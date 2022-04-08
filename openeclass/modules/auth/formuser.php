@@ -73,16 +73,16 @@ if ($all_set) {
                          proftmima, profcomm, status, date_open,
                          comment, lang, statut)
                   VALUES (".
-                  autoquote($name) .', '.
-                  autoquote($surname) .', '.
-                  autoquote($username) .', '.
-                  autoquote($usermail) .', '.
-                  intval($department) .', '.
-                  autoquote($userphone) .', 1, NOW(), '.
-                  autoquote($usercomment) .", '$lang', 5)");
+                  autoquote(mysql_real_escape_string($name)) .', '.
+                  autoquote(mysql_real_escape_string($surname)) .', '.
+                  autoquote(mysql_real_escape_string($username)) .', '.
+                  autoquote(mysql_real_escape_string($usermail)) .', '.
+                  intval(mysql_real_escape_string($department)) .', '.
+                  autoquote(mysql_real_escape_string($userphone)) .', 1, NOW(), '.
+                  autoquote(mysql_real_escape_string($usercomment)) .", '$lang', 5)");
 
         //----------------------------- Email Message --------------------------
-        $department = find_faculty_by_id($department);
+        $department = find_faculty_by_id(mysql_real_escape_string($department));
         $MailMessage = $mailbody1 . $mailbody2 . "$name $surname\n\n" .
                 $mailbody3 . $mailbody4 . $mailbody5 . "$mailbody8\n\n" .
                 "$langFaculty: $department\n$langComments: $usercomment\n" .

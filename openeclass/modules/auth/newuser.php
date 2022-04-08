@@ -137,7 +137,7 @@ if (!isset($submit)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
 	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
+		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".mysql_real_escape_string($uname)."'";
 		$username_check = mysql_query($q2);
 		if ($myusername = mysql_fetch_array($username_check)) {
 			$registration_errors[] = $langUserFree;
@@ -190,17 +190,24 @@ if (!isset($submit)) {
 	
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
-	$uname = escapeSimple($uname);  // escape the characters: simple and double quote
-	$password = escapeSimpleSelect($password);  // escape the characters: simple and double quote
+	$uname = mysql_real_escape_string($uname);  // escape the characters: simple and double quote
+	$password = mysql_real_escape_string($password);  // escape the characters: simple and double quote
 	if(!in_array($auth,$authmethods)) {
 		$password_encrypted = md5($password);
 	} else {
 		$password_encrypted = $password;
 	}
+	$nom_form = mysql_real_escape_string($nom_form);
+	$prenom_form = mysql_real_escape_string($prenom_form);
+	$email = mysql_real_escape_string($email);
+	$department = mysql_real_escape_string($department);
+	$am = mysql_real_escape_string($am);
+	$lang = mysql_real_escape_string($lang);
+
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
-		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
+		'$department','$',".$registered_at.",".$expires_at.",'$lang')";
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
 	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");

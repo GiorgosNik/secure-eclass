@@ -49,6 +49,7 @@ if($submit) {
   $department = isset($_POST['department'])?$_POST['department']:'';
   $localize = isset($_POST['localize'])?$_POST['localize']:'';
   $lang = langname_to_code($localize);	
+  $uname = mysql_real_escape_string($uname);
 
       // check if user name exists
   $username_check=mysql_query("SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'");
@@ -101,8 +102,17 @@ send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
     $expires_at = time() + $durationAccount;
 
     $password_encrypted = md5($password);
+    $department = mysql_real_escape_string($department);
     $s = mysql_query("SELECT id FROM faculte WHERE name='$department'");
     $dep = mysql_fetch_array($s);
+
+    $nom_form = mysql_real_escape_string($nom_form);
+    $prenom_form = mysql_real_escape_string($prenom_form);
+    $email_form = mysql_real_escape_string($email_form);
+    $lang = mysql_real_escape_string($lang);
+    $uname = mysql_real_escape_string($uname);
+
+
     $inscr_user=mysql_query("INSERT INTO `$mysqlMainDb`.user
       (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
       VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email_form', '5', '$dep[id]', '$registered_at', '$expires_at', '$lang')");

@@ -42,7 +42,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
                 $username_form = $uname;
         }
 	// check if username exists
-	$username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
+	$username_check=mysql_query("SELECT username FROM user WHERE username='".mysql_real_escape_string($username_form)."'");
 	while ($myusername = mysql_fetch_array($username_check))
 	{
 		$user_exist=$myusername[0];
@@ -82,7 +82,15 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 		$langcode = langname_to_code($language);
 
-		$username_form = escapeSimple($username_form);
+		$username_form = mysql_real_escape_string($username_form);
+		$nom_form = mysql_real_escape_string($nom_form);
+		$prenom_form = mysql_real_escape_string($prenom_form);
+		$email_form = mysql_real_escape_string($email_form);
+		$am_form = mysql_real_escape_string($am_form);
+		$langcode = mysql_real_escape_string($langcode);
+		$persoStatus = mysql_real_escape_string($persoStatus);
+
+
 		if(mysql_query("UPDATE user
 	        SET nom='$nom_form', prenom='$prenom_form',
 	        username='$username_form', email='$email_form', am='$am_form',
