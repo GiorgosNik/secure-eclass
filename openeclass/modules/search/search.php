@@ -40,16 +40,32 @@ search.php
 //  x. sthn kentrikh selida mathimatos (exei ginei log-in kai o xrhsths eigaxthhke se mathima)
 //*/
 
+function debug_to_console($data) {
+    $output = $data;
+    if (is_array($output))
+        $output = implode(',', $output);
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+}
 include '../../include/baseTheme.php';
 if(isset($_POST['search_terms'])) {
-	$search_terms_title = $search_terms_keywords = $search_terms_instructor = $search_terms_coursecode = $_POST['search_terms'];
+	$search_terms_title = $search_terms_keywords = $search_terms_instructor = $search_terms_coursecode = mysql_real_escape_string($_POST['search_terms']);
 }
 //elegxos ean o xrhsths vrisketai sthn kentrikh selida tou systhmatos xwris na exei kanei login
+
 if (@empty($uid))
 {
+	$search_terms_title 		= mysql_real_escape_string($search_terms_title);
+	$search_terms_keywords 		= mysql_real_escape_string($search_terms_keywords);
+	$search_terms_instructor 	= mysql_real_escape_string($search_terms_instructor);
+	$search_terms_coursecode 	= mysql_real_escape_string($search_terms_coursecode);
 	include 'search_loggedout.php';
 }else
 {
+	$search_terms_title 		= mysql_real_escape_string($search_terms_title);
+	$search_terms_keywords 		= mysql_real_escape_string($search_terms_keywords);
+	$search_terms_instructor 	= mysql_real_escape_string($search_terms_instructor);
+	$search_terms_coursecode 	= mysql_real_escape_string($search_terms_coursecode);
 	include 'search_loggedin.php';
 }
 ?>

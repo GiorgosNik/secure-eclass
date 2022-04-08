@@ -58,8 +58,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	$userUID = (int)$_REQUEST['u'];
 	$hash = $_REQUEST['h'];
 	$res = db_query("SELECT `user_id`, `hash`, `password`, `datetime` FROM passwd_reset
-			WHERE `user_id` = '" . mysql_escape_string($userUID) . "'
-			AND `hash` = '" . mysql_escape_string($hash) . "'
+			WHERE `user_id` = '" . mysql_real_escape_string($userUID) . "'
+			AND `hash` = '" . mysql_real_escape_string($hash) . "'
 			AND TIME_TO_SEC(TIMEDIFF(`datetime`,NOW())) < 3600
 			", $mysqlMainDb);
 
@@ -131,8 +131,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 } elseif (!isset($_REQUEST['do'])) {
 	/***** If valid e-mail address was entered, find user and send email *****/
 	$res = db_query("SELECT user_id, nom, prenom, username, password, statut FROM user
-			WHERE email = '" . mysql_escape_string($email) . "'
-			AND BINARY username = '" . mysql_escape_string($userName) . "'", $mysqlMainDb);
+			WHERE email = '" . mysql_real_escape_string($email) . "'
+			AND BINARY username = '" . mysql_real_escape_string($userName) . "'", $mysqlMainDb);
 
         $found_editable_password = false;
 	if (mysql_num_rows($res) == 1) {

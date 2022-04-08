@@ -46,6 +46,14 @@ include "modules/auth/auth.inc.php";
 $homePage = true;
 $tool_content = "";
 
+function debug_to_console($data) {
+    $output = $data;
+    if (is_array($output))
+        $output = implode(',', $output);
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+}
+
 // first check
 // check if we can connect to database. If not then eclass is most likely not installed
 if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
@@ -84,12 +92,14 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
-		$uname = escapeSimple(preg_replace('/ +/', ' ', trim($_POST['uname'])));
+		$uname=mysql_real_escape_string(trim($_POST['uname']));
+
 	} else {
 		$uname = '';
 	}
 	
 	$pass = isset($_POST['pass'])?$_POST['pass']:'';
+	$pass = mysql_real_escape_string($pass);
 	$submit = isset($_POST['submit'])?$_POST['submit']:'';
 	$auth = get_auth_active_methods();
 	$is_eclass_unique = is_eclass_unique();
