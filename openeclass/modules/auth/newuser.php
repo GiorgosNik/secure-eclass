@@ -67,15 +67,15 @@ if (!isset($submit)) {
 	<thead>
 	<tr>
 	<th class='left' width='220'>$langName</th>
-	<td colspan='2'><input type='text' name='prenom_form' value='$prenom_form' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='prenom_form' value='". htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langSurname</th>
-	<td colspan='2'><input type='text' name='nom_form' value='$nom_form' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='nom_form' value='". htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langUsername</th>
-	<td colspan='2'><input type='text' name='uname' value='$uname' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
+	<td colspan='2'><input type='text' name='uname' value='". htmlspecialchars($uname, ENT_QUOTES, 'UTF-8'). "' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langPass</th>
@@ -87,12 +87,12 @@ if (!isset($submit)) {
 	</tr>
 	<tr>
 	<th class='left'>$langEmail</th>
-	<td valign='top'><input type='text' name='email' value='$email' class='FormData_InputText' /></td>
+	<td valign='top'><input type='text' name='email' value='". htmlspecialchars($email, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText' /></td>
 	<td><small>$langEmailNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langAm</th>
-	<td colspan='2' valign='top'><input type='text' name='am' value='$am' class='FormData_InputText' /></td>
+	<td colspan='2' valign='top'><input type='text' name='am' value='". htmlspecialchars($am, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText' /></td>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>
@@ -242,8 +242,14 @@ if (!isset($submit)) {
 		foreach ($registration_errors as $error) {
 			$tool_content .= "<p>$error</p>";
 		}
-		$tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&nom_form=$_POST[nom_form]&uname=$_POST[uname]&email=$_POST[email]&am=$_POST[am]'>$langAgain</a></p>" .
-					"</td></tr></tbody></table><br /><br />";
+
+		 $prenom_temp = htmlspecialchars($_POST[prenom_form], ENT_QUOTES, 'UTF-8');
+         $nom_temp = htmlspecialchars($_POST[nom_form], ENT_QUOTES, 'UTF-8');
+         $uname_temp = htmlspecialchars($_POST[uname], ENT_QUOTES, 'UTF-8');
+         $email_form_temp = htmlspecialchars($_POST[email], ENT_QUOTES, 'UTF-8');
+         $am_temp = htmlspecialchars($_POST[am], ENT_QUOTES, 'UTF-8');
+	     $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$prenom_temp&nom_form=$nom_temp&
+         uname=$uname_temp&email_form=$email_form_temp&am=$am_temp'>$langAgain</a></p>" ."</td></tr></tbody></table><br /><br />";
 	}
 
 } // end of registration

@@ -70,9 +70,9 @@ if (isset($_POST['username'])) {
                 header('Location: ' . $urlServer);
                 exit;
         } else {
-                $tool_content = "<div class='caution_small'>" . sprintf($langChangeUserNotFound, $_POST['username']) . "</div>";
+                $tool_content = "<div class='caution_small'>" . sprintf($langChangeUserNotFound,  htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8') ) . "</div>";
         }
 } 
 
-$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>$langUsername: <input type='text' name='username' /></form>";
+$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>". htmlspecialchars($langUsername, ENT_QUOTES, 'UTF-8'). ": <input type='text' name='username' /></form>";
 draw($tool_content,3,'admin');

@@ -55,27 +55,27 @@ if (!isset($submit)) {
   <thead>
   <tr>
    <th class='left' width='220'>$langSurname</th>
-   <td><input size='35' type='text' name='nom_form' value='$nom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+   <td><input size='35' type='text' name='nom_form' value='". htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langName</th>
-    <td><input size='35' type='text' name='prenom_form' value='$prenom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='prenom_form' value='". htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
 	<tr>
     <th class='left'>$langPhone</th>
-    <td><input size='35' type='text' name='userphone' value='$userphone' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='userphone' value='". htmlspecialchars($userphone, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langUsername</th>
-    <td><input size='35' type='text' name='uname' value='$uname' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='uname' value='". htmlspecialchars($uname, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langEmail</th>
-    <td><input size='35' type='text' name='email_form' value='$email_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='email_form' value='". htmlspecialchars($email_form, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langComments</td>
-    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>$usercomment</textarea>&nbsp;&nbsp;<small>(*) $profreason</small></td>
+    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>". htmlspecialchars($usercomment, ENT_QUOTES, 'UTF-8'). "</textarea>&nbsp;&nbsp;<small>(*) $profreason</small></td>
   </tr>
   <tr>
     <th class='left'>$langFaculty</th>
@@ -189,7 +189,14 @@ $registration_errors = array();
                 foreach ($registration_errors as $error) {
                         $tool_content .= "<p>$error</p>";
                 }
-	       $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&amp;nom_form=$_POST[nom_form]&amp;userphone=$_POST[userphone]&amp;uname=$_POST[uname]&amp;email_form=$_POST[email_form]&amp;usercomment=$_POST[usercomment]'>$langAgain</a></p>" .
+         $prenom_temp = htmlspecialchars($_POST[prenom_form], ENT_QUOTES, 'UTF-8');
+         $nom_temp = htmlspecialchars($_POST[nom_form], ENT_QUOTES, 'UTF-8');
+         $userphone_temp = htmlspecialchars($_POST[userphone], ENT_QUOTES, 'UTF-8');
+         $uname_temp = htmlspecialchars($_POST[uname], ENT_QUOTES, 'UTF-8');
+         $email_form_temp = htmlspecialchars($_POST[email_form], ENT_QUOTES, 'UTF-8');
+         $usercomment_temp = htmlspecialchars($_POST[usercomment], ENT_QUOTES, 'UTF-8');
+	       $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$prenom_temp&amp;nom_form=$nom_temp&amp;
+         userphone=$userphone_temp&amp;uname=$uname_temp&amp;email_form=$email_form_temp&amp;usercomment=$usercomment_temp'>$langAgain</a></p>" .
                 "</td></tr></tbody></table><br /><br />";
 	}
 

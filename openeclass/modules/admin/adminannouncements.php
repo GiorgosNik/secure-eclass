@@ -72,12 +72,12 @@ $visible = isset($_POST['visible'])? 'V': 'I';
 
 if (isset($_GET['delete'])) {
         // delete announcement command
-        $id = intval($_GET['delete']);
+        $id = htmlspecialchars(intval($_GET['delete']), ENT_QUOTES, 'UTF-8') ;
         $result =  db_query("DELETE FROM admin_announcements WHERE id='$id'", $mysqlMainDb);
         $message = $langAdminAnnDel;
 } elseif (isset($_GET['modify'])) {
         // modify announcement command
-        $id = intval($_GET['modify']);
+        $id = htmlspecialchars(intval($_GET['modify']), ENT_QUOTES, 'UTF-8') ;
         $result = db_query("SELECT * FROM admin_announcements WHERE id='$id'", $mysqlMainDb);
         $myrow = mysql_fetch_array($result);
 

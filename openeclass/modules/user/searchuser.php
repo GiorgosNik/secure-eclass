@@ -55,7 +55,7 @@ if($is_adminOfCourse) {
 	if(isset($giveAdmin) && $giveAdmin && $is_adminOfCourse) {
 		mysql_query("PREPARE stmt9 FROM 'UPDATE cours_user SET statut = 1 WHERE user_id= ? AND cours_id = ?';");
 		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
-		mysql_query('SET @b = "' . $cours_id . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($cours_id) . '";');
 		$result = db_query("EXECUTE stmt9 USING @a,@b;",$mysqlMainDb);
 		
 	}
@@ -63,7 +63,7 @@ if($is_adminOfCourse) {
 	elseif(isset($giveTutor) && $giveTutor) {
 		mysql_query("PREPARE stmt10 FROM 'UPDATE cours_user SET tutor = 1 WHERE user_id= ? AND cours_id = ?';");
 		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
-		mysql_query('SET @b = "' . $cours_id . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($cours_id) . '";');
 		$result = db_query("EXECUTE stmt10 USING @a,@b;",$mysqlMainDb);
 
 
@@ -74,7 +74,7 @@ if($is_adminOfCourse) {
         // remove admin status
         elseif(isset($removeAdmin) && $removeAdmin) {
 				mysql_query("PREPARE stmt12 FROM 'UPDATE cours_user SET statut = 5 WHERE user_id != ? AND user_id= ? AND cours_id = ?';");
-				mysql_query('SET @a = "' . $uid . '";');
+				mysql_query('SET @a = "' . mysql_real_escape_string($uid) . '";');
 				mysql_query('SET @b = "' . mysql_real_escape_string($_GET['user_id']) . '";');
 				mysql_query('SET @c = "' . $cours_id . '";');
 				$result = db_query("EXECUTE stmt12 USING @a,@b,@c;",$mysqlMainDb);
@@ -84,28 +84,28 @@ if($is_adminOfCourse) {
         elseif(isset($removeTutor) && $removeTutor) {
 				mysql_query("PREPARE stmt13 FROM 'UPDATE cours_user SET tutor = 0 WHERE user_id = ? AND cours_id = ?';");
 				mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
-				mysql_query('SET @b = "' . $cours_id . '";');
+				mysql_query('SET @b = "' . mysql_real_escape_string($cours_id) . '";');
 				$result = db_query("EXECUTE stmt13 USING @a,@b;",$mysqlMainDb);
         }
         // unregister user from courses
         elseif(isset($unregister) && $unregister) {
                 // Security: cannot remove myself
 				mysql_query("PREPARE stmt14 FROM 'DELETE FROM cours_user WHERE user_id!= ? AND user_id = ? AND cours_id = ?';");
-				mysql_query('SET @a = "' . $uid . '";');
+				mysql_query('SET @a = "' . mysql_real_escape_string($uid) . '";');
 				mysql_query('SET @b = "' . mysql_real_escape_string($_GET['user_id']) . '";');
-				mysql_query('SET @c = "' . $cours_id . '";');
+				mysql_query('SET @c = "' . mysql_real_escape_string($cours_id) . '";');
 				$result = db_query("EXECUTE stmt14 USING @a,@b,@c;",$mysqlMainDb);
 
                 // Except: remove myself if there is another tutor
                 if ($_GET['user_id'] == $uid) {
 						mysql_query("PREPARE stmt15 FROM 'SELECT user_id FROM cours_user WHERE cours_id = $cours_id AND user_id <> $uid AND statut = 1 LIMIT 1';");
-						mysql_query('SET @a = "' . $cours_id . '";');
-						mysql_query('SET @b = "' . $uid . '";');
+						mysql_query('SET @a = "' . mysql_real_escape_string($cours_id) . '";');
+						mysql_query('SET @b = "' . mysql_real_escape_string($uid) . '";');
 						$result = db_query("EXECUTE stmt15 USING @a,@b;",$mysqlMainDb);
                         if (mysql_num_rows($result) > 0) {
 							mysql_query("PREPARE stmt16 FROM 'DELETE FROM cours_user WHERE cours_id = $cours_id AND user_id = $uid';");
-							mysql_query('SET @a = "' . $cours_id . '";');
-							mysql_query('SET @b = "' . $uid . '";');
+							mysql_query('SET @a = "' . mysql_real_escape_string($cours_id) . '";');
+							mysql_query('SET @b = "' . mysql_real_escape_string($uid) . '";');
 							db_query("EXECUTE stmt16 USING @a,@b;");
                         }
                 }
@@ -126,15 +126,15 @@ if($is_adminOfCourse) {
 	</tr>
 	<tr>
 	<th class='left'>$langSurname</th>
-	<td><input type='text' name='search_nom' value='$search_nom' class='FormData_InputText'></td>
+	<td><input type='text' name='search_nom' value='". htmlspecialchars($search_nom, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'></td>
 	</tr>
 	<tr>
 	<th class='left'>$langName</th>
-	<td><input type='text' name='search_prenom' value='$search_prenom' class='FormData_InputText'></td>
+	<td><input type='text' name='search_prenom' value='". htmlspecialchars($search_prenom, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'></td>
 	</tr>
 	<tr>
 	<th class='left'>$langUsername</th>
-	<td><input type='text' name='search_uname' value='$search_uname' class='FormData_InputText'></td>
+	<td><input type='text' name='search_uname' value='". htmlspecialchars($search_uname, ENT_QUOTES, 'UTF-8'). "' class='FormData_InputText'></td>
 	</tr>
 	<tr>
 	<th class='left'>&nbsp;</th>
@@ -162,7 +162,7 @@ if($is_adminOfCourse) {
 	$query = join(' AND ', $search);
 	if (!empty($query)) {
 		mysql_query("PREPARE stmt17 FROM 'SELECT user.user_id, user.nom, user.prenom, user.email, user.am, cours_user.statut, cours_user.tutor, cours_user.reg_date, user_group.team FROM `$mysqlMainDb`.cours_user, `$mysqlMainDb`.user LEFT JOIN `$currentCourseID`.user_group ON user.user_id=user_group.user WHERE `user`.`user_id`=`cours_user`.`user_id` AND `cours_user`.`cours_id` = ? AND ? ORDER BY nom, prenom';");
-		mysql_query('SET @a = "' . $cours_id . '";');
+		mysql_query('SET @a = "' . mysql_real_escape_string($cours_id) . '";');
 		mysql_query('SET @b = "' . $query . '";');
 		$result = db_query("EXECUTE stmt17 USING @a,@b;");
 		if (mysql_num_rows($result) == 0) {

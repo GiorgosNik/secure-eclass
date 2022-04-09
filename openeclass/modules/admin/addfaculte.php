@@ -192,7 +192,7 @@ elseif ($a == 1)  {
 }
 // Delete faculty
 elseif ($a == 2) {
-        $c = intval($_GET['c']);
+        $c = htmlspecialchars(intval($_GET['c']), ENT_QUOTES, 'UTF-8');
 	$s=mysql_query("SELECT * from cours WHERE faculteid=$c");
 	// Check for existing courses of a faculty
 	if (mysql_num_rows($s) > 0)  {

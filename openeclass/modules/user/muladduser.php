@@ -127,6 +127,9 @@ if (!empty($query)) {
 	if (mysql_num_rows($result) == 0) {
 		$tool_content .= $langNoUsersFound."</td></tr>\n";
 	} else {
+		$langName = htmlspecialchars($langName, ENT_QUOTES, 'UTF-8');
+		$langSurname = htmlspecialchars($langSurname, ENT_QUOTES, 'UTF-8');
+		$langUsername = htmlspecialchars($langUsername, ENT_QUOTES, 'UTF-8');
 $tool_content .= <<<tCont4
 	<table width=99%>
 	<thead>
@@ -184,16 +187,16 @@ function adduser($user, $cid) {
 
 
 	mysql_query("PREPARE stmt7 FROM 'SELECT * from cours_user WHERE user_id = ? AND cours_id = ?';");
-	mysql_query('SET @a = "' . $userid . '";');
-	mysql_query('SET @b = "' . $$cid . '";');
+	mysql_query('SET @a = "' . mysql_escape_string($userid) . '";');
+	mysql_query('SET @b = "' . mysql_escape_string($cid) . '";');
 	$result = db_query("EXECUTE stmt7 USING @a,@b;");
 	if (mysql_num_rows($result) > 0)
 	return -2;
 
 
 	mysql_query("PREPARE stmt8 FROM 'INSERT INTO cours_user (user_id, cours_id, statut, reg_date)VALUES (?, ?, '5', CURDATE())';");
-	mysql_query('SET @a = "' . $userid . '";');
-	mysql_query('SET @b = "' . $$cid . '";');
+	mysql_query('SET @a = "' . mysql_escape_string($userid) . '";');
+	mysql_query('SET @b = "' . mysql_escape_string($cid) . '";');
 	$result = db_query("EXECUTE stmt8 USING @a,@b;");
 
 	return $userid;

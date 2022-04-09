@@ -237,7 +237,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 
 	if (isset($_SESSION['shib_user'])) {
                 $auth_text = "Shibboleth user";
-		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$prenom_form."</b> [".$auth_text."]
+		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8')."</b> [".$auth_text."]
 	        <input type=\"hidden\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
@@ -248,7 +248,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
        <th class='left'>$langSurname</th>";
 	if (isset($_SESSION['shib_user'])) {
                 $auth_text = "Shibboleth user";
-		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$nom_form."</b> [".$auth_text."]
+		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8')."</b> [".$auth_text."]
                 <input type=\"hidden\" name=\"nom_form\" value=\"$nom_form\"></td>";
 	} else {
        		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"nom_form\" value=\"$nom_form\"></td>";
@@ -279,7 +279,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 		$tool_content .= "
     <tr>
       <th class='left'>".$langUsername. "</th>
-      <td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$username_form."</b> [".$auth_text."]
+      <td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".htmlspecialchars($username_form, ENT_QUOTES, 'UTF-8')."</b> [".$auth_text."]
         <input type=\"hidden\" name=\"username_form\" value=\"$username_form\">
       </td>
     </tr>";

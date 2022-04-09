@@ -57,7 +57,7 @@ function confirmation () {
 
 // Process resource actions
 if (isset($_REQUEST['edit'])) {
-	$res_id = intval($_GET['edit']);
+	$res_id = htmlspecialchars(intval($_GET['edit']), ENT_QUOTES, 'UTF-8') ;
 	if ($id = check_admin_unit_resource($res_id)) {
                 if ($language == 'greek')
                         $lang_editor = 'el';

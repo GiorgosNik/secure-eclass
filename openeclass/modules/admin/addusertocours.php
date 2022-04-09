@@ -42,7 +42,7 @@ $tool_content = "";
 ******************************************************************************/
 // Initialize some variables
 $searchurl = "";
-$cid = course_code_to_id($_GET['c']);
+$cid = course_code_to_id(htmlspecialchars(intval($_GET['c']), ENT_QUOTES, 'UTF-8'));
 
 // Define $searchurl to go back to search results
 if (isset($search) && ($search=="yes")) {

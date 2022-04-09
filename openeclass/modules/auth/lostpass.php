@@ -40,7 +40,7 @@ include '../../include/baseTheme.php';
 include 'auth.inc.php';
 include('../../include/sendMail.inc.php');
 $nameTools = $lang_remind_pass;
-
+$langHome = htmlspecialchars($langHome, ENT_QUOTES, 'UTF-8');
 function check_password_editable($password)
 {
 	$authmethods = array("pop3", "imap", "ldap", "db");
@@ -50,16 +50,6 @@ function check_password_editable($password)
 		return true; // is editable
 	}
 }
-
-function debug_to_console($data)
-{
-	$output = $data;
-	if (is_array($output))
-		$output = implode(',', $output);
-
-	echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
-
 
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
@@ -145,6 +135,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 
 	$found_editable_password = false;
 	if (mysql_num_rows($res) == 1) {
+		$emailhelpdesk = htmlspecialchars($emailhelpdesk, ENT_QUOTES, 'UTF-8');
 		$text = $langPassResetIntro . $emailhelpdesk;
 		$text .= "$langHowToResetTitle";
 
@@ -204,7 +195,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
                                         <tr>
                                                 <td class=\"caution\">
                                                 <p><strong>$langAccountEmailError1</strong></p>
-                                                <p>$langAccountEmailError2 $email.</p>
+                                                <p>$langAccountEmailError2 ". htmlspecialchars($email, ENT_QUOTES, 'UTF-8'). "</p>
                                                 <p>$langAccountEmailError3 <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a>.</p>
                                                 <p><a href=\"../../index.php\">$langHome</a></p>
                                         </td>
@@ -222,7 +213,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	} else {
 		$tool_content .= "<table width=\"99%\"><tbody>
 		<tr><td class=\"caution\">
-		<p><strong>$langAccountNotFound1 ($userName / $email)</strong></p>
+		<p><strong>$langAccountNotFound1 (". htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'). " / ". htmlspecialchars($email, ENT_QUOTES, 'UTF-8'). ")</strong></p>
 		<p>$langAccountNotFound2 <a href='mailto: $emailhelpdesk'>$emailhelpdesk</a>, $langAccountNotFound3</p>
 		<p><a href=\"../../index.php\">$langHome</a></p>
 		</td>
@@ -234,7 +225,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	<tbody><tr>
 	<td class=\"caution\">
 	<p><strong>$langAccountEmailError1</strong></p>
-	<p>$langAccountEmailError2 $email.</p>
+	<p>$langAccountEmailError2 ". htmlspecialchars($email, ENT_QUOTES, 'UTF-8'). ".</p>
 	<p>$langAccountEmailError3 <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a>.</p>
 	<p><a href=\"../../index.php\">$langHome</a></p>
 	</td>

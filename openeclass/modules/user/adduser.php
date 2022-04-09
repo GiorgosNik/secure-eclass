@@ -63,6 +63,10 @@ if (isset($add)) {
 if(!isset($search_nom)) $search_nom = "";
 if(!isset($search_prenom)) $search_prenom = "";
 if(!isset($search_uname)) $search_uname = "";
+$search_nom = htmlspecialchars($search_nom, ENT_QUOTES, 'UTF-8');
+$search_prenom = htmlspecialchars($search_prenom, ENT_QUOTES, 'UTF-8');
+$search_uname = htmlspecialchars($search_uname, ENT_QUOTES, 'UTF-8');
+
 $tool_content .= <<<tCont
 
     <table width="99%" class="FormData">
