@@ -43,33 +43,42 @@ $nameTools = $lang_remind_pass;
 
 function check_password_editable($password)
 {
-	$authmethods = array("pop3","imap","ldap","db");
-	if(in_array($password,$authmethods))
-	{
+	$authmethods = array("pop3", "imap", "ldap", "db");
+	if (in_array($password, $authmethods)) {
 		return false; // it is not editable, because it belongs in external auth method
-	}
-	else
-	{
+	} else {
 		return true; // is editable
 	}
 }
 
+function debug_to_console($data)
+{
+	$output = $data;
+	if (is_array($output))
+		$output = implode(',', $output);
+
+	echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+}
+
+
+
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	$userUID = (int)$_REQUEST['u'];
 	$hash = $_REQUEST['h'];
-	$res = db_query("SELECT `user_id`, `hash`, `password`, `datetime` FROM passwd_reset
-			WHERE `user_id` = '" . mysql_real_escape_string($userUID) . "'
-			AND `hash` = '" . mysql_real_escape_string($hash) . "'
-			AND TIME_TO_SEC(TIMEDIFF(`datetime`,NOW())) < 3600
-			", $mysqlMainDb);
+	mysql_query("PREPARE stmt2 FROM 'SELECT `user_id`, `hash`, `password`, `datetime` FROM passwd_reset WHERE `user_id` = ? AND `hash` = ? AND TIME_TO_SEC(TIMEDIFF(`datetime`,NOW())) < 3600';");
+	mysql_query('SET @a = "' . mysql_real_escape_string($userUID) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($hash) . '";');
+	$res = mysql_query("EXECUTE stmt2 USING @a, @b;");
+	$myrow = mysql_fetch_array($res);
+
 
 	if (mysql_num_rows($res) == 1) {
 		$myrow = mysql_fetch_array($res);
 		//copy pass hash (md5) from reset_pass to user table
-		$sql = "UPDATE `user` SET `password` = '".$myrow['hash']."' WHERE `user_id` = ".$myrow['user_id']."";
-		if(db_query($sql, $mysqlMainDb)) {
+		$sql = "UPDATE `user` SET `password` = '" . $myrow['hash'] . "' WHERE `user_id` = " . $myrow['user_id'] . "";
+		if (db_query($sql, $mysqlMainDb)) {
 			//send email to the user of his new pass (not hashed)
-			$res = db_query("SELECT `email` FROM user WHERE `user_id` = ".$myrow['user_id']."", $mysqlMainDb);
+			$res = db_query("SELECT `email` FROM user WHERE `user_id` = " . $myrow['user_id'] . "", $mysqlMainDb);
 			$myrow2 = mysql_fetch_array($res);
 			$text = "$langPassEmail1 <em>$myrow[password]</em><br>$langPassEmail2";
 			$tool_content .= "<table width=\"99%\"><tbody>
@@ -96,21 +105,21 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 		</table>";
 	}
 } elseif ((!isset($email) || !email_seems_valid($email)
-     || !isset($userName) || empty($userName)) && !isset($_REQUEST['do'])) {
+	|| !isset($userName) || empty($userName)) && !isset($_REQUEST['do'])) {
 
-		$lang_pass_invalid_mail= "$lang_pass_invalid_mail1 $lang_pass_invalid_mail2 $lang_pass_invalid_mail3";
+	$lang_pass_invalid_mail = "$lang_pass_invalid_mail1 $lang_pass_invalid_mail2 $lang_pass_invalid_mail3";
 
 	/***** Email address entry form *****/
-        if (isset($email) and !email_seems_valid($email)) {
-                $tool_content .= '<table width="99%"><tbody><tr><td class="caution">' .
-                                '<p><strong>' . $lang_pass_invalid_mail . '<br />&nbsp;<br />' .
-                                '&nbsp;<br />&nbsp;<br /></strong></p>' .
-				'</td></tr></tbody></table>';
-        }
+	if (isset($email) and !email_seems_valid($email)) {
+		$tool_content .= '<table width="99%"><tbody><tr><td class="caution">' .
+			'<p><strong>' . $lang_pass_invalid_mail . '<br />&nbsp;<br />' .
+			'&nbsp;<br />&nbsp;<br /></strong></p>' .
+			'</td></tr></tbody></table>';
+	}
 
 	$tool_content .= $lang_pass_intro;
 
-	$tool_content .= "<form method=\"post\" action=\"".$REQUEST_URI."\">
+	$tool_content .= "<form method=\"post\" action=\"" . $REQUEST_URI . "\">
 		<table>
 		<thead>
 		<tr><th>$lang_username: </th>
@@ -125,56 +134,55 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 		</thead>
 		</table>
 		<br/>
-		<input type=\"submit\" name=\"doit\" value=\"".$lang_pass_submit."\" />
+		<input type=\"submit\" name=\"doit\" value=\"" . $lang_pass_submit . "\" />
 	</form>";
-
 } elseif (!isset($_REQUEST['do'])) {
 	/***** If valid e-mail address was entered, find user and send email *****/
-	$res = db_query("SELECT user_id, nom, prenom, username, password, statut FROM user
-			WHERE email = '" . mysql_real_escape_string($email) . "'
-			AND BINARY username = '" . mysql_real_escape_string($userName) . "'", $mysqlMainDb);
+	mysql_query("PREPARE stmt3 FROM 'SELECT user_id, nom, prenom, username, password, statut FROM user WHERE email = ? AND BINARY username = ?';");
+	mysql_query('SET @a = "' . mysql_real_escape_string($email) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($userName) . '";');
+	$res = db_query("EXECUTE stmt3 USING @a, @b;", $mysqlMainDb);
 
-        $found_editable_password = false;
+	$found_editable_password = false;
 	if (mysql_num_rows($res) == 1) {
-		$text = $langPassResetIntro. $emailhelpdesk;
+		$text = $langPassResetIntro . $emailhelpdesk;
 		$text .= "$langHowToResetTitle";
 
 		while ($s = mysql_fetch_array($res, MYSQL_ASSOC)) {
 			$is_editable = check_password_editable($s['password']);
-			if($is_editable) {
-                                $found_editable_password = true;
+			if ($is_editable) {
+				$found_editable_password = true;
 				//insert an md5 key to the db
 				$new_pass = create_pass();
 				//TODO: add a query to check if the newly generated password already exists in the
 				//reset-pass table. If yes, attempt to generate another one.
-				$sql = "INSERT INTO `passwd_reset` (`user_id`, `hash`, `password`, `datetime`) VALUES ('".$s['user_id']."',  '".md5($new_pass)."', '$new_pass', NOW())";
+				$sql = "INSERT INTO `passwd_reset` (`user_id`, `hash`, `password`, `datetime`) VALUES ('" . $s['user_id'] . "',  '" . md5($new_pass) . "', '$new_pass', NOW())";
 				db_query($sql, $mysqlMainDb);
 				//prepare instruction for password reset
 				$text .= $langPassResetGoHere;
-				$text .= $urlServer . "modules/auth/lostpass.php?do=go&u=".$s['user_id']."&h=" .md5($new_pass);
-
+				$text .= $urlServer . "modules/auth/lostpass.php?do=go&u=" . $s['user_id'] . "&h=" . md5($new_pass);
 			} else { //other type of auth...
-				switch($s['password'])  {
-					case 'pop3':{
-						$auth=2;
-						break;
-					}
-					case 'imap':{
-						$auth=3;
-						break;
-					}
-					case 'ldap':{
-						$auth=4;
-						break;
-					}
-					case 'db':{
-						$auth=5;
-						break;
-					}
-					default:{
-						$auth=1;
-						break;
-					}
+				switch ($s['password']) {
+					case 'pop3': {
+							$auth = 2;
+							break;
+						}
+					case 'imap': {
+							$auth = 3;
+							break;
+						}
+					case 'ldap': {
+							$auth = 4;
+							break;
+						}
+					case 'db': {
+							$auth = 5;
+							break;
+						}
+					default: {
+							$auth = 1;
+							break;
+						}
 				}
 				$tool_content = "<table width=\"99%\">
 				<tbody><tr><td class=\"caution\">
@@ -186,11 +194,11 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 			}
 		}
 
-	/***** Account details found, now send e-mail *****/
-        if ($found_editable_password) {
-                $emailsubject = $lang_remind_pass;
-                if (!send_mail('', '', '', $email, $emailsubject, $text, $charset)) {
-                        $tool_content = "
+		/***** Account details found, now send e-mail *****/
+		if ($found_editable_password) {
+			$emailsubject = $lang_remind_pass;
+			if (!send_mail('', '', '', $email, $emailsubject, $text, $charset)) {
+				$tool_content = "
                                 <table width=\"99%\">
                                 <tbody>
                                         <tr>
@@ -203,17 +211,15 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
                                         </tr>
                                 </tbody>
                         </table>";
-
-                } elseif (!isset($auth)) {
-                    $tool_content .= "<table width=\"99%\">
+			} elseif (!isset($auth)) {
+				$tool_content .= "<table width=\"99%\">
                            <tbody><tr><td class=\"success\">
                                $lang_pass_email_ok <strong>$email</strong><br/><br/>
                                 <a href=\"../../index.php\">$langHome</a>
                                 </td></tr></tbody></table><br/>";
-                        }
-                }
-
-       } else {
+			}
+		}
+	} else {
 		$tool_content .= "<table width=\"99%\"><tbody>
 		<tr><td class=\"caution\">
 		<p><strong>$langAccountNotFound1 ($userName / $email)</strong></p>
@@ -222,7 +228,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 		</td>
 		</tr>
 		</tbody></table>";
-        }
+	}
 } else {
 	$tool_content = "<table width=\"99%\">
 	<tbody><tr>
@@ -235,5 +241,4 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	</tr>
 	</tbody></table>";
 }
-draw($tool_content,0);
-?>
+draw($tool_content, 0);

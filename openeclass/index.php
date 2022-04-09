@@ -34,10 +34,10 @@
  */
 
 /***************************************************************
-*               HOME PAGE OF ECLASS		               *
-****************************************************************
-*/
-define ("INDEX_START", 1);
+ *               HOME PAGE OF ECLASS		               *
+ ****************************************************************
+ */
+define("INDEX_START", 1);
 $guest_allowed = true;
 $path2add = 0;
 include "include/baseTheme.php";
@@ -46,12 +46,13 @@ include "modules/auth/auth.inc.php";
 $homePage = true;
 $tool_content = "";
 
-function debug_to_console($data) {
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
+function debug_to_console($data)
+{
+	$output = $data;
+	if (is_array($output))
+		$output = implode(',', $output);
 
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+	echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
 
 // first check
@@ -67,15 +68,15 @@ if (!$db) {
 // unset system that records visitor only once by course for statistics
 include('include/action.php');
 if (isset($dbname)) {
-        mysql_select_db($dbname);
-        $action = new action();
-        $action->record('MODULE_ID_UNITS', 'exit');
+	mysql_select_db($dbname);
+	$action = new action();
+	$action->record('MODULE_ID_UNITS', 'exit');
 }
 unset($dbname);
 
 // second check
 // can we select a database? if not then there is some sort of a problem
-if (isset($mysqlMainDb)) $selectResult = mysql_select_db($mysqlMainDb,$db);
+if (isset($mysqlMainDb)) $selectResult = mysql_select_db($mysqlMainDb, $db);
 if (!isset($selectResult)) {
 	include "include/not_installed.php";
 }
@@ -92,40 +93,40 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
-		$uname=mysql_real_escape_string(trim($_POST['uname']));
-
+		$uname = mysql_real_escape_string(trim($_POST['uname']));
 	} else {
 		$uname = '';
 	}
-	
-	$pass = isset($_POST['pass'])?$_POST['pass']:'';
+
+	$pass = isset($_POST['pass']) ? $_POST['pass'] : '';
 	$pass = mysql_real_escape_string($pass);
-	$submit = isset($_POST['submit'])?$_POST['submit']:'';
+	$submit = isset($_POST['submit']) ? $_POST['submit'] : '';
 	$auth = get_auth_active_methods();
 	$is_eclass_unique = is_eclass_unique();
 
-	if(!empty($submit)) {
+
+	if (!empty($submit)) {
 		unset($uid);
-		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
-			FROM user WHERE username='".$uname."'";
-		$result = mysql_query($sqlLogin);
-		$check_passwords = array("pop3","imap","ldap","db");
+		mysql_query("PREPARE stmt1 FROM 'SELECT user_id, nom, username, password, prenom, statut, email, perso, lang FROM user WHERE username= ?';");
+		mysql_query('SET @a = "' . $uname . '";');
+		$result = mysql_query("EXECUTE stmt1 USING @a;");
+		$check_passwords = array("pop3", "imap", "ldap", "db");
 		$warning = "";
 		$auth_allow = 0;
 		$exists = 0;
-                if (!isset($_COOKIE) or count($_COOKIE) == 0) {
-                        // Disallow login when cookies are disabled
-                        $auth_allow = 5;
-                } elseif (empty($pass)) {
-                        // Disallow login with empty password
+		if (!isset($_COOKIE) or count($_COOKIE) == 0) {
+			// Disallow login when cookies are disabled
+			$auth_allow = 5;
+		} elseif (empty($pass)) {
+			// Disallow login with empty password
 			$auth_allow = 4;
 		} else {
 			while ($myrow = mysql_fetch_array($result)) {
 				$exists = 1;
-				if(!empty($auth)) {
-					if(!in_array($myrow["password"],$check_passwords)) {
+				if (!empty($auth)) {
+					if (!in_array($myrow["password"], $check_passwords)) {
 						// eclass login
-						include "include/login.php"; 
+						include "include/login.php";
 					} else {
 						// alternate methods login
 						include "include/alt_login.php";
@@ -135,27 +136,32 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 				}
 			}
 		}
-		if(empty($exists) and !$auth_allow) {
+		if (empty($exists) and !$auth_allow) {
 			$auth_allow = 4;
 		}
 		if (!isset($uid)) {
-			switch($auth_allow) {
-				case 1 : $warning .= ""; 
+			switch ($auth_allow) {
+				case 1:
+					$warning .= "";
 					break;
-				case 2 : $warning .= "<br /><font color='red'>".$langInvalidId ."</font><br />"; 
+				case 2:
+					$warning .= "<br /><font color='red'>" . $langInvalidId . "</font><br />";
 					break;
-				case 3 : $warning .= "<br />".$langAccountInactive1." <a href='modules/auth/contactadmin.php?userid=".$user."'>".$langAccountInactive2."</a><br /><br />"; 
+				case 3:
+					$warning .= "<br />" . $langAccountInactive1 . " <a href='modules/auth/contactadmin.php?userid=" . $user . "'>" . $langAccountInactive2 . "</a><br /><br />";
 					break;
-				case 4 : $warning .= "<br /><font color='red'>". $langInvalidId . "</font><br />"; 
+				case 4:
+					$warning .= "<br /><font color='red'>" . $langInvalidId . "</font><br />";
 					break;
-				case 5 : $warning .= "<br /><font color='red'>". $langNoCookies . "</font><br />"; 
+				case 5:
+					$warning .= "<br /><font color='red'>" . $langNoCookies . "</font><br />";
 					break;
 				default:
 					break;
 			}
 		} else {
 			$warning = '';
-			$log='yes';
+			$log = 'yes';
 			$_SESSION['nom'] = $nom;
 			$_SESSION['prenom'] = $prenom;
 			$_SESSION['email'] = $email;
@@ -165,7 +171,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
 			VALUES ('', '$uid', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
 		}
-	
+
 		##[BEGIN personalisation modification]############
 		//if user has activated the personalised interface
 		//register a control session for it
@@ -174,44 +180,43 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		}
 		##[END personalisation modification]############
 	}  // end of user authentication
-} 
-	
-if (isset($_SESSION['uid'])) { 
+}
+
+if (isset($_SESSION['uid'])) {
 	$uid = $_SESSION['uid'];
-} else { 
+} else {
 	unset($uid);
 }
 // if the user logged in include the correct language files
 // in case he has a different language set in his/her profile
 if (isset($language)) {
-        // include_messages
-        include("${webDir}modules/lang/$language/common.inc.php");
-        $extra_messages = "${webDir}/config/$language.inc.php";
-        if (file_exists($extra_messages)) {
-                include $extra_messages;
-        } else {
-                $extra_messages = false;
-        }
-        include("${webDir}modules/lang/$language/messages.inc.php");
-        if ($extra_messages) {
-                include $extra_messages;
-        }
-
+	// include_messages
+	include("${webDir}modules/lang/$language/common.inc.php");
+	$extra_messages = "${webDir}/config/$language.inc.php";
+	if (file_exists($extra_messages)) {
+		include $extra_messages;
+	} else {
+		$extra_messages = false;
+	}
+	include("${webDir}modules/lang/$language/messages.inc.php");
+	if ($extra_messages) {
+		include $extra_messages;
+	}
 }
 $nameTools = $langWelcomeToEclass;
-	
+
 //----------------------------------------------------------------
 // if login succesful display courses lists
 // --------------------------------------------------------------
-if (isset($uid) AND !isset($logout)) {
+if (isset($uid) and !isset($logout)) {
 	$nameTools = $langWelcomeToPortfolio;
 	$require_help = true;
-	$helpTopic="Portfolio";
+	$helpTopic = "Portfolio";
 	if (isset($_SESSION['user_perso_active']) and $_SESSION['user_perso_active'] == 'no') {
-		if (!check_guest()){
+		if (!check_guest()) {
 			//if the user is not a guest, load classic view
 			include "include/logged_in_content.php";
-			draw($tool_content,1,null,null,null,null,$perso_tool_content);
+			draw($tool_content, 1, null, null, null, null, $perso_tool_content);
 		} else {
 			//if the user is a guest send him straight to the corresponding lesson
 			$guestSQL = db_query("SELECT code FROM cours_user, cours
@@ -219,13 +224,13 @@ if (isset($uid) AND !isset($logout)) {
                                                     user_id = $uid", $mysqlMainDb);
 			if (mysql_num_rows($guestSQL) > 0) {
 				$sql_row = mysql_fetch_row($guestSQL);
-				$dbname=$sql_row[0];
+				$dbname = $sql_row[0];
 				session_register("dbname");
-				header("location:".$urlServer."courses/$dbname/index.php");
+				header("location:" . $urlServer . "courses/$dbname/index.php");
 			} else { // if course has deleted stop guest account
-				$warning = "<br><font color='red'>".$langInvalidGuestAccount."</font><br>";
+				$warning = "<br><font color='red'>" . $langInvalidGuestAccount . "</font><br>";
 				include "include/logged_out_content.php";
-				draw($tool_content, 0,'index');
+				draw($tool_content, 0, 'index');
 			}
 		}
 	} else {
@@ -238,7 +243,7 @@ if (isset($uid) AND !isset($logout)) {
 // -------------------------------------------------------------------------------------
 // display login  page
 // -------------------------------------------------------------------------------------
-elseif ((isset($logout) && isset($uid)) OR (1==1)) {
+elseif ((isset($logout) && isset($uid)) or (1 == 1)) {
 	if (isset($logout) && isset($uid)) {
 		mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
 			loginout.ip, loginout.when, loginout.action)
@@ -250,7 +255,7 @@ elseif ((isset($logout) && isset($uid)) OR (1==1)) {
 		session_destroy();
 	}
 	$require_help = true;
-	$helpTopic="Init";
+	$helpTopic = "Init";
 	include "include/logged_out_content.php";
-	draw($tool_content, 0,'index');
+	draw($tool_content, 0, 'index');
 } // end of display

@@ -56,7 +56,7 @@ $e = 1;
 
 // check for close user registration
 if (isset($close_user_registration) and $close_user_registration) {
-        $newuser = "formuser.php";
+        $newuser = "newuser.php";
         $tool_content .= $langUserAccountInfo1;
 } else {
         $newuser = "newuser.php";

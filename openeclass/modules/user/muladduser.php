@@ -174,18 +174,28 @@ draw($tool_content, 2, 'user');
 // returns userid (yes  everything is ok )
 
 function adduser($user, $cid) {
-	$result = db_query("SELECT user_id FROM user WHERE username='".mysql_escape_string($user)."'");
+	mysql_query("PREPARE stmt3 FROM 'SELECT user_id FROM user WHERE username= ?';");
+	mysql_query('SET @a = "' . mysql_escape_string($user) . '";');
+	$result = db_query("EXECUTE stmt3 USING @a;");
 	if (!mysql_num_rows($result))
 	return -1;
 
 	list($userid) = mysql_fetch_array($result);
 
-	$result = db_query("SELECT * from cours_user WHERE user_id = $userid AND cours_id = $cid");
+
+	mysql_query("PREPARE stmt7 FROM 'SELECT * from cours_user WHERE user_id = ? AND cours_id = ?';");
+	mysql_query('SET @a = "' . $userid . '";');
+	mysql_query('SET @b = "' . $$cid . '";');
+	$result = db_query("EXECUTE stmt7 USING @a,@b;");
 	if (mysql_num_rows($result) > 0)
 	return -2;
 
-	$result = db_query("INSERT INTO cours_user (user_id, cours_id, statut, reg_date)
-			VALUES ($userid, $cid, '5', CURDATE())");
+
+	mysql_query("PREPARE stmt8 FROM 'INSERT INTO cours_user (user_id, cours_id, statut, reg_date)VALUES (?, ?, '5', CURDATE())';");
+	mysql_query('SET @a = "' . $userid . '";');
+	mysql_query('SET @b = "' . $$cid . '";');
+	$result = db_query("EXECUTE stmt8 USING @a,@b;");
+
 	return $userid;
 }
 

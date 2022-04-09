@@ -53,48 +53,65 @@ $tool_content="";
 if($is_adminOfCourse) {
 	// give admin status
 	if(isset($giveAdmin) && $giveAdmin && $is_adminOfCourse) {
-		$result = db_query("UPDATE cours_user SET statut = 1
-		WHERE user_id='".mysql_real_escape_string($_GET['user_id'])."' AND cours_id = $cours_id", $mysqlMainDb);
+		mysql_query("PREPARE stmt9 FROM 'UPDATE cours_user SET statut = 1 WHERE user_id= ? AND cours_id = ?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+		mysql_query('SET @b = "' . $cours_id . '";');
+		$result = db_query("EXECUTE stmt9 USING @a,@b;",$mysqlMainDb);
+		
 	}
 	// give tutor status
 	elseif(isset($giveTutor) && $giveTutor) {
-		$result = db_query("UPDATE cours_user SET tutor = 1
-		WHERE user_id='".mysql_real_escape_string($_GET['user_id'])."' AND cours_id = $cours_id",$mysqlMainDb);
-		$result2=db_query("DELETE FROM user_group 
-		WHERE user='".mysql_real_escape_string($_GET['user_id'])."'", $currentCourseID);
+		mysql_query("PREPARE stmt10 FROM 'UPDATE cours_user SET tutor = 1 WHERE user_id= ? AND cours_id = ?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+		mysql_query('SET @b = "' . $cours_id . '";');
+		$result = db_query("EXECUTE stmt10 USING @a,@b;",$mysqlMainDb);
+
+
+		mysql_query("PREPARE stmt11 FROM 'DELETE FROM user_group  WHERE user= ?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+		$result2 = db_query("EXECUTE stmt11 USING @a;",$currentCourseID);
 	}
         // remove admin status
         elseif(isset($removeAdmin) && $removeAdmin) {
-                $result = db_query("UPDATE cours_user SET statut = 5
-                        WHERE user_id != $uid AND user_id='".mysql_real_escape_string($_GET['user_id'])."'
-                              AND cours_id = $cours_id", $mysqlMainDb);
+				mysql_query("PREPARE stmt12 FROM 'UPDATE cours_user SET statut = 5 WHERE user_id != ? AND user_id= ? AND cours_id = ?';");
+				mysql_query('SET @a = "' . $uid . '";');
+				mysql_query('SET @b = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+				mysql_query('SET @c = "' . $cours_id . '";');
+				$result = db_query("EXECUTE stmt12 USING @a,@b,@c;",$mysqlMainDb);
+
         }
         // remove tutor status
         elseif(isset($removeTutor) && $removeTutor) {
-                $result = db_query("UPDATE cours_user SET tutor = 0
-                        WHERE user_id = '".mysql_real_escape_string($_GET['user_id'])."'
-                              AND cours_id = $cours_id", $mysqlMainDb);
+				mysql_query("PREPARE stmt13 FROM 'UPDATE cours_user SET tutor = 0 WHERE user_id = ? AND cours_id = ?';");
+				mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+				mysql_query('SET @b = "' . $cours_id . '";');
+				$result = db_query("EXECUTE stmt13 USING @a,@b;",$mysqlMainDb);
         }
         // unregister user from courses
         elseif(isset($unregister) && $unregister) {
                 // Security: cannot remove myself
-                $result = db_query("DELETE FROM cours_user WHERE user_id!= $uid
-                        AND user_id = '".mysql_real_escape_string($_GET['user_id'])."'
-                        AND cours_id = $cours_id", $mysqlMainDb);
+				mysql_query("PREPARE stmt14 FROM 'DELETE FROM cours_user WHERE user_id!= ? AND user_id = ? AND cours_id = ?';");
+				mysql_query('SET @a = "' . $uid . '";');
+				mysql_query('SET @b = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+				mysql_query('SET @c = "' . $cours_id . '";');
+				$result = db_query("EXECUTE stmt14 USING @a,@b,@c;",$mysqlMainDb);
+
                 // Except: remove myself if there is another tutor
                 if ($_GET['user_id'] == $uid) {
-                        $result = db_query("SELECT user_id FROM cours_user
-                                        WHERE cours_id = $cours_id
-                                        AND user_id <> $uid
-                                        AND statut = 1 LIMIT 1", $mysqlMainDb);
+						mysql_query("PREPARE stmt15 FROM 'SELECT user_id FROM cours_user WHERE cours_id = $cours_id AND user_id <> $uid AND statut = 1 LIMIT 1';");
+						mysql_query('SET @a = "' . $cours_id . '";');
+						mysql_query('SET @b = "' . $uid . '";');
+						$result = db_query("EXECUTE stmt15 USING @a,@b;",$mysqlMainDb);
                         if (mysql_num_rows($result) > 0) {
-                                db_query("DELETE FROM cours_user
-                                        WHERE cours_id = $cours_id
-                                        AND user_id = $uid");
+							mysql_query("PREPARE stmt16 FROM 'DELETE FROM cours_user WHERE cours_id = $cours_id AND user_id = $uid';");
+							mysql_query('SET @a = "' . $cours_id . '";');
+							mysql_query('SET @b = "' . $uid . '";');
+							db_query("EXECUTE stmt16 USING @a,@b;");
                         }
                 }
-		$delGroupUser=db_query("DELETE FROM user_group 
-		WHERE user='".mysql_real_escape_string($_GET['user_id'])."'", $currentCourseID);
+		mysql_query("PREPARE stmt17 FROM 'DELETE FROM user_group WHERE user=?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($_GET['user_id']) . '";');
+		$delGroupUser = db_query("EXECUTE stmt17 USING @a;",$currentCourseID);		
 	}
 	
 	if(!isset($search_nom)) $search_nom = "";
@@ -144,14 +161,10 @@ if($is_adminOfCourse) {
 
 	$query = join(' AND ', $search);
 	if (!empty($query)) {
-		$result = db_query("SELECT user.user_id, user.nom, user.prenom, user.email, user.am, cours_user.statut,
-			cours_user.tutor, cours_user.reg_date, user_group.team
-			FROM `$mysqlMainDb`.cours_user, `$mysqlMainDb`.user
-			LEFT JOIN `$currentCourseID`.user_group
-			ON user.user_id=user_group.user
-			WHERE `user`.`user_id`=`cours_user`.`user_id` 
-			AND `cours_user`.`cours_id` = $cours_id AND $query
-			ORDER BY nom, prenom");
+		mysql_query("PREPARE stmt17 FROM 'SELECT user.user_id, user.nom, user.prenom, user.email, user.am, cours_user.statut, cours_user.tutor, cours_user.reg_date, user_group.team FROM `$mysqlMainDb`.cours_user, `$mysqlMainDb`.user LEFT JOIN `$currentCourseID`.user_group ON user.user_id=user_group.user WHERE `user`.`user_id`=`cours_user`.`user_id` AND `cours_user`.`cours_id` = ? AND ? ORDER BY nom, prenom';");
+		mysql_query('SET @a = "' . $cours_id . '";');
+		mysql_query('SET @b = "' . $query . '";');
+		$result = db_query("EXECUTE stmt17 USING @a,@b;");
 		if (mysql_num_rows($result) == 0) {
 			$tool_content .= "<p class='caution_small'>$langNoUsersFound2</p>\n";
 		} else {
