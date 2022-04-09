@@ -42,7 +42,12 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
                 $username_form = $uname;
         }
 	// check if username exists
-	$username_check=mysql_query("SELECT username FROM user WHERE username='".mysql_real_escape_string($username_form)."'");
+
+	mysql_query("PREPARE stmt1 FROM 'SELECT username FROM user WHERE username=?';");
+            
+    mysql_query('SET @a = "' . mysql_real_escape_string($username_form) . '";');
+
+    $username_check = mysql_query("EXECUTE stmt1 USING @a;");
 	while ($myusername = mysql_fetch_array($username_check))
 	{
 		$user_exist=$myusername[0];
@@ -82,26 +87,26 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 		$langcode = langname_to_code($language);
 
-		$username_form = mysql_real_escape_string($username_form);
-		$nom_form = mysql_real_escape_string($nom_form);
-		$prenom_form = mysql_real_escape_string($prenom_form);
-		$email_form = mysql_real_escape_string($email_form);
-		$am_form = mysql_real_escape_string($am_form);
-		$langcode = mysql_real_escape_string($langcode);
-		$persoStatus = mysql_real_escape_string($persoStatus);
+		mysql_query("PREPARE stmt1 FROM 'UPDATE user SET nom=?, prenom=?, username=?, email=?, am=?, perso=?, lang=? WHERE user_id=?';");
+            
+        mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+        mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+        mysql_query('SET @c = "' . mysql_real_escape_string($username_form) . '";');
+        mysql_query('SET @d = "' . mysql_real_escape_string($email_form) . '";');
+        mysql_query('SET @e = "' . mysql_real_escape_string($am_form) . '";');
+        mysql_query('SET @f = "' . mysql_real_escape_string($persoStatus) . '";');
+        mysql_query('SET @g = "' . mysql_real_escape_string($langcode) . '";');
+		mysql_query('SET @h = "' . $_SESSION["uid"] . '";');
+		
+        $result = mysql_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h;");
 
-
-		if(mysql_query("UPDATE user
-	        SET nom='$nom_form', prenom='$prenom_form',
-	        username='$username_form', email='$email_form', am='$am_form',
-	            perso='$persoStatus', lang='$langcode'
-	        WHERE user_id='".$_SESSION["uid"]."'")) {
+		if ($result) {
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
                 		unset($_SESSION['user_perso_active']);
 			}
 			header("location:". $_SERVER['PHP_SELF']."?msg=1");
 			exit();
-	        }
+	    }
 	}
 }	// if submit
 

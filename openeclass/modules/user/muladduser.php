@@ -71,13 +71,13 @@ tCont2;
 mysql_select_db($mysqlMainDb);
 $search=array();
 if(!empty($search_nom)) {
-	$search[] = "u.nom LIKE '".mysql_escape_string($search_nom)."%'";
+	$search[] = "u.nom LIKE '".mysql_real_escape_string($search_nom)."%'";
 }
 if(!empty($search_prenom)) {
-	$search[] = "u.prenom LIKE '".mysql_escape_string($search_prenom)."%'";
+	$search[] = "u.prenom LIKE '".mysql_real_escape_string($search_prenom)."%'";
 }
 if(!empty($search_uname)) {
-	$search[] = "u.username LIKE '".mysql_escape_string($search_uname)."%'";
+	$search[] = "u.username LIKE '".mysql_real_escape_string($search_uname)."%'";
 }
 // added by jexi
 if (!empty($users_file)) {
@@ -174,7 +174,7 @@ draw($tool_content, 2, 'user');
 // returns userid (yes  everything is ok )
 
 function adduser($user, $cid) {
-	$result = db_query("SELECT user_id FROM user WHERE username='".mysql_escape_string($user)."'");
+	$result = db_query("SELECT user_id FROM user WHERE username='".mysql_real_escape_string($user)."'");
 	if (!mysql_num_rows($result))
 	return -1;
 

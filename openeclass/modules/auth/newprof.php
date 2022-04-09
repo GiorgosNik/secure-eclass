@@ -30,6 +30,8 @@ require_once 'auth.inc.php';
 $nameTools = $langReqRegProf;
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
 
+
+
 // Initialise $tool_content
 $tool_content = "";
 
@@ -139,20 +141,18 @@ $registration_errors = array();
                                       break;
                     }
             }
+            mysql_query("PREPARE stmt1 FROM 'INSERT INTO prof_request SET profname=?, profsurname=?, profuname=?, profemail=?, proftmima=?, profcomm=?, status=1, statut=1, date_open=NOW(), comment=?, lang=?';");
+            
+            mysql_query('SET @a = "' . mysql_real_escape_string($prenom_form) . '";');
+            mysql_query('SET @b = "' . mysql_real_escape_string($nom_form) . '";');
+            mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+            mysql_query('SET @d = "' . mysql_real_escape_string($email_form) . '";');
+            mysql_query('SET @e = "' . mysql_real_escape_string($department) . '";');
+            mysql_query('SET @f = "' . mysql_real_escape_string($userphone) . '";');
+            mysql_query('SET @g = "' . mysql_real_escape_string($usercomment) . '";');
+            mysql_query('SET @h = "' . mysql_real_escape_string($proflang) . '";');
 
-            db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote(mysql_real_escape_string($prenom_form)). ',
-                                profsurname = ' . autoquote(mysql_real_escape_string($nom_form)). ',
-                                profuname = ' . autoquote(mysql_real_escape_string($uname)). ',
-                                profemail = ' . autoquote(mysql_real_escape_string($email_form)). ',
-                                proftmima = ' . autoquote(mysql_real_escape_string($department)). ',
-                                profcomm = ' . autoquote(mysql_real_escape_string($userphone)). ',
-                                status = 1,
-                                statut = 1,
-                                date_open = NOW(),
-                                comment = ' . autoquote(mysql_real_escape_string($usercomment)). ',
-                                lang = ' . autoquote(mysql_real_escape_string($proflang)),
-                     $mysqlMainDb);
+            $result = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h;", $mysqlMainDb);
 
             //----------------------------- Email Message --------------------------
             $MailMessage = $mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .

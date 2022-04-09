@@ -47,18 +47,9 @@ $homePage = true;
 $tool_content = "";
 
 function debug_to_console($data) {
-<<<<<<< Updated upstream
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
-
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
-=======
 	echo "<script>console.log('Debug Objects: " . $data . "' );</script>";
 } 
 
->>>>>>> Stashed changes
 
 // first check
 // check if we can connect to database. If not then eclass is most likely not installed

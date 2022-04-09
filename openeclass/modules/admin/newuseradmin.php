@@ -59,7 +59,7 @@ if($submit) {
 
 	// check if user name exists
 	$username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user 
-			WHERE username=".autoquote($uname));
+			WHERE username=".autoquote(mysql_real_escape_string($uname)));
 	$user_exist = (mysql_num_rows($username_check) > 0);
 
 	// check if there are empty fields
@@ -76,17 +76,28 @@ if($submit) {
                 $registered_at = time();
 		$expires_at = time() + $durationAccount;
 		$password_encrypted = md5($password);
-		$inscr_user = db_query("INSERT INTO `$mysqlMainDb`.user
-				(nom, prenom, username, password, email, statut, department, am, registered_at, expires_at,lang)
-				VALUES (" .
-				autoquote($nom_form) . ', ' .
-				autoquote($prenom_form) . ', ' .
-				autoquote($uname) . ", '$password_encrypted', " .
-				autoquote($email_form) .
-				", $pstatut, $depid, " . autoquote($comment) . ", $registered_at, $expires_at, '$proflanguage')");
+
+
+
+		mysql_query("PREPARE stmt1 FROM 'INSERT INTO user SET nom=?, prenom=?, username=?, password=?, email=?, statut=?, department=?, am=?, registered_at=?, expires_at=?, lang=?';");
+            
+        mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+        mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+        mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+        mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
+        mysql_query('SET @e = "' . mysql_real_escape_string($email_form) . '";');
+        mysql_query('SET @f = "' . mysql_real_escape_string($pstatut) . '";');
+        mysql_query('SET @g = "' . mysql_real_escape_string($depid) . '";');
+        mysql_query('SET @h = "' . mysql_real_escape_string($comment) . '";');
+        mysql_query('SET @i = "' . mysql_real_escape_string($registered_at) . '";');
+        mysql_query('SET @j = "' . mysql_real_escape_string($expires_at) . '";');
+        mysql_query('SET @k = "' . mysql_real_escape_string($proflanguage) . '";');
+		mysql_query('SET @l = "' . $_SESSION["uid"] . '";');
+		
+        $inscr_user = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
 
 		// close request
-	  	$rid = intval($_POST['rid']);
+	  	$rid = intval(mysql_real_escape_string($_POST['rid']));
   	  	db_query("UPDATE prof_request set status = 2, date_closed = NOW() WHERE rid = '$rid'");
 
                 if ($pstatut == 1) {

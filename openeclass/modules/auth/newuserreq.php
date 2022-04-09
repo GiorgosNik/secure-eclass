@@ -106,16 +106,19 @@ send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
     $s = mysql_query("SELECT id FROM faculte WHERE name='$department'");
     $dep = mysql_fetch_array($s);
 
-    $nom_form = mysql_real_escape_string($nom_form);
-    $prenom_form = mysql_real_escape_string($prenom_form);
-    $email_form = mysql_real_escape_string($email_form);
-    $lang = mysql_real_escape_string($lang);
-    $uname = mysql_real_escape_string($uname);
+    mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, registered_at=?, expires_at=?, lang=?';");
+      
+    mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+    mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+    mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+    mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
+    mysql_query('SET @e = "' . mysql_real_escape_string($email_form) . '";');
+    mysql_query('SET @f = "' . mysql_real_escape_string($dep[id]) . '";');
+    mysql_query('SET @g = "' . $registered_at . '";');
+    mysql_query('SET @h = "' . $expires_at . '";');
+    mysql_query('SET @i = "' . mysql_real_escape_string($lang) . '";');
 
-
-    $inscr_user=mysql_query("INSERT INTO `$mysqlMainDb`.user
-      (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
-      VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email_form', '5', '$dep[id]', '$registered_at', '$expires_at', '$lang')");
+    $res = mysql_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i;");
 
     // close request
         $rid = intval($_POST['rid']);

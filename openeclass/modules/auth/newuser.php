@@ -136,10 +136,11 @@ if (!isset($submit)) {
 	if (empty($nom_form) or empty($prenom_form) or empty($password) or empty($uname)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
-	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".mysql_real_escape_string($uname)."'";
-		$username_check = mysql_query($q2);
-		if ($myusername = mysql_fetch_array($username_check)) {
+		// check if the username is already in use
+		mysql_query("PREPARE stmt1 FROM 'SELECT username FROM `$mysqlMainDb`.user WHERE username=?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($uname) . '";');
+		$result = mysql_query("EXECUTE stmt1 USING @a;");
+		if ($myusername = mysql_fetch_array($result)) {
 			$registration_errors[] = $langUserFree;
 		}
 	}
@@ -190,27 +191,30 @@ if (!isset($submit)) {
 	
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
-	$uname = mysql_real_escape_string($uname);  // escape the characters: simple and double quote
 	$password = mysql_real_escape_string($password);  // escape the characters: simple and double quote
 	if(!in_array($auth,$authmethods)) {
 		$password_encrypted = md5($password);
 	} else {
 		$password_encrypted = $password;
 	}
-	$nom_form = mysql_real_escape_string($nom_form);
-	$prenom_form = mysql_real_escape_string($prenom_form);
-	$email = mysql_real_escape_string($email);
-	$department = mysql_real_escape_string($department);
-	$am = mysql_real_escape_string($am);
-	$lang = mysql_real_escape_string($lang);
 
-	$q1 = "INSERT INTO `$mysqlMainDb`.user
-	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
-		'$department','$',".$registered_at.",".$expires_at.",'$lang')";
-	$inscr_user = mysql_query($q1);
+	mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, am=?, registered_at=?, expires_at=?, lang=?';");
+      
+    mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+    mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+    mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+    mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
+    mysql_query('SET @e = "' . mysql_real_escape_string($email) . '";');
+    mysql_query('SET @f = "' . mysql_real_escape_string($department) . '";');
+    mysql_query('SET @g = "' . mysql_real_escape_string($am) . '";');
+    mysql_query('SET @h = "' . $registered_at . '";');
+    mysql_query('SET @i = "' . $expires_at . '";');
+    mysql_query('SET @j = "' . mysql_real_escape_string($lang) . '";');
+
+    $res = db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j;", $mysqlMainDb);
+
 	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+	$result=mysql_query("SELECT user_id, nom, prenom FROM user WHERE user_id='$last_id'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
