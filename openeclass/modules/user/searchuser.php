@@ -147,15 +147,15 @@ if($is_adminOfCourse) {
 	mysql_select_db($mysqlMainDb);
 	$search=array();
 	if(!empty($search_nom)) {
-		$search[] = "user.nom LIKE '".mysql_escape_string($search_nom)."%'";
+		$search[] = "user.nom LIKE '".mysql_real_escape_string($search_nom)."%'";
 		$s = "search_nom=$search_nom";
 	}
 	if(!empty($search_prenom)) {
-		$search[] = "user.prenom LIKE '".mysql_escape_string($search_prenom)."%'";
+		$search[] = "user.prenom LIKE '".mysql_real_escape_string($search_prenom)."%'";
 		$s = "search_prenom=$search_prenom";
 	}
 	if(!empty($search_uname)) {
-		$search[] = "user.username LIKE '".mysql_escape_string($search_uname)."%'";
+		$search[] = "user.username LIKE '".mysql_real_escape_string($search_uname)."%'";
 		$s = "search_uname=$search_uname";
 	}
 

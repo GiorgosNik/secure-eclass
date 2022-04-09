@@ -42,9 +42,11 @@ if($is_adminOfCourse) {
 
 if (isset($add)) {
 	mysql_select_db($mysqlMainDb);
-	$result = db_query("INSERT INTO cours_user (user_id, cours_id, statut, reg_date) ".
-		"VALUES ('".mysql_escape_string($add)."', $cours_id, ".
-		"'5', CURDATE())");
+
+	mysql_query("PREPARE stmt1 FROM 'INSERT INTO cours_user SET user_id=?, cours_id=?, statut=5, reg_date=CURDATE()';");
+    mysql_query('SET @a = "' . mysql_real_escape_string($add) . '";');
+    mysql_query('SET @b = "' . mysql_real_escape_string($cours_id) . '";');
+    $result = db_query("EXECUTE stmt1 USING @a, @b;");
 
 		$tool_content .= "<p class=\"success_small\">";
 	if ($result) {
@@ -96,13 +98,13 @@ tCont;
 	mysql_select_db($mysqlMainDb);
 	$search=array();
 	if(!empty($search_nom)) {
-		$search[] = "u.nom LIKE '".mysql_escape_string($search_nom)."%'";
+		$search[] = "u.nom LIKE '".mysql_real_escape_string($search_nom)."%'";
 	}
 	if(!empty($search_prenom)) {
-		$search[] = "u.prenom LIKE '".mysql_escape_string($search_prenom)."%'";
+		$search[] = "u.prenom LIKE '".mysql_real_escape_string($search_prenom)."%'";
 	}
 	if(!empty($search_uname)) {
-		$search[] = "u.username LIKE '".mysql_escape_string($search_uname)."%'";
+		$search[] = "u.username LIKE '".mysql_real_escape_string($search_uname)."%'";
 	}
 
 	$query = join(' AND ', $search);

@@ -166,7 +166,7 @@ if (isset($_POST['submit'])) {
 			$registration_errors[] = $langEmptyFields;
 		} else {
 		// check if the username is already in use
-			$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
+			$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".mysql_real_escape_string($uname)."'";
 			$username_check = mysql_query($q2);
 			if ($myusername = mysql_fetch_array($username_check)) {
 				$registration_errors[] = $langUserFree;
@@ -193,9 +193,17 @@ if (isset($_POST['submit'])) {
 		$registered_at = time();
 		$expires_at = time() + $durationAccount;
 		$authmethods = array("2","3","4","5");
-		$uname = escapeSimple($uname);
 		$lang = langname_to_code($language);
 	
+		$nom_form = mysql_real_escape_string($nom_form);
+		$prenom_form = mysql_real_escape_string($prenom_form);
+		$email = mysql_real_escape_string($email);
+		$department = mysql_real_escape_string($department);
+		$am = mysql_real_escape_string($am);
+		$lang = mysql_real_escape_string($lang);
+		$uname = mysql_real_escape_string($uname);
+		$password = mysql_real_escape_string($password);
+
 		$q1 = "INSERT INTO `$mysqlMainDb`.user 
 			SET nom = '$nom_form', prenom = '$prenom_form', 
 			username = '$uname', password = '$password', email = '$email',

@@ -203,10 +203,17 @@ if (isset($submit))  {
 		}
 	}
 
-	$usermail = $email;
-	$surname = $nom_form;
-	$name = $prenom_form;
-	$depid = intval($department);
+	$usermail = mysql_real_escape_string($email);
+	$surname = mysql_real_escape_string($nom_form);
+	$name = mysql_real_escape_string($prenom_form);
+	$depid = intval(mysql_real_escape_string($department));
+	$username = intval(mysql_real_escape_string($username));
+	$password = intval(mysql_real_escape_string($password));
+	$userphone = intval(mysql_real_escape_string($userphone));
+	$usercomment = intval(mysql_real_escape_string($usercomment));
+	$lang = intval(mysql_real_escape_string($lang));
+
+
 	
 	$sql = "INSERT INTO prof_request(profname, profsurname, profuname, profpassword,
 		profemail, proftmima, profcomm, status, date_open, comment, lang, statut) VALUES(

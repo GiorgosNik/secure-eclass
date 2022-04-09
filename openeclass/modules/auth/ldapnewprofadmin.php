@@ -49,14 +49,15 @@ $tool_content = "";
 $submit = isset($_POST['submit'])?$_POST['submit']:'';
 // professor registration
 if ($submit)  {
-        $auth = $_POST['auth'];
-        $pn = $_POST['pn'];
-        $ps = $_POST['ps'];
-        $pu = $_POST['pu'];
-        $pe = $_POST['pe'];
-        $department = $_POST['department'];
+        $auth = mysql_real_escape_string($_POST['auth']);
+        $pn = mysql_real_escape_string($_POST['pn']);
+        $ps = mysql_real_escape_string($_POST['ps']);
+        $pu = mysql_real_escape_string($_POST['pu']);
+        $pe = mysql_real_escape_string($_POST['pe']);
+        $department = mysql_real_escape_string($_POST['department']);
         $comment = isset($_POST['comment'])?$_POST['comment']:'';
-        $lang = $_POST['language'];
+		$comment = mysql_real_escape_string($comment);
+        $lang = mysql_real_escape_string($_POST['language']);
         if (!isset($native_language_names[$lang])) {
 		$lang = langname_to_code($language);
 	}

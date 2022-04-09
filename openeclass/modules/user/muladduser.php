@@ -71,13 +71,13 @@ tCont2;
 mysql_select_db($mysqlMainDb);
 $search=array();
 if(!empty($search_nom)) {
-	$search[] = "u.nom LIKE '".mysql_escape_string($search_nom)."%'";
+	$search[] = "u.nom LIKE '".mysql_real_escape_string($search_nom)."%'";
 }
 if(!empty($search_prenom)) {
-	$search[] = "u.prenom LIKE '".mysql_escape_string($search_prenom)."%'";
+	$search[] = "u.prenom LIKE '".mysql_real_escape_string($search_prenom)."%'";
 }
 if(!empty($search_uname)) {
-	$search[] = "u.username LIKE '".mysql_escape_string($search_uname)."%'";
+	$search[] = "u.username LIKE '".mysql_real_escape_string($search_uname)."%'";
 }
 // added by jexi
 if (!empty($users_file)) {

@@ -49,6 +49,7 @@ if($submit) {
   $department = isset($_POST['department'])?$_POST['department']:'';
   $localize = isset($_POST['localize'])?$_POST['localize']:'';
   $lang = langname_to_code($localize);	
+  $uname = mysql_real_escape_string($uname);
 
       // check if user name exists
   $username_check=mysql_query("SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'");
@@ -101,11 +102,23 @@ send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
     $expires_at = time() + $durationAccount;
 
     $password_encrypted = md5($password);
+    $department = mysql_real_escape_string($department);
     $s = mysql_query("SELECT id FROM faculte WHERE name='$department'");
     $dep = mysql_fetch_array($s);
-    $inscr_user=mysql_query("INSERT INTO `$mysqlMainDb`.user
-      (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
-      VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email_form', '5', '$dep[id]', '$registered_at', '$expires_at', '$lang')");
+
+    mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, registered_at=?, expires_at=?, lang=?';");
+      
+    mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+    mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+    mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+    mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
+    mysql_query('SET @e = "' . mysql_real_escape_string($email_form) . '";');
+    mysql_query('SET @f = "' . mysql_real_escape_string($dep[id]) . '";');
+    mysql_query('SET @g = "' . $registered_at . '";');
+    mysql_query('SET @h = "' . $expires_at . '";');
+    mysql_query('SET @i = "' . mysql_real_escape_string($lang) . '";');
+
+    $res = mysql_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i;");
 
     // close request
         $rid = intval($_POST['rid']);
