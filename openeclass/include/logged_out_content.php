@@ -114,7 +114,7 @@ $tool_content .= <<<lCont2
    <input class="Login" name="pass" type="password" size="20" /><br /><br />
    <input class="Login" name="submit" type="submit" size="20" value="$langEnter" /><br />
    $warning<br />$shibboleth_link
-   <a href="modules/auth/lostpass.php">$lang_forgot_pass</a>
+   
    </form>
    </td>
  </tr>

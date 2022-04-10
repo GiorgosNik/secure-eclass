@@ -27,7 +27,6 @@
 $require_login = TRUE;
 include '../../include/baseTheme.php';
 $nameTools = $langUnregUser;
-$navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfile);
 
 $tool_content = "";
 
@@ -38,7 +37,6 @@ if (!isset($doit) or $doit != "yes") {
 	// admin cannot be deleted
 	if ($is_admin) {
 		$tool_content .=  "<p><b>$langAdminNo</b></p>";
-		$tool_content .=  "<p><a href='../profile/profile.php'>$langBack</a></p>";
 		$tool_content .= "</td></tr></tbody></table>";
 		draw($tool_content,1);
 		exit;
@@ -50,13 +48,11 @@ if (!isset($doit) or $doit != "yes") {
 			$tool_content .=  "<li>$langYes: ";
 			$tool_content .=  "<a href='$_SERVER[PHP_SELF]?u=$uid&doit=yes'>$langDelete</a>";
 			$tool_content .=  "</li>";
-			$tool_content .=  "<li>$langNo: <a href='../profile/profile.php'>$langBack</a>";
 			$tool_content .=  "</li></ul>";
 			$tool_content .= "</td></tr></tbody></table>";
 		} else {
 			$tool_content .=  "<p><b>$langNotice: </b>";
 			$tool_content .=  "$langExplain</p>";
-			$tool_content .=  "<p><a href='../profile/profile.php'>$langBack</a></p>";
 			$tool_content .= "</td></tr></tbody></table>";
 		}
 	}  //endif is admin
@@ -73,7 +69,7 @@ if (!isset($doit) or $doit != "yes") {
 			unset($_SESSION['uid']);
 		} else {
 			$tool_content .=  "<p>$langError</p>";
-			$tool_content .=  "<p><a href='../profile/profile.php'>$langBack</a></p><br>";
+
 			//			exit;
 		}
 	}

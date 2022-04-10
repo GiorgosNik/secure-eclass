@@ -215,10 +215,6 @@ function loggedInMenu(){
 	array_push($sideMenuLink, $urlServer . "modules/agenda/myagenda.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 
-	array_push($sideMenuText, $GLOBALS['langModifyProfile']);
-	array_push($sideMenuLink, $urlServer . "modules/profile/profile.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
-
 	array_push($sideMenuText, $GLOBALS['langMyStats']);
 	array_push($sideMenuLink, $urlServer . "modules/profile/personal_stats.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
@@ -341,18 +337,6 @@ function adminMenu(){
 		array_push($sideMenuImg, "black-arrow1.gif");
 	}
 	
-	array_push($sideMenuText, $GLOBALS['langUserAuthentication']);
-	array_push($sideMenuLink, "../admin/auth.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
-	array_push($sideMenuText, $GLOBALS['langChangeUser']);
-	array_push($sideMenuLink, "../admin/change_user.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
-	array_push($sideMenuText, $GLOBALS['langMultiRegUser']);
-	array_push($sideMenuLink, "../admin/multireguser.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
-	array_push($sideMenuText, $GLOBALS['langInfoMail']);
-	array_push($sideMenuLink, "../admin/mailtoprof.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
 	array_push($sideMenuSubGroup, $sideMenuText);
 	array_push($sideMenuSubGroup, $sideMenuLink);
 	array_push($sideMenuSubGroup, $sideMenuImg);
@@ -372,9 +356,6 @@ function adminMenu(){
 
 	array_push($sideMenuText, $GLOBALS['langListCours']);
 	array_push($sideMenuLink, "../admin/listcours.php");
-	array_push($sideMenuImg, "black-arrow1.gif");
-	array_push($sideMenuText, $GLOBALS['langRestoreCourse']);
-	array_push($sideMenuLink, "../course_info/restore_course.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 	array_push($sideMenuText, $GLOBALS['langListFaculte']);
 	array_push($sideMenuLink, "../admin/addfaculte.php");

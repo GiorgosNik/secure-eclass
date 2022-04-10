@@ -88,7 +88,6 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 	global $page_name, $page_navi, $currentCourseID, $langHomePage, $siteName, $navigation;
 	global $homePage, $courseHome, $uid, $webDir, $extraMessage;
 	global $langChangeLang, $langUserBriefcase, $langPersonalisedBriefcase, $langAdmin, $switchLangURL;
-	global $langSearch, $langAdvancedSearch;
 	global $langMyPersoLessons, $langMyPersoDeadlines;
 	global $langMyPersoAnnouncements, $langMyPersoDocs, $langMyPersoAgenda, $langMyPersoForum;
 	global $langExtrasLeft, $langExtrasRight;
@@ -229,17 +228,6 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'logo_icon' );
 		}
 
-		//set the appropriate search action for the searchBox form
-		if ($menuTypeID == 2) {
-			$searchAction = "search_incourse.php";
-			$searchAdvancedURL = $searchAction;
-		} elseif ($menuTypeID == 1 || $menuTypeID == 3) {
-			$searchAction = "search.php";
-			$searchAdvancedURL = $searchAction;
-		} else { //$menuType == 0
-			$searchAction = "search.php";
-			$searchAdvancedURL = $searchAction;
-		}
 		$mod_activation = '';
 		if ($is_adminOfCourse and isset($currentCourseID)) {
 			// link for activating / deactivating module
@@ -256,11 +244,6 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 				}
 			}
 		}
-
-		$t->set_var ( 'SEARCH_ACTION', $searchAction );
-		$t->set_var ( 'SEARCH_ADVANCED_URL', $searchAdvancedURL );
-		$t->set_var ( 'SEARCH_TITLE', $langSearch );
-		$t->set_var ( 'SEARCH_ADVANCED', $langAdvancedSearch );
 
 		$t->set_var ( 'TOOL_NAME', $nameTools );
 

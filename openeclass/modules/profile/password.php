@@ -39,7 +39,6 @@ $require_valid_uid = TRUE;
 include '../../include/baseTheme.php';
 
 $nameTools = $langChangePass;
-$navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfile);
 
 check_uid();
 $tool_content = "";
