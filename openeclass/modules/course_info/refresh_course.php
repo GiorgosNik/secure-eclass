@@ -79,7 +79,6 @@ if(isset($submit)) {
 
 
 
-	$tool_content .="<p align=\"right\"><a href='infocours.php'>$langBack</a></p>";
 
 } else {
 
@@ -103,11 +102,6 @@ if(isset($submit)) {
       <td>$langAnnouncesDel</td>
     </tr>
     <tr>
-      <th class='left'><img src=\"../../template/classic/img/calendar_on.gif\" alt=\"\" border=\"0\" height=\"16\" width=\"16\"> $langAgenda</th>
-      <td><input type='checkbox' name='delagenda'></td>
-      <td>$langAgendaDel</td>
-    </tr>
-    <tr>
       <th class='left'><img src=\"../../template/classic/img/assignments_on.gif\" alt=\"\" border=\"0\" height=\"16\" width=\"16\"> $langWorks</th>
       <td><input type='checkbox' name='hideworks'></td>
       <td>$langHideWork</td>
@@ -120,7 +114,6 @@ if(isset($submit)) {
     </table>
 </form>";
 
-  $tool_content .= "<p align=\"right\"><a href=\"infocours.php\">$langBack</a></p>";
 }
 
 draw($tool_content, 2, 'course_info');

@@ -61,12 +61,6 @@ if (isset($_SESSION['uid']) && isset($perso)) {
 			header("location:".$urlServer."modules/announcements/announcements.php");
 			break;
 		}
-		case 4: {//agenda
-			//$c is the lesson code.
-			$_SESSION["dbname"] = $c;
-			header("location:".$urlServer."modules/agenda/agenda.php");
-			break;
-		}
 		case 5: {//forum
 			$_SESSION["dbname"] = $c;
 			$url = $urlServer."modules/phpbb/viewtopic.php?topic=".$t."&forum=".$f."&sub=".$s;

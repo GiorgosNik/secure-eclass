@@ -1039,17 +1039,7 @@ function upgrade_course_old($code, $lang, $extramessage = '')
                                 )", $code);
         }
 
-        if (accueil_tool_missing('MODULE_ID_USAGE')) {
-                db_query("INSERT IGNORE INTO accueil VALUES (
-                        '24',
-                        '$langCourseStat[$lang]',
-                        '../../modules/usage/usage.php',
-                        'usage',
-                        '0',
-                        '1',
-                        '',
-                        'MODULE_ID_USAGE')", $code);
-        }
+        
 
         if (accueil_tool_missing('MODULE_ID_TOOLADMIN')) {
                 db_query("INSERT IGNORE INTO accueil VALUES (

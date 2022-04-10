@@ -41,6 +41,9 @@
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 include 'auth.inc.php';
+include '../../csrf_token.php';
+csrf_token_tag();
+
 $nameTools = $langUserDetails;
 // Main body
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
@@ -55,10 +58,12 @@ if (isset($close_user_registration) and $close_user_registration == TRUE) {
  
 $lang = langname_to_code($language);
 
+$token = $_SESSION['csrf_token'];
 // display form
 if (!isset($submit)) {
 	// Main body
 	@$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+    <input type='hidden' name='csrf_token' value=$token>
 	<table width='99%' style='border: 1px solid #edecdf;'>
 	<thead>
 	<tr>
@@ -198,43 +203,48 @@ if (!isset($submit)) {
 		$password_encrypted = $password;
 	}
 
-	mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, am=?, registered_at=?, expires_at=?, lang=?';");
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	  header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	} else {
+		mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, am=?, registered_at=?, expires_at=?, lang=?';");
       
-    mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
-    mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
-    mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
-    mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
-    mysql_query('SET @e = "' . mysql_real_escape_string($email) . '";');
-    mysql_query('SET @f = "' . mysql_real_escape_string($department) . '";');
-    mysql_query('SET @g = "' . mysql_real_escape_string($am) . '";');
-    mysql_query('SET @h = "' . $registered_at . '";');
-    mysql_query('SET @i = "' . $expires_at . '";');
-    mysql_query('SET @j = "' . mysql_real_escape_string($lang) . '";');
-
-    $res = db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j;", $mysqlMainDb);
-
-	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM user WHERE user_id='$last_id'");
-	while ($myrow = mysql_fetch_array($result)) {
-		$uid=$myrow[0];
-		$nom=$myrow[1];
-		$prenom=$myrow[2];
-	}
-	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
-	$_SESSION['uid'] = $uid;
-	$_SESSION['statut'] = 5;
-	$_SESSION['prenom'] = $prenom;
-	$_SESSION['nom'] = $nom;
-	$_SESSION['uname'] = $uname;
+		mysql_query('SET @a = "' . mysql_real_escape_string($nom_form) . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($prenom_form) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string($password_encrypted) . '";');
+		mysql_query('SET @e = "' . mysql_real_escape_string($email) . '";');
+		mysql_query('SET @f = "' . mysql_real_escape_string($department) . '";');
+		mysql_query('SET @g = "' . mysql_real_escape_string($am) . '";');
+		mysql_query('SET @h = "' . $registered_at . '";');
+		mysql_query('SET @i = "' . $expires_at . '";');
+		mysql_query('SET @j = "' . mysql_real_escape_string($lang) . '";');
 	
-	// registration form
-	$tool_content .= "<table width='99%'><tbody><tr>" .
-			"<td class='well-done' height='60'>" .
-			"<p>$langDear $prenom $nom,</p>" .
-			"<p>$langPersonalSettings</p></td>" .
-			"</tr></tbody></table><br /><br />" .
-			"<p>$langPersonalSettingsMore</p>";
+		$res = db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j;", $mysqlMainDb);
+	
+		$last_id = mysql_insert_id();
+		$result=mysql_query("SELECT user_id, nom, prenom FROM user WHERE user_id='$last_id'");
+		while ($myrow = mysql_fetch_array($result)) {
+			$uid=$myrow[0];
+			$nom=$myrow[1];
+			$prenom=$myrow[2];
+		}
+		mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
+		VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+		$_SESSION['uid'] = $uid;
+		$_SESSION['statut'] = 5;
+		$_SESSION['prenom'] = $prenom;
+		$_SESSION['nom'] = $nom;
+		$_SESSION['uname'] = $uname;
+		
+		// registration form
+		$tool_content .= "<table width='99%'><tbody><tr>" .
+				"<td class='well-done' height='60'>" .
+				"<p>$langDear $prenom $nom,</p>" .
+				"<p>$langPersonalSettings</p></td>" .
+				"</tr></tbody></table><br /><br />" .
+				"<p>$langPersonalSettingsMore</p>";
+	}
+
 	} else {
 		// errors exist - registration failed
 		$tool_content .= "<table width='99%'><tbody><tr>" .

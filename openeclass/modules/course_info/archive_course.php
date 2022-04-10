@@ -35,7 +35,6 @@ $require_prof = TRUE;
 include '../../include/baseTheme.php';
 
 $nameTools = $langArchiveCourse;
-$navigation[] = array("url" => "infocours.php", "name" => $langModifInfo);
 $tool_content = "";
 $archiveDir = "/courses/archive";
 
@@ -87,7 +86,6 @@ if($is_adminOfCourse) {
 		else $searchurl = "";
 		$tool_content .= "<a href=\"../admin/editcours.php?c=".$c."".$searchurl."\">$langBack</a>";
 	} else {
-		$tool_content .= "<a href=\"infocours.php\">$langBack</a>";
 	}
 	$tool_content .= "</p>";
 

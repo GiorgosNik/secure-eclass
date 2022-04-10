@@ -37,9 +37,12 @@
  *               HOME PAGE OF ECLASS		               *
  ****************************************************************
  */
+include './csrf_token.php';
+$csrf_token = csrf_token_tag();
 define("INDEX_START", 1);
 $guest_allowed = true;
 $path2add = 0;
+
 include "include/baseTheme.php";
 include "modules/auth/auth.inc.php";
 //$homePage is used by baseTheme.php to parse correctly the breadcrumb
@@ -48,11 +51,7 @@ $tool_content = "";
 
 function debug_to_console($data)
 {
-	$output = $data;
-	if (is_array($output))
-		$output = implode(',', $output);
-
-	echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+	echo "<script>console.log('Debug Objects: " . $data . "' );</script>";
 }
 
 // first check

@@ -55,6 +55,8 @@
 ******************************************************************************/
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
+include '../../csrf_token.php';
+$csrf_token = csrf_token_tag();
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
@@ -184,6 +186,7 @@ elseif ($a == 1)  {
 		<th>&nbsp;</th>
 		<td><input type='submit' name='add' value='".$langAdd."' /></td>
 		</tr>
+		<?= $csrf_token; ?>
 		</tbody>
 		</table>
 		</form>";

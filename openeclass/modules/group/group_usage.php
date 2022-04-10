@@ -37,7 +37,6 @@ include '../../include/lib/learnPathLib.inc.php';
 include '../usage/duration_query.php';
 
 if (isset($_GET['module']) and $_GET['module'] == 'usage') {
-        $navigation[] = array('url' => '../usage/usage.php', 'name'=> $langUsage);
         $navigation[] = array('url' => '../usage/group.php', 'name'=> $langGroupUsage);
         $module = 'module=usage&amp;';
 } else {

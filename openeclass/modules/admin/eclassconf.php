@@ -55,6 +55,8 @@
 ******************************************************************************/
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
+include '../../csrf_token.php';
+$csrf_token = csrf_token_tag();
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
@@ -161,7 +163,7 @@ else {
 	$tool_content .= "
     <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
 	$tool_content .= "
-
+  <?= $csrf_token; ?>
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>

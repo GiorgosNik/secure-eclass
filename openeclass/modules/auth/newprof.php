@@ -27,6 +27,8 @@
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 require_once 'auth.inc.php';
+include '../../csrf_token.php';
+$csrf_token = csrf_token_tag();
 $nameTools = $langReqRegProf;
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
 
@@ -37,7 +39,7 @@ $tool_content = "";
 
 // security check
 if (isset($_POST['localize'])) {
-	$language = preg_replace('/[^a-z]/', '', $_POST['localize']);
+	$language = preg_replace('/[^a-z]/', '', htmlspecialchars($_POST['localize'], ENT_QUOTES, 'UTF-8'));
 }
 
 $auth = get_auth_id();
@@ -106,6 +108,7 @@ if (!isset($submit)) {
     <div align='right'><small>$langRequiredFields</small></div>
   </td>
 </tr>
+<?= $csrf_token; ?>
 </thead>
 </table>
 

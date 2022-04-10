@@ -78,18 +78,7 @@ while($result = mysql_fetch_row($res)) {
 	$fake_code = $result[8];
 }
 
-if ($is_adminOfCourse) {
-        $edit_link = "&nbsp;<a href='../../modules/course_info/infocours.php'><img src='../../template/classic/img/edit.gif' title='$langEdit'></img></a>";
-} else {
-        $edit_link = '';
-}
-$main_content .= "\n      <div class='course_info'>";
-if (!empty($description)) {
-        $main_content .= "\n      <h1>$langDescription$edit_link</h1>\n      <p>$description</p>";
 
-} else {
-        $main_content .= "\n      <p>$langThisCourseDescriptionIsEmpty$edit_link</p>";
-}
 if (!empty($keywords)) {
 	$main_content .= "\n      <p><b>$langCourseKeywords</b> $keywords</p>";
 }
@@ -144,16 +133,7 @@ if ($is_adminOfCourse) {
 	}
 }
 
-// display course units header
-if (!is_null($maxorder) or $is_adminOfCourse) {
-        $cunits_content .= "\n      <div class='course_info'>".
-        $cunits_content .= "\n\n      <table class='resources' width='99%'>\n      <thead>";
-        $cunits_content .= "\n      <tr>\n        <td><h3>$langCourseUnits ";
-}
-// add course units
-if ($is_adminOfCourse) {
-	$cunits_content .= ": <a href='{$urlServer}modules/units/info.php'>$langAddUnit</a>&nbsp;<img src='../../template/classic/img/add.gif' width='15' height='15' title='$langAddUnit' alt='$langAddUnit' />";
-}
+
         $cunits_content .= "</h3>";
         $cunits_content .= "</td>\n      </tr>\n      </thead>\n      </table>\n";
 if ($is_adminOfCourse) {
@@ -252,8 +232,6 @@ $bar_content .= "\n            <p><b>".$langCode."</b>: ".$fake_code."</p>".
                 "\n            <p><b>".$langFaculty."</b>: ".$faculte."</p>".
                 "\n            <p><b>".$langType."</b>: ".$lessonType."</p>";
 
-$require_help = TRUE;
-$helpTopic = 'course_home';
 
 if ($is_adminOfCourse) {
 	$sql = "SELECT COUNT(user_id) AS numUsers
@@ -306,14 +284,6 @@ $tool_content .= "
 
         <br />
 
-        <table>
-        <tbody>
-        <tr>
-          <td class='odd' width='1%' align='right'></td>
-          <td align='left'>$langContactProf: (<a href='../../modules/contact/index.php'>$langEmail</a>)</td>
-        </tr>
-        </tbody>
-        </table>
 
         <br />\n";
 

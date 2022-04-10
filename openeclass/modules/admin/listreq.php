@@ -85,7 +85,6 @@ switch ($show) {
   $tool_content .= "
       <div id='operations_container'>
         <ul id='opslist'>
-	  <li><a href='newuseradmin.php$linkget'>$linkreg</a></li>
           <li><a href='$_SERVER[PHP_SELF]?show=closed$reqtype'>$langReqHaveClosed</a></li>
           <li><a href='$_SERVER[PHP_SELF]?show=rejected$reqtype'>$langReqHaveBlocked</a></li>
           <li><a href='$_SERVER[PHP_SELF]?show=accepted$reqtype'>$langReqHaveFinished</a></li>

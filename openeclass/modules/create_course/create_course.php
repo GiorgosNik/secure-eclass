@@ -148,11 +148,7 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	$tool_content .= "
 	</td>
 	<td>&nbsp;</td></tr>
-	<tr>
-	<th class='left'>$langLanguage&nbsp;:</th>
-	<td>";
-	$tool_content .= lang_select_options('languageCourse');
-	$tool_content .= "</td><td>&nbsp;</td></tr>
+	
 	<tr><th>&nbsp;</th>
 	<td><input type='submit' name='create2' value='$langNextStep >' /><input type='hidden' name='visit' value='true' /></td>
 	<td><p align='right'><small>(*) &nbsp;$langFieldsRequ</small></p></td>

@@ -253,11 +253,8 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		$t->set_var ( 'LOGOUT_LINK', $relPath );
 
-		if ($menuTypeID != 2) {
-			$t->set_var ( 'LANG_SELECT', lang_selections () );
-		} else {
-			$t->set_var ( 'LANG_SELECT', '' );
-		}
+		
+		$t->set_var ( 'LANG_SELECT', '' );
 
 		//START breadcrumb AND page title
 
@@ -465,32 +462,3 @@ function print_a($TheArray) {
 	}
 	echo "</table>n";
 }
-
-/*
- * Function lang_selections
- *
- * Returns the HTML code for a language selection tool form
- *
- */
-function lang_selections() {
-	$html = '<form name="langform" action="' . $_SERVER ['PHP_SELF'] . '" method="get" >';
-	$html .= lang_select_options('localize', 'onChange="document.langform.submit();"');
-	$html .= '</form>';
-	return $html;
-}
-
-/*
- * Function lang_select_option
- *
- * Returns the HTML code for the <select> element of the language selection tool
- *
- */
-function lang_select_options($name, $onchange_js = '', $default_langcode = false) {
-	global $language, $native_language_names;
-
-        if ($default_langcode === false) {
-                $default_langcode = langname_to_code($language);
-        }
-	return selection($native_language_names, $name, $default_langcode, $onchange_js);
-}
-
