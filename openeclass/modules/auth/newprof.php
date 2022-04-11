@@ -37,10 +37,6 @@ $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
 // Initialise $tool_content
 $tool_content = "";
 
-// security check
-if (isset($_POST['localize'])) {
-	$language = preg_replace('/[^a-z]/', '', htmlspecialchars($_POST['localize'], ENT_QUOTES, 'UTF-8'));
-}
 
 $auth = get_auth_id();
 
@@ -90,12 +86,7 @@ if (!isset($submit)) {
         $tool_content .= "</select>
     </td>
   </tr>
-<tr>
-      <th class='left'>$langLanguage</th>
-      <td>";
-	$tool_content .= lang_select_options('proflang');
-	$tool_content .= "</td>
-    </tr>
+
   <tr>
     <th>&nbsp;</th>
     <td>
@@ -108,7 +99,6 @@ if (!isset($submit)) {
     <div align='right'><small>$langRequiredFields</small></div>
   </td>
 </tr>
-<?= $csrf_token; ?>
 </thead>
 </table>
 

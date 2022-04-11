@@ -435,39 +435,7 @@ function lessonToolsMenu(){
 
 	if ($row = mysql_fetch_row($res2)) $statut = $row[0];
 
-	if ($is_adminOfCourse) {
 
-
-		//get course administration tools
-		$result= getToolsArray('courseAdmin');
-
-		$sideMenuSubGroup = array();
-		$sideMenuText = array();
-		$sideMenuLink = array();
-		$sideMenuImg = array();
-		$sideMenuID = array();
-
-		$arrMenuType = array();
-		$arrMenuType['type'] = 'text';
-		$arrMenuType['text'] = $GLOBALS['langAdministrationTools'];
-		array_push($sideMenuSubGroup, $arrMenuType);
-		while ($toolsRow = mysql_fetch_array($result)) {
-
-			if(!defined($toolsRow["define_var"])) define($toolsRow["define_var"], $toolsRow["id"]);
-
-			array_push($sideMenuText, $toolsRow["rubrique"]);
-			array_push($sideMenuLink, $toolsRow["lien"]);
-			array_push($sideMenuImg, $toolsRow["image"]."_on.gif");
-			array_push($sideMenuID, $toolsRow["id"]);
-		}
-
-		array_push($sideMenuSubGroup, $sideMenuText);
-		array_push($sideMenuSubGroup, $sideMenuLink);
-		array_push($sideMenuSubGroup, $sideMenuImg);
-		array_push($sideMenuSubGroup, $sideMenuID);
-		array_push($sideMenuGroup, $sideMenuSubGroup);
-
-	}
 	//	------------------------------------------------------------------
 	//	END of Get professor's tools
 	//	------------------------------------------------------------------

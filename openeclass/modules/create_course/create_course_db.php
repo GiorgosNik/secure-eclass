@@ -287,7 +287,16 @@ mysql_query("CREATE TABLE accueil (
                PRIMARY KEY (id))
         ENGINE=MyISAM $charset_spec");
 
-
+// Content accueil (homepage) Table
+    mysql_query("INSERT INTO accueil VALUES (
+                '1',
+                '$langAgenda',
+                '../../modules/agenda/agenda.php',
+                'calendar',
+                '".$sbsystems[1]."',
+                '0',
+                '',
+                'MODULE_ID_AGENDA')");
 
     mysql_query("INSERT INTO accueil VALUES (
                '2',
@@ -465,9 +474,26 @@ mysql_query("INSERT INTO accueil VALUES (
         'MODULE_ID_USERS'
         )");
 
+mysql_query("INSERT INTO accueil VALUES (
+               '14',
+               '$langModifyInfo',
+               '../../modules/course_info/infocours.php?',
+               'course_info',
+               '".$sbsystems[14]."',
+               '1',
+               '',
+               'MODULE_ID_COURSEINFO'
+               )");
 
-
-
+mysql_query("INSERT INTO accueil VALUES (
+                '24',
+                '".$langUsage."',
+                '../../modules/usage/usage.php',
+                'usage',
+                '".$sbsystems[24]."',
+                '1',
+                '',
+                'MODULE_ID_USAGE')");
 
 // The Units subsystem is special - neither visible, nor invisible, it doesn't
 // appear in the menu, so it gets visibility = 2

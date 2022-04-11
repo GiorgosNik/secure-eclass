@@ -59,6 +59,7 @@ if (isset($close_user_registration) and $close_user_registration == TRUE) {
 $lang = langname_to_code($language);
 
 $token = $_SESSION['csrf_token'];
+
 // display form
 if (!isset($submit)) {
 	// Main body
@@ -109,13 +110,7 @@ if (!isset($submit)) {
 	$tool_content .= "\n</select>
 	</td>
 	</tr>
-	<tr>
-	<th class='left'>$langLanguage</th>
-	<td width='1'>";
-	$tool_content .= lang_select_options('localize');
-	$tool_content .= "</td>
-	<td><small>$langTipLang2</small></td>
-	</tr>
+
 	<tr>
 	<th class='left'>&nbsp;</th>
 	<td colspan='2'>
@@ -132,7 +127,6 @@ if (!isset($submit)) {
 	</table>
 	</form>";
 } else {
-
 	// trim white spaces in the end and in the beginning of the word
 	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
 	// registration

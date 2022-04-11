@@ -128,13 +128,6 @@ else {
 	}
 }
 
-// Display Actions Toolbar
-  $tool_content .= "
-      <div id='operations_container'>
-        <ul id='opslist'>
-	<li><a href='searchcours.php'>$langSearchCourses</a></li>
-        </ul>
-      </div>";
 
 // Construct course list table
 $tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
