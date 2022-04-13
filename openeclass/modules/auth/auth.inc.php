@@ -39,8 +39,6 @@
 ==============================================================================
 */
 
-// pop3 class
-require("methods/pop3.php");
 
 /****************************************************************
 find/return the id of the default authentication method

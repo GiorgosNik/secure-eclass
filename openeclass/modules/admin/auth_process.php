@@ -174,16 +174,6 @@ else
 	</tr>";
 	
 	switch($auth) {
-		case 2: include_once '../auth/methods/pop3form.php';
-			break;
-		case 3: include_once '../auth/methods/imapform.php';
-			break;
-		case 4: include_once '../auth/methods/ldapform.php';
-			break;
-		case 5: include_once '../auth/methods/db/dbform.php';
-			break;
-		case 6: include_once '../auth/methods/shibform.php';
-			break;
 		default:
 			break;
 	}

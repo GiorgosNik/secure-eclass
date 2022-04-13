@@ -145,7 +145,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 					$warning .= "<br /><font color='red'>" . $langInvalidId . "</font><br />";
 					break;
 				case 3:
-					$warning .= "<br />" . $langAccountInactive1 . " <a href='modules/auth/contactadmin.php?userid=" . $user . "'>" . $langAccountInactive2 . "</a><br /><br />";
+					$warning .= "<br /><font color='red'>" . $langInvalidId . "</font><br />";
 					break;
 				case 4:
 					$warning .= "<br /><font color='red'>" . $langInvalidId . "</font><br />";

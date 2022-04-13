@@ -190,7 +190,7 @@ if (isset($c)) {
   </tr>
   <tr>
     <th width=\"220\">&nbsp;</th>
-    <td>".$langCourseStatus." (<a href=\"statuscours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langModify."</a>)</td>
+    <td>".$langCourseStatus."</td>
   </tr>";
 	$tool_content .= "
   <tr>

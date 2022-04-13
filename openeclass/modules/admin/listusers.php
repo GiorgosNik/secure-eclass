@@ -336,7 +336,6 @@ if($sql)
 			if($c=='inactive')
 			{
 				$caption .= "&nbsp;$langAsInactive<br />";
-				$caption .= "<a href=\"updatetheinactive.php?activate=1\">".$langAddSixMonths."</a><br />";
 			}
 			else
 			{
