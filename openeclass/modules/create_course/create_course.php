@@ -64,7 +64,7 @@ function checkrequired(which, entry, entry2) {
         _editor_url  = "$urlAppend/include/xinha/";
         _editor_lang = "$lang_editor";
 </script>
-<script type="text/javascript" src="$urlAppend/include/xinha/XinhaCore.js"></script>
+<script type="text/javascript" src="$urlAppend/include/xinha/XinhaEasy.js"></script>
 <script type="text/javascript" src="$urlAppend/include/xinha/my_config.js"></script>
 hContent;
 
