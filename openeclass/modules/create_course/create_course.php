@@ -421,9 +421,6 @@ if (isset($_POST['create_course'])) {
         $status[$repertoire] = 1;
         $_SESSION['status'] = $status;
 
-        // ----------- Import from BetaCMS Bridge -----------
-        $tool_content .= doImportFromBetaCMSAfterCourseCreation($repertoire, $mysqlMainDb, $webDir);
-        // --------------------------------------------------
         $tool_content .= "
                 <p class=\"success_small\">$langJustCreated: &nbsp;<b>$intitule</b></p>
                 <p><small>$langEnterMetadata</small></p><br />
