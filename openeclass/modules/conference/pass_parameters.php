@@ -84,16 +84,16 @@ if ($is_adminOfCourse) {
                if($_POST["variable"]=="netmeeting_show")
                 {
 			if(isset($URL["netmeeting_show"]))
-                       		echo $URL["netmeeting_show"];
+                       		echo htmlspecialchars($URL["netmeeting_show"], ENT_QUOTES, 'UTF-8');
                 }
                 if($_POST["variable"]=="video_URL")
                 {
 			if(isset($URL["video_URL"]))
-                       		echo $URL["video_URL"];
+				echo htmlspecialchars($URL["video_URL"], ENT_QUOTES, 'UTF-8');
                 }
                 if($_POST["variable"]=="presantation_URL")
                 {
 			if(isset($URL["presantation_URL"]))
-                       		echo $URL["presantation_URL"];
+				echo htmlspecialchars($URL["presantation_URL"], ENT_QUOTES, 'UTF-8');
                 }
 ?>

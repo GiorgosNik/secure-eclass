@@ -344,7 +344,7 @@ if($is_adminOfCourse)
 	//nea methodos metonomasias arxeiwn kanontas update sthn eggrafh pou yparxei sth vash
 	if (isset($renameTo2)) {
 		$query =  "UPDATE $dbTable SET filename=" .
-                        quote(canonicalize_whitespace($renameTo2)) .
+                        quote(mysql_real_escape_string(canonicalize_whitespace($renameTo2))) .
                         " WHERE path='$sourceFile'";
 		db_query($query);
 		$dialogBox = "<p class='caution_small'>$langElRen</p><br />";

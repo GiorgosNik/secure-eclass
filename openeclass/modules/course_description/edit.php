@@ -91,8 +91,8 @@ if ($is_adminOfCourse) {
                 }
                 db_query("INSERT IGNORE INTO course_description SET id = $new_id");
                 db_query("UPDATE course_description
-                                SET title = " . autoquote(trim($edTitleBloc)) . ",
-                                    content = " . autoquote(trim($edContentBloc)) . ",
+                                SET title = " . autoquote(mysql_real_escape_string(trim($edTitleBloc))) . ",
+                                    content = " . autoquote(mysql_real_escape_string(trim($edContentBloc))) . ",
                                     `upDate` = NOW()
                                 WHERE id = $new_id");
                 header('Location: ' . $urlServer . 'modules/course_description/edit.php');

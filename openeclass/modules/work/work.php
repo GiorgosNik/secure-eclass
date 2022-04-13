@@ -244,12 +244,19 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	global $tool_content, $workPath;
 
 	$secret = uniqid("");
-	db_query("INSERT INTO assignments
-		(title, description, comments, deadline, submission_date, secret_directory,
-			group_submissions) VALUES
-		(" . autoquote($title) . ", " . autoquote($desc) . ", " . autoquote($comments) . ", " . autoquote($deadline) . ", NOW(), '$secret',
-			" . autoquote($group_submissions) . ")");
-	mkdir("$workPath/$secret", 0777);
+
+	mysql_query("PREPARE stmt2 FROM 'INSERT INTO assignments SET title=?, description=?, comments=?, deadline=?, submission_date=NOW(), secret_directory=?, group_submissions=?';");
+      
+	mysql_query('SET @a = "' . mysql_real_escape_string($title) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($desc) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($comments) . '";');
+	mysql_query('SET @d = "' . mysql_real_escape_string($deadline) . '";');
+	mysql_query('SET @e = ' .  mysql_real_escape_string($secret) . ';');
+	mysql_query('SET @f = "'  . mysql_real_escape_string($group_submissions) . '";');
+                
+	db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f;");
+
+	mkdir("$workPath/$secret",0777);
 }
 
 
@@ -304,37 +311,66 @@ function submit_work($id)
 
 			$msg1 = delete_submissions_by_uid($uid, -1, $id);
 
-			$local_name = greek_to_latin(uid_to_name($uid));
-			$am = mysql_fetch_array(db_query("SELECT am FROM user WHERE user_id = '$uid'"));
-			if (!empty($am[0])) {
-				$local_name = "$local_name $am[0]";
-			}
-			$local_name = replace_dangerous_char($local_name);
-			if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' . 'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' . 'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $_FILES['userfile']['name'])) {
-				$tool_content .= "<p class=\"caution_small\">$langUnwantedFiletype: {$_FILES['userfile']['name']}<br />";
-				$tool_content .= "<a href=\"$_SERVER[PHP_SELF]?id=$id\">$langBack</a></p><br />";
-				return;
-			}
-			$secret = work_secret($id);
-			$ext = get_file_extension($_FILES['userfile']['name']);
-			$filename = "$secret/$local_name" . (empty($ext) ? '' : '.' . $ext);
-			if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
-				$msg2 = "$langUploadSuccess"; //to message
-				$group_id = user_group($uid, FALSE);
-				if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
-					delete_submissions_by_uid(-1, $group_id, $id);
-					db_query("INSERT INTO assignment_submit
-				(uid, assignment_id, submission_date, submission_ip, file_path,
-				file_name, comments, group_id) VALUES ('$uid','$id', NOW(),
-				'$REMOTE_ADDR', '$filename','" . $_FILES['userfile']['name'] .
-						"', '$stud_comments', '$group_id')", $currentCourseID);
-				} else {
-					db_query("INSERT INTO assignment_submit
-				(uid, assignment_id, submission_date, submission_ip, file_path,
-				file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
-				'$filename','" . $_FILES['userfile']['name'] .
-						"', '$stud_comments')", $currentCourseID);
-				}
+	$local_name = greek_to_latin(uid_to_name($uid));
+	$am = mysql_fetch_array(db_query("SELECT am FROM user WHERE user_id = '$uid'"));
+	if (!empty($am[0])) {
+		$local_name = "$local_name $am[0]";
+	}
+	$local_name = replace_dangerous_char($local_name);
+	if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' .'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' .'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $_FILES['userfile']['name'])) {
+		$tool_content .= "<p class=\"caution_small\">$langUnwantedFiletype: {$_FILES['userfile']['name']}<br />";
+		$tool_content .= "<a href=\"$_SERVER[PHP_SELF]?id=$id\">$langBack</a></p><br />";
+		return;
+	}
+	$secret = work_secret($id);
+        $ext = get_file_extension($_FILES['userfile']['name']);
+	$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
+	if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
+		$msg2 = "$langUploadSuccess";//to message
+		$group_id = user_group($uid, FALSE);
+		if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
+			delete_submissions_by_uid(-1, $group_id, $id);
+
+			// db_query("INSERT INTO assignment_submit
+			// 	(uid, assignment_id, submission_date, submission_ip, file_path,
+			// 	file_name, comments, group_id) VALUES ('$uid','$id', NOW(),
+			// 	'$REMOTE_ADDR', '$filename','".$_FILES['userfile']['name'].
+			// 	"', '$stud_comments', '$group_id')", $currentCourseID);
+
+			mysql_query("PREPARE stmt3 FROM 'INSERT INTO assignment_submit SET uid=?, assignment_id=?, submission_date=NOW(), submission_ip=?, file_path=?, file_name=?, comments=?, group_id=?';");
+      
+			mysql_query('SET @a = "' . mysql_real_escape_string($uid) . '";');
+			mysql_query('SET @b = "' . mysql_real_escape_string($id) . '";');
+			mysql_query('SET @c = "' . mysql_real_escape_string($REMOTE_ADDR) . '";');
+			mysql_query('SET @d = "' . mysql_real_escape_string($filename) . '";');
+			mysql_query('SET @e = "' .  mysql_real_escape_string($_FILES['userfile']['name']) . '";');
+			mysql_query('SET @f = "'  . mysql_real_escape_string($stud_comments) . '";');
+			mysql_query('SET @g = "'  . mysql_real_escape_string($group_id) . '";');
+							
+			db_query("EXECUTE stmt3 USING @a, @b, @c, @d, @e, @f, @g;", $currentCourseID);
+
+
+		} else {
+
+			// db_query("INSERT INTO assignment_submit
+			// 	(uid, assignment_id, submission_date, submission_ip, file_path,
+			// 	file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
+			// 	'$filename','".$_FILES['userfile']['name'].
+			// 	"', '$stud_comments')", $currentCourseID);
+
+			mysql_query("PREPARE stmt4 FROM 'INSERT INTO assignment_submit SET uid=?, assignment_id=?, submission_date=NOW(), submission_ip=?, 
+				file_path=?, file_name=?, comments=?';");
+		  
+			mysql_query('SET @a = "' . mysql_real_escape_string($uid) . '";');
+			mysql_query('SET @b = "' . mysql_real_escape_string($id) . '";');
+			mysql_query('SET @c = "' . mysql_real_escape_string($REMOTE_ADDR) . '";');
+			mysql_query('SET @d = "' . mysql_real_escape_string($filename) . '";');
+			mysql_query('SET @e = "' . mysql_real_escape_string($_FILES['userfile']['name']) . '";');
+			mysql_query('SET @f = "' . mysql_real_escape_string($stud_comments) . '";');
+								
+			db_query("EXECUTE stmt4 USING @a, @b, @c, @d, @e, @f;", $currentCourseID);
+
+		}
 
 				$tool_content .= "<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
 			} else {
@@ -535,14 +571,26 @@ function edit_assignment($id)
 	$nav[] = array("url" => "work.php", "name" => $langWorks);
 	$nav[] = array("url" => "work.php?id=$id", "name" => $_POST['title']);
 
-	if (db_query("UPDATE assignments SET title=" . autoquote($_POST['title']) . ",
-		description=" . autoquote($_POST['desc']) . ", group_submissions=" . autoquote($_POST['group_submissions']) . ",
-		comments=" . autoquote($_POST['comments']) . ", deadline=" . autoquote($_POST['WorkEnd']) . " WHERE id='$id'")) {
 
-		$title = autounquote($_POST['title']);
-		$tool_content .= "<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
+	mysql_query("PREPARE stmt5 FROM 'UPDATE assignments SET title=?, description=?, group_submissions=?, comments=?, deadline=? WHERE id=?';");
+      
+	mysql_query('SET @a = "' . mysql_real_escape_string($_POST['title']) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($_POST['desc']) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($_POST['group_submissions']) . '";');
+	mysql_query('SET @d = "' . mysql_real_escape_string($_POST['comments']) . '";');
+	mysql_query('SET @e = "' .  mysql_real_escape_string($_POST['WorkEnd']) . '";');
+	mysql_query('SET @f = '  . mysql_real_escape_string($id) . ';');
+                
+	// if (db_query("UPDATE assignments SET title=".autoquote($_POST['title']).",
+	// 	description=".autoquote($_POST['desc']).", group_submissions=".autoquote($_POST['group_submissions']).",
+	// 	comments=".autoquote($_POST['comments']).", deadline=".autoquote($_POST['WorkEnd'])." WHERE id='$id'")) {
+
+    $title = htmlspecialchars(autounquote($_POST['title']));
+
+	if (db_query("EXECUTE stmt5 USING @a, @b, @c, @d, @e, @f;")) {
+		$tool_content .="<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	} else {
-		$tool_content .= "<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
+		$tool_content .="<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	}
 }
 
@@ -1187,9 +1235,19 @@ function submit_grade_comments($id, $sid, $grade, $comment)
 		$tool_content .= $langWorkWrongInput;
 		$stupid_user = 1;
 	} else {
-		db_query("UPDATE assignment_submit SET grade='$grade', grade_comments='$comment',
-		grade_submission_date=NOW(), grade_submission_ip='$REMOTE_ADDR'
-		WHERE id = '$sid'");
+		// db_query("UPDATE assignment_submit SET grade='$grade', grade_comments='$comment',
+		// grade_submission_date=NOW(), grade_submission_ip='$REMOTE_ADDR'
+		// WHERE id = '$sid'");
+
+		mysql_query("PREPARE stmt6 FROM 'UPDATE assignment_submit SET grade=?, grade_comments=?, grade_submission_date=NOW(), grade_submission_ip=? WHERE id=?';");
+			
+		mysql_query('SET @a = "' . mysql_real_escape_string($grade) . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($comment) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string($REMOTE_ADDR) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string($sid) . '";');
+						
+		db_query("EXECUTE stmt6 USING @a, @b, @c, @d;");
+
 	}
 	if (!$stupid_user) {
 		show_assignment($id, $langGrades);
@@ -1219,9 +1277,17 @@ function submit_grades($grades_id, $grades)
 		foreach ($grades as $sid => $grade) {
 			$val = mysql_fetch_row(db_query("SELECT grade from assignment_submit WHERE id = '$sid'"));
 			if ($val[0] != $grade) {
-				db_query("UPDATE assignment_submit SET grade='$grade',
-						grade_submission_date=NOW(), grade_submission_ip='$REMOTE_ADDR'
-						WHERE id = '$sid'");
+				// db_query("UPDATE assignment_submit SET grade='$grade',
+				// 		grade_submission_date=NOW(), grade_submission_ip='$REMOTE_ADDR'
+				// 		WHERE id = '$sid'");
+
+				mysql_query("PREPARE stmt7 FROM 'UPDATE assignment_submit SET grade=?, grade_submission_date=NOW(), grade_submission_ip=? WHERE id=?';");
+			
+				mysql_query('SET @a = "' . mysql_real_escape_string($grade) . '";');
+				mysql_query('SET @b = "' . mysql_real_escape_string($REMOTE_ADDR) . '";');
+				mysql_query('SET @c = "' . mysql_real_escape_string($sid) . '";');
+								
+				db_query("EXECUTE stmt7 USING @a, @b, @c;");
 			}
 		}
 		show_assignment($grades_id, $langGrades);

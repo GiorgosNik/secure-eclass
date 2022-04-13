@@ -66,7 +66,7 @@ if (isset($_POST['submit'])) {
                                   <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";
         } else {
                 if (isset($_POST['localize'])) {
-                        $newlang = $language = langcode_to_name($_POST['localize']);
+                        $newlang = $language = htmlspecialchars(langcode_to_name($_POST['localize']), ENT_QUOTES, 'UTF-8');
                         // include_messages
                         include("${webDir}modules/lang/$language/common.inc.php");
                         $extra_messages = "${webDir}/config/$language.inc.php";
@@ -91,23 +91,30 @@ if (isset($_POST['submit'])) {
                 }
 
                 list($facid, $facname) = explode('--', $_POST['facu']);
-                db_query("UPDATE `$mysqlMainDb`.cours
-                          SET intitule = " . autoquote($_POST['title']) .",
-                              faculte = " . autoquote($facname) . ",
-                              description = " . autoquote($_POST['description']) . ",
-                              course_addon = " . autoquote($_POST['course_addon']) . ",
-                              course_keywords = ".autoquote($_POST['course_keywords']) . ",
-                              visible = " . intval($_POST['formvisible']) . ",
-                              titulaires = " . autoquote($_POST['titulary']) . ",
-                              languageCourse = '$newlang',
-                              type = " . autoquote($_POST['type']) . ",
-                              password = " . autoquote($_POST['password']) . ",
-                              faculteid = " . intval($facid) . "
-                          WHERE cours_id = $cours_id");
-                db_query("UPDATE `$mysqlMainDb`.cours_faculte
-                          SET faculte = " . autoquote($facname) . ",
-                              facid = " . intval($facid) . "
-                          WHERE code='$currentCourseID'");
+
+                mysql_query("PREPARE stmt2 FROM 'UPDATE `$mysqlMainDb`.cours SET intitule=?, faculte=?, description=?, course_addon=?, course_keywords=?, visible=?, titulaires=?, languageCourse=?, type=?, password=?, faculteid=? WHERE cours_id=?';");
+      
+		mysql_query('SET @a = "' . mysql_real_escape_string($_POST['title']) . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($facname) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string($_POST['description']) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string($_POST['course_addon']) . '";');
+		mysql_query('SET @e = "' . mysql_real_escape_string($_POST['course_keywords']) . '";');
+		mysql_query('SET @f = '  . intval(mysql_real_escape_string($_POST['formvisible'])) . ';');
+		mysql_query('SET @g = "' . mysql_real_escape_string($_POST['titulary']) . '";');
+		mysql_query('SET @h = "' . mysql_real_escape_string($newlang) . '";');
+		mysql_query('SET @i = "' . mysql_real_escape_string($_POST['type']) . '";');
+		mysql_query('SET @j = "' . mysql_real_escape_string($_POST['password']) . '";');
+		mysql_query('SET @k = ' . intval(mysql_real_escape_string($facid)) . ';');
+		mysql_query('SET @l = ' . mysql_real_escape_string($cours_id) . ';');
+                
+		db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
+
+                mysql_query("PREPARE stmt3 FROM 'UPDATE `$mysqlMainDb`.cours_faculte SET faculte=?, facid=? WHERE code=?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($facname) . '";');
+		mysql_query('SET @b = ' . intval(mysql_real_escape_string($facid)) . ';');
+		mysql_query('SET @c = ' . intval(mysql_real_escape_string($currentCourseID)) . ';');
+
+		db_query("EXECUTE stmt3 USING @a, @b, @c;");
 
                 // update Home Page Menu Titles for new language
                 mysql_select_db($currentCourseID, $db);

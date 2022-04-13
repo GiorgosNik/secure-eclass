@@ -1,5 +1,4 @@
 <?php session_start();
-$_SESSION['csrf_token'] = $temp;
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -249,8 +248,11 @@ elseif ((isset($logout) && isset($uid)) or (1 == 1)) {
 		unset($_SESSION['uid']);
 		$temp = $_SESSION['csrf_token'];
 		session_destroy();
+		session_start();
+		$_SESSION['csrf_token'] = $temp;
 
 	}
+	
 	$require_help = false;
 	$helpTopic = "Init";
 	include "include/logged_out_content.php";
