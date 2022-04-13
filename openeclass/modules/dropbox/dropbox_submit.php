@@ -199,7 +199,8 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 				or die($dropbox_lang["uploadError"]);
-				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
+					
+				new Dropbox_SentWork(mysql_real_escape_string($uid), mysql_real_escape_string($dropbox_title), mysql_real_escape_string($_POST['description']), mysql_real_escape_string($_POST['authors']), mysql_real_escape_string($dropbox_filename), mysql_real_escape_string($dropbox_filesize), mysql_real_escape_string($newWorkRecipients));
 			}
 		}
 		chdir ($cwd);
@@ -416,7 +417,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 					{
 						$newName = $uid . "_" . $thisFile . "_" . uniqid('');
 						if (rename($dropbox_cnf["sysPath"] . '/' . $thisFile, $dropbox_cnf["sysPath"] . '/' . $newName))
-						new Dropbox_SentWork( $mailingPseudoId, $thisFile, $mailing_item->description, $mailing_item->author, $newName, $thisContent['size'], array($thisRecip[0]));
+						new Dropbox_SentWork( mysql_real_escape_string($mailingPseudoId), mysql_real_escape_string($thisFile), mysql_real_escape_string($mailing_item->description), mysql_real_escape_string($mailing_item->author), mysql_real_escape_string($newName), mysql_real_escape_string($thisContent['size']), array($thisRecip[0]));
 					}
 				}
 

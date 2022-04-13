@@ -112,33 +112,33 @@ $urlServer	=	"'.$_POST['formurlServer'].'";
 $urlAppend	=	"'.$_POST['formurlAppend'].'";
 $webDir		=	"'.str_replace("\\","/",realpath($_POST['formwebDir'])."/").'" ;
 
-$mysqlServer="'.$_POST['formmysqlServer'].'";
-$mysqlUser="'.$_POST['formmysqlUser'].'";
-$mysqlPassword="'.$_POST['formmysqlPassword'].'";
-$mysqlMainDb="'.$_POST['formmysqlMainDb'].'";
-$phpMyAdminURL="'.$_POST['formphpMyAdminURL'].'";
-$phpSysInfoURL="'.$_POST['formphpSysInfoURL'].'";
-$emailAdministrator="'.$_POST['formemailAdministrator'].'";
-$administratorName="'.$_POST['formadministratorName'].'";
-$administratorSurname="'.$_POST['formadministratorSurname'].'";
-$siteName="'.$_POST['formsiteName'].'";
+$mysqlServer="'.mysql_real_escape_string($_POST['formmysqlServer']).'";
+$mysqlUser="'.mysql_real_escape_string($_POST['formmysqlUser']).'";
+$mysqlPassword="'.mysql_real_escape_string($_POST['formmysqlPassword']).'";
+$mysqlMainDb="'.mysql_real_escape_string($_POST['formmysqlMainDb']).'";
+$phpMyAdminURL="'.mysql_real_escape_string($_POST['formphpMyAdminURL']).'";
+$phpSysInfoURL="'.mysql_real_escape_string($_POST['formphpSysInfoURL']).'";
+$emailAdministrator="'.mysql_real_escape_string($_POST['formemailAdministrator']).'";
+$administratorName="'.mysql_real_escape_string($_POST['formadministratorName']).'";
+$administratorSurname="'.mysql_real_escape_string($_POST['formadministratorSurname']).'";
+$siteName="'.mysql_real_escape_string($_POST['formsiteName']).'";
 
-$telephone="'.$_POST['formtelephone'].'";
-$emailhelpdesk="'.$_POST['formemailhelpdesk'].'";
-$Institution="'.$_POST['formInstitution'].'";
-$InstitutionUrl="'.$_POST['formInstitutionUrl'].'";
+$telephone="'.mysql_real_escape_string($_POST['formtelephone']).'";
+$emailhelpdesk="'.mysql_real_escape_string($_POST['formemailhelpdesk']).'";
+$Institution="'.mysql_real_escape_string($_POST['formInstitution']).'";
+$InstitutionUrl="'.mysql_real_escape_string($_POST['formInstitutionUrl']).'";
 
 // available: greek and english
-$language = "'.$_POST['formlanguage'].'";
+$language = "'.mysql_real_escape_string($_POST['formlanguage']).'";
 
-$postaddress = "'.$_POST['formpostaddress'].'";
-$fax = "'.$_POST['formfax'].'";
+$postaddress = "'.mysql_real_escape_string($_POST['formpostaddress']).'";
+$fax = "'.mysql_real_escape_string($_POST['formfax']).'";
 
 $close_user_registration = '.$user_reg.';
 $encryptedPasswd = "true";
 $persoIsActive = TRUE;
 
-$durationAccount = "'.$_POST['formdurationAccount'].'";
+$durationAccount = "'.mysql_real_escape_string($_POST['formdurationAccount']).'";
 ';
 	// Save new config.php
 	fwrite($fd, $stringConfig);
@@ -172,85 +172,85 @@ else {
   </tr>
   <tr>
     <th class=\"left\"><b>\$urlServer:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formurlServer\" size=\"40\" value=\"".$urlServer."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formurlServer\" size=\"40\" value=\"".htmlspecialchars($urlServer, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$urlAppend:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formurlAppend\" size=\"40\" value=\"".$urlAppend."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formurlAppend\" size=\"40\" value=\"".htmlspecialchars($urlAppend, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$webDir:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formwebDir\" size=\"40\" value=\"".$webDir."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formwebDir\" size=\"40\" value=\"".htmlspecialchars($webDir, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <td colspan=\"2\">&nbsp;</td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$mysqlServer:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlServer\" size=\"40\" value=\"".$mysqlServer."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlServer\" size=\"40\" value=\"".htmlspecialchars($mysqlServer, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$mysqlUser:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlUser\" size=\"40\" value=\"".$mysqlUser."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlUser\" size=\"40\" value=\"".htmlspecialchars($mysqlUser, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$mysqlPassword:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"password\" name=\"formmysqlPassword\" size=\"40\" value=\"".$mysqlPassword."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"password\" name=\"formmysqlPassword\" size=\"40\" value=\"".htmlspecialchars($mysqlPassword, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$mysqlMainDb:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlMainDb\" size=\"40\" value=\"".$mysqlMainDb."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formmysqlMainDb\" size=\"40\" value=\"".htmlspecialchars($mysqlMainDb, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>";
 	$tool_content .= "  <tr>
     <th class=\"left\"><b>\$phpMyAdminURL:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formphpMyAdminURL\" size=\"40\" value=\"".$phpMyAdminURL."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formphpMyAdminURL\" size=\"40\" value=\"".htmlspecialchars($phpMyAdminURL, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$phpSysInfoURL:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formphpSysInfoURL\" size=\"40\" value=\"".$phpSysInfoURL."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formphpSysInfoURL\" size=\"40\" value=\"".htmlspecialchars($phpSysInfoURL, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$emailAdministrator:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formemailAdministrator\" size=\"40\" value=\"".$emailAdministrator."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formemailAdministrator\" size=\"40\" value=\"".htmlspecialchars($emailAdministrator, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$administratorName:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formadministratorName\" size=\"40\" value=\"".$administratorName."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formadministratorName\" size=\"40\" value=\"".htmlspecialchars($administratorName, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$administratorSurname:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formadministratorSurname\" size=\"40\" value=\"".$administratorSurname."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formadministratorSurname\" size=\"40\" value=\"".htmlspecialchars($administratorSurname, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$siteName:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formsiteName\" size=\"40\" value=\"".$siteName."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formsiteName\" size=\"40\" value=\"".htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <td colspan=\"2\">&nbsp;</td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$postaddress:</b></th>
-	<td><textarea rows='3' cols='40' name='formpostaddress'>$postaddress</textarea></td>
+	<td><textarea rows='3' cols='40' name='formpostaddress'>".htmlspecialchars($postaddress, ENT_QUOTES, 'UTF-8')."</textarea></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$telephone:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formtelephone\" size=\"40\" value=\"".$telephone."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formtelephone\" size=\"40\" value=\"".htmlspecialchars($telephone, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$fax:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formfax\" size=\"40\" value=\"".$fax."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formfax\" size=\"40\" value=\"".htmlspecialchars($fax, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$emailhelpdesk:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formemailhelpdesk\" size=\"40\" value=\"".$emailhelpdesk."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formemailhelpdesk\" size=\"40\" value=\"".htmlspecialchars($emailhelpdesk, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$Institution:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formInstitution\" size=\"40\" value=\"".$Institution."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formInstitution\" size=\"40\" value=\"".htmlspecialchars($Institution, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <th class=\"left\"><b>\$InstitutionUrl:</b></th>
-    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formInstitutionUrl\" size=\"40\" value=\"".$InstitutionUrl."\"></td>
+    <td><input class=\"FormData_InputText\" type=\"text\" name=\"formInstitutionUrl\" size=\"40\" value=\"".htmlspecialchars($InstitutionUrl, ENT_QUOTES, 'UTF-8')."\"></td>
   </tr>
   <tr>
     <td colspan=\"2\">&nbsp;</td>
@@ -291,7 +291,7 @@ $tool_content .= "
 $tool_content .= "
   <tr>
     <th class=\"left\"><b>\$durationAccount:</b></th>
-    <td><input type=\"text\" name=\"formdurationAccount\" size=\"40\" value=\"".$durationAccount."\"></td>
+    <td><input type=\"text\" name=\"formdurationAccount\" size=\"40\" value=\"".htmlspecialchars($durationAccount, ENT_QUOTES, 'UTF-8')."\"></td>
 </tr>";
 $tool_content .= "
   <tr>
