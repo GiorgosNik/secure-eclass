@@ -34,10 +34,11 @@ $require_prof = true;
 $requier_help = false;
 $helpTopic = 'Infocours';
 include '../../include/baseTheme.php';
-
+include '../../csrf_token.php';
+csrf_token_tag();
 $nameTools = $langModifInfo;
 $tool_content = "";
-
+$token = $_SESSION['csrf_token'];
 // submit
 if (!$is_adminOfCourse) {
 	$tool_content .= "<p>$langForbidden</p>";
@@ -57,6 +58,9 @@ $head_content = <<<hContent
 hContent;
 
 if (isset($_POST['submit'])) {
+        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+              }else{
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
                                   <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";
@@ -132,6 +136,7 @@ if (isset($_POST['submit'])) {
                         <a href='".$_SERVER['PHP_SELF']."'>$langBack</a></p><br />
                         <p><a href='{$urlServer}courses/$currentCourseID/index.php'>$langBackCourse</a></p><br />";
         }
+}
 } else {
 
 		$tool_content .= "<div id='operations_container'><ul id='opslist'>";
@@ -163,6 +168,7 @@ if (isset($_POST['submit'])) {
 
 		@$tool_content .="
 		<form method='post' action='$_SERVER[PHP_SELF]'>
+                <input type='hidden' name='csrf_token' value=$token>
 		<table width='99%' align='left'>
 		<thead><tr>
 		<td>

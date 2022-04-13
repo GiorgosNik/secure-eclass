@@ -39,7 +39,11 @@
  * 4. Platform announcements (If there are any)
  *
  */
-
+include './csrf_token.php';
+if (isset($logout) && isset($uid)) {
+	unset($_SESSION['csrf_token']);
+	csrf_token_tag();
+}
 if (!defined('INDEX_START')) {
 	die("Action not allowed!");
 }
@@ -96,6 +100,7 @@ if ($shibactive['auth_default'] == 1) {
 	$shibboleth_link = "";
 }
 
+$token = $_SESSION['csrf_token'];
 $tool_content .= <<<lCont2
 </div>
 </div>
@@ -108,6 +113,7 @@ $tool_content .= <<<lCont2
  <tr>
    <td class="LoginData">
    <form action="${urlSecure}index.php" method="post">
+   <input type='hidden' name='csrf_token' value=$token>
    $langUsername <br />
    <input class="Login" name="uname" size="20" /><br />
    $langPass <br />

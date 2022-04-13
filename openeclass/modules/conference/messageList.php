@@ -94,7 +94,9 @@ if (isset($_GET['store']) && $is_adminOfCourse) {
 		date=NOW(), date_modified=NOW()", $currentCourseID);
 	exit;
 }
-
+if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+  }else{
 // add new line
 if (isset($chatLine) and trim($chatLine) != '') {
 	$fchat = fopen($fileChatName,'a');
@@ -102,7 +104,7 @@ if (isset($chatLine) and trim($chatLine) != '') {
 	fwrite($fchat,$timeNow.' - '.$nick.' : '.stripslashes($chatLine)."\n");
 	fclose($fchat);
 }
-
+}
 // display message list
 $fileContent  = file($fileChatName);
 

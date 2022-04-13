@@ -29,7 +29,9 @@ $requier_help = false;
 $helpTopic = 'Conference';
 $tool_content = "";
 include '../../include/baseTheme.php';
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 if(!isset($MCU))
 	$MCU="";
 
@@ -89,6 +91,7 @@ if ($is_adminOfCourse) {
 
 $tool_content .= "
 <form name='chatForm' action='messageList.php' method='get' target='messageList' onSubmit='return prepare_message();'>
+  <input type='hidden' name='csrf_token' value=$token>
   <table width='99%' class='FormData'>
   <thead>
   <tr>

@@ -25,14 +25,15 @@
 * =========================================================================*/
 session_start();
 
+
 $require_login = TRUE;
 $require_prof = TRUE;
 $requier_help = false;
 $helpTopic = 'CreateCourse';
-
+include '../../csrf_token.php';
 include '../../include/baseTheme.php';
-
-$nameTools = $langCreateCourse . " (" . $langCreateCourseStep ." 1 " .$langCreateCourseStep2 . " 3)" ;
+csrf_token_tag();
+$nameTools = $langCreateCourse . " (" . $langCreateCourseStep . " 1 " . $langCreateCourseStep2 . " 3)";
 $tool_content = $head_content = "";
 $lang_editor = langname_to_code($language);
 
@@ -68,24 +69,25 @@ function checkrequired(which, entry, entry2) {
 <script type="text/javascript" src="$urlAppend/include/xinha/my_config.js"></script>
 hContent;
 
-$titulaire_probable="$prenom $nom";
-
+$titulaire_probable = "$prenom $nom";
+$token = $_SESSION['csrf_token'];
 $tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
 
 
-function escape_if_exists($name) {
-        if (isset($_POST[$name])) {
-                if (get_magic_quotes_gpc()) {
-                		$tmp = stripslashes($_POST[$name]);
-                } else {
-                        $tmp = $_POST[$name];
-                }
-                $GLOBALS[$name] = $tmp;
-                $GLOBALS[$name . '_html'] = '<input type="hidden" name="' . $name .
-                       '" value="' . htmlspecialchars($tmp) . '" />';
-        } else {
-                $GLOBALS[$name . '_html'] = $GLOBALS[$name] = '';
-        }
+function escape_if_exists($name)
+{
+	if (isset($_POST[$name])) {
+		if (get_magic_quotes_gpc()) {
+			$tmp = stripslashes($_POST[$name]);
+		} else {
+			$tmp = $_POST[$name];
+		}
+		$GLOBALS[$name] = $tmp;
+		$GLOBALS[$name . '_html'] = '<input type="hidden" name="' . $name .
+			'" value="' . htmlspecialchars($tmp) . '" />';
+	} else {
+		$GLOBALS[$name . '_html'] = $GLOBALS[$name] = '';
+	}
 }
 
 escape_if_exists('intitule');
@@ -99,18 +101,18 @@ escape_if_exists('course_keywords');
 escape_if_exists('visit');
 
 $tool_content .= $intitule_html .
-                 $faculte_html .
-                 $titulaires_html .
-                 $type_html .
-                 $languageCourse_html .
-                 $description_html .
-                 $course_addon_html .
-                 $course_keywords_html .
-                 $visit_html;
+	$faculte_html .
+	$titulaires_html .
+	$type_html .
+	$languageCourse_html .
+	$description_html .
+	$course_addon_html .
+	$course_keywords_html .
+	$visit_html;
 
 if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 
-   // display form
+	// display form
 	$tool_content .= "<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
 	<tr>
@@ -120,7 +122,7 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	</tr>
 	<tr>
 	<th class='left' width=\"160\">$langTitle&nbsp;:</th>
-	<td width=\"160\"><input class='FormData_InputText' type='text' name='intitule' size='60' value='".@$intitule."' /></td>
+	<td width=\"160\"><input class='FormData_InputText' type='text' name='intitule' size='60' value='" . @$intitule . "' /></td>
 	<td><small>$langEx</small></td>
 	</tr>
 	<tr>
@@ -136,12 +138,12 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	unset($repertoire);
 	$tool_content .= "<tr>
 	<th class='left'>$langTeachers&nbsp;:</th>
-	<td><input class='FormData_InputText' type='text' name='titulaires' size='60' value='".$titulaire_probable."' /></td>
+	<td><input class='FormData_InputText' type='text' name='titulaires' size='60' value='" . $titulaire_probable . "' /></td>
 	<td>&nbsp;</td></tr>
 	<tr>
 	<th class='left'>$langType&nbsp;:</th>
 	<td>";
-	$tool_content .= " ".selection(array('pre' => $langpre, 'post' => $langpost, 'other' => $langother), 'type', $type)." ";
+	$tool_content .= " " . selection(array('pre' => $langpre, 'post' => $langpost, 'other' => $langother), 'type', $type) . " ";
 	$tool_content .= "
 	</td>
 	<td>&nbsp;</td></tr>
@@ -150,15 +152,16 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	<td><input type='submit' name='create2' value='$langNextStep >' /><input type='hidden' name='visit' value='true' /></td>
 	<td><p align='right'><small>(*) &nbsp;$langFieldsRequ</small></p></td>
 </tbody>
-</table><br />";
+</table>
+<input type='hidden' name='csrf_token' value=$token><br />";
 }
 
 // --------------------------------
 // step 2 of creation
 // --------------------------------
 
- elseif (isset($_POST['create2']) or isset($_POST['back2']))  {
-	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep." 2 " .$langCreateCourseStep2 . " 3 )";
+elseif (isset($_POST['create2']) or isset($_POST['back2'])) {
+	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep . " 2 " . $langCreateCourseStep2 . " 3 )";
 	$tool_content .= "<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
 	<tr>
@@ -190,9 +193,8 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	</table>
 	<p align='right'><small>$langFieldsOptionalNote</small></p>
 	<br />";
-
-}  elseif (isset($_POST['create3']) or isset($_POST['back2'])) {
-	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep." 3 " .$langCreateCourseStep2 . " 3 )" ;
+} elseif (isset($_POST['create3']) or isset($_POST['back2'])) {
+	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep . " 3 " . $langCreateCourseStep2 . " 3 )";
 	@$tool_content .= "
 	<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
@@ -208,24 +210,24 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	<td colspan='2'>
 	<table>
 	<tr>
-	<td width='30'><img src=\"../../template/classic/img/OpenCourse.gif\" title=\"".$m['legopen']."\" width=\"16\" height=\"16\"></td>
-	<td width='200'>".$m['legopen']."</td>
+	<td width='30'><img src=\"../../template/classic/img/OpenCourse.gif\" title=\"" . $m['legopen'] . "\" width=\"16\" height=\"16\"></td>
+	<td width='200'>" . $m['legopen'] . "</td>
 	<td width='5' ><input name=\"formvisible\" type=\"radio\" value=\"2\" checked=\"checked\" /></td>
 	<td width='325'><p align='right'><small>$langPublic</small></p></td>
 	</tr>
 	<tr>
-	<td width='30'><img src=\"../../template/classic/img/Registration.gif\" title=\"".$m['legrestricted']."\" width=\"16\" height=\"16\"></td>
-	<td width='200'>".$m['legrestricted']."</td>
+	<td width='30'><img src=\"../../template/classic/img/Registration.gif\" title=\"" . $m['legrestricted'] . "\" width=\"16\" height=\"16\"></td>
+	<td width='200'>" . $m['legrestricted'] . "</td>
 	<td width='5'><input name=\"formvisible\" type=\"radio\" value=\"1\" /></td>
 	<td width='325'><p align='right'><small>$langPrivOpen</small></p></td></tr>
 	<tr>
-	<td colspan='4' class='right'><input type='checkbox' name='checkpassword' ".$checkpasssel.">&nbsp;$langOptPassword
-	<input type='text' name='password' value='".q($password)."' class='FormData_InputText'>
+	<td colspan='4' class='right'><input type='checkbox' name='checkpassword' " . $checkpasssel . ">&nbsp;$langOptPassword
+	<input type='text' name='password' value='" . q($password) . "' class='FormData_InputText'>
 	</td>
 	</tr>
 	<tr>
-	<td width='30'><img src=\"../../template/classic/img/ClosedCourse.gif\" title=\"".$m['legclosed']."\" width=\"16\" height=\"16\"></td>
-	<td width='200'>".$m['legclosed']."</td>
+	<td width='30'><img src=\"../../template/classic/img/ClosedCourse.gif\" title=\"" . $m['legclosed'] . "\" width=\"16\" height=\"16\"></td>
+	<td width='200'>" . $m['legclosed'] . "</td>
 	<td width='5'><input name=\"formvisible\" type=\"radio\" value=\"0\" /></td>
 	<td width='325'><p align='right'><small>$langPrivate</small></p></td>
 	</tr>
@@ -326,108 +328,110 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 
 // create the course and the course database
 if (isset($_POST['create_course'])) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	} else {
+		$nameTools = $langCourseCreate;
+		$facid = intval($faculte);
+		$facname = find_faculty_by_id($facid);
 
-        $nameTools = $langCourseCreate;
-        $facid = intval($faculte);
-        $facname = find_faculty_by_id($facid);
+		// create new course code: uppercase, no spaces allowed
+		$repertoire = strtoupper(new_code($facid));
+		$repertoire = str_replace(' ', '', $repertoire);
 
-        // create new course code: uppercase, no spaces allowed
-        $repertoire = strtoupper(new_code($facid));
-        $repertoire = str_replace (' ', '', $repertoire);
+		$language = langcode_to_name($_POST['languageCourse']);
+		// include_messages
+		include("${webDir}modules/lang/$language/common.inc.php");
+		$extra_messages = "${webDir}/config/$language.inc.php";
+		if (file_exists($extra_messages)) {
+			include $extra_messages;
+		} else {
+			$extra_messages = false;
+		}
+		include("${webDir}modules/lang/$language/messages.inc.php");
+		if ($extra_messages) {
+			include $extra_messages;
+		}
 
-        $language = langcode_to_name($_POST['languageCourse']);
-        // include_messages
-        include("${webDir}modules/lang/$language/common.inc.php");
-        $extra_messages = "${webDir}/config/$language.inc.php";
-        if (file_exists($extra_messages)) {
-                include $extra_messages;
-        } else {
-                $extra_messages = false;
-        }
-        include("${webDir}modules/lang/$language/messages.inc.php");
-        if ($extra_messages) {
-                include $extra_messages;
-        }
+		// create directories
+		umask(0);
+		if (!(mkdir("../../courses/$repertoire", 0777) and
+			mkdir("../../courses/$repertoire/image", 0777) and
+			mkdir("../../courses/$repertoire/document", 0777) and
+			mkdir("../../courses/$repertoire/dropbox", 0777) and
+			mkdir("../../courses/$repertoire/page", 0777) and
+			mkdir("../../courses/$repertoire/work", 0777) and
+			mkdir("../../courses/$repertoire/group", 0777) and
+			mkdir("../../courses/$repertoire/temp", 0777) and
+			mkdir("../../courses/$repertoire/scormPackages", 0777) and
+			mkdir("../../video/$repertoire", 0777))) {
+			$tool_content .= "<div class='caution'>$langErrorDir</div>";
+			draw($tool_content, '1', 'create_course', $head_content);
+			exit;
+		}
+		// ---------------------------------------------------------
+		//  all the course db queries are inside the following script
+		// ---------------------------------------------------------
+		require "create_course_db.php";
 
-        // create directories
-        umask(0);
-        if (! (mkdir("../../courses/$repertoire", 0777) and
-                                mkdir("../../courses/$repertoire/image", 0777) and
-                                mkdir("../../courses/$repertoire/document", 0777) and
-                                mkdir("../../courses/$repertoire/dropbox", 0777) and
-                                mkdir("../../courses/$repertoire/page", 0777) and
-                                mkdir("../../courses/$repertoire/work", 0777) and
-                                mkdir("../../courses/$repertoire/group", 0777) and
-                                mkdir("../../courses/$repertoire/temp", 0777) and
-                                mkdir("../../courses/$repertoire/scormPackages", 0777) and
-                                mkdir("../../video/$repertoire", 0777))) {
-                $tool_content .= "<div class='caution'>$langErrorDir</div>";
-                draw($tool_content, '1', 'create_course', $head_content);
-                exit;
-        }
-        // ---------------------------------------------------------
-        //  all the course db queries are inside the following script
-        // ---------------------------------------------------------
-        require "create_course_db.php";
-
-        // ------------- update main Db------------
-        mysql_select_db("$mysqlMainDb");
+		// ------------- update main Db------------
+		mysql_select_db("$mysqlMainDb");
 
 		mysql_query("PREPARE stmt1 FROM 'INSERT INTO cours SET code=?, languageCourse=?, intitule=?, description=?, course_addon=?, course_keywords=?, faculte=?, visible=?, titulaires=?, fake_code=?, type=?, faculteid=?, first_create=NOW()';");
-            
-        mysql_query('SET @a = "' . mysql_real_escape_string($code) . '";');
-        mysql_query('SET @b = "' . mysql_real_escape_string($language) . '";');
-        mysql_query('SET @c = "' . mysql_real_escape_string($intitule) . '";');
-        mysql_query('SET @d = "' . mysql_real_escape_string($description) . '";');
-        mysql_query('SET @e = "' . mysql_real_escape_string($course_addon) . '";');
-        mysql_query('SET @f = "' . mysql_real_escape_string($course_keywords) . '";');
-        mysql_query('SET @g = "' . mysql_real_escape_string($facname) . '";');
-        mysql_query('SET @h = "' . mysql_real_escape_string($formvisible) . '";');
-        mysql_query('SET @i = "' . mysql_real_escape_string($titulaires) . '";');
-        mysql_query('SET @j = "' . mysql_real_escape_string($code) . '";');
-        mysql_query('SET @k = "' . mysql_real_escape_string($type) . '";');
-        mysql_query('SET @l = "' . mysql_real_escape_string($facid) . '";');
+
+		mysql_query('SET @a = "' . mysql_real_escape_string($code) . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($language) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string($intitule) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string($description) . '";');
+		mysql_query('SET @e = "' . mysql_real_escape_string($course_addon) . '";');
+		mysql_query('SET @f = "' . mysql_real_escape_string($course_keywords) . '";');
+		mysql_query('SET @g = "' . mysql_real_escape_string($facname) . '";');
+		mysql_query('SET @h = "' . mysql_real_escape_string($formvisible) . '";');
+		mysql_query('SET @i = "' . mysql_real_escape_string($titulaires) . '";');
+		mysql_query('SET @j = "' . mysql_real_escape_string($code) . '";');
+		mysql_query('SET @k = "' . mysql_real_escape_string($type) . '";');
+		mysql_query('SET @l = "' . mysql_real_escape_string($facid) . '";');
 
 
-        $result = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
+		$result = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
 
 
-        $new_cours_id = mysql_insert_id();
-        mysql_query("INSERT INTO cours_user SET
+		$new_cours_id = mysql_insert_id();
+		mysql_query("INSERT INTO cours_user SET
                         cours_id = $new_cours_id,
                         user_id = '$uid',
                         statut = '1',
                         tutor='1',
                         reg_date = CURDATE()");
 
-        mysql_query("INSERT INTO cours_faculte SET
+		mysql_query("INSERT INTO cours_faculte SET
                         faculte = '$faculte',
                         code = '$repertoire',
                         facid = '$facid'");
 
-        $titou='$dbname';
+		$titou = '$dbname';
 
-        // ----------- main course index.php -----------
+		// ----------- main course index.php -----------
 
-        $fd=fopen("../../courses/$repertoire/index.php", "w");
-        $string="<?php
+		$fd = fopen("../../courses/$repertoire/index.php", "w");
+		$string = "<?php
                 session_start();
         $titou=\"$repertoire\";
         session_register(\"dbname\");
         include(\"../../modules/course_home/course_home.php\");
         ?>";
 
-        fwrite($fd, "$string");
-        $status[$repertoire] = 1;
-        $_SESSION['status'] = $status;
+		fwrite($fd, "$string");
+		$status[$repertoire] = 1;
+		$_SESSION['status'] = $status;
 
-        $tool_content .= "
+		$tool_content .= "
                 <p class=\"success_small\">$langJustCreated: &nbsp;<b>$intitule</b></p>
                 <p><small>$langEnterMetadata</small></p><br />
                 <p align='center'>&nbsp;<a href='../../courses/$repertoire/index.php' class=mainpage>$langEnter</a>&nbsp;</p>";
+	}
 } // end of submit
 
 $tool_content .= "</form>";
 
 draw($tool_content, '1', 'create_course', $head_content);
-?>

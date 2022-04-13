@@ -1,4 +1,5 @@
 <?php session_start();
+$_SESSION['csrf_token'] = $temp;
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -37,8 +38,6 @@
  *               HOME PAGE OF ECLASS		               *
  ****************************************************************
  */
-include './csrf_token.php';
-$csrf_token = csrf_token_tag();
 define("INDEX_START", 1);
 $guest_allowed = true;
 $path2add = 0;
@@ -63,7 +62,6 @@ if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
 if (!$db) {
 	include "include/not_installed.php";
 }
-
 // unset system that records visitor only once by course for statistics
 include('include/action.php');
 if (isset($dbname)) {
@@ -249,7 +247,9 @@ elseif ((isset($logout) && isset($uid)) or (1 == 1)) {
 		unset($nom);
 		unset($statut);
 		unset($_SESSION['uid']);
+		$temp = $_SESSION['csrf_token'];
 		session_destroy();
+
 	}
 	$require_help = false;
 	$helpTopic = "Init";

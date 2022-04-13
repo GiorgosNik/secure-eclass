@@ -56,7 +56,7 @@
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
 include '../../csrf_token.php';
-$csrf_token = csrf_token_tag();
+csrf_token_tag();
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
@@ -70,6 +70,9 @@ $tool_content = "";
 ******************************************************************************/
 // Save new config.php
 if (isset($submit))  {
+  if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	  header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	}else{
 	// Make config directory writable
 	@chmod( "../../config",777 );
 	@chmod( "../../config", 0777 );
@@ -150,8 +153,10 @@ $durationAccount = "'.$_POST['formdurationAccount'].'";
 	$tool_content .= "<center><p><a href=\"index.php\">".$langBack."</a></p></center>";
 
 }
+}
 // Display config.php edit form
 else {
+  $token = $_SESSION['csrf_token'];
 	$titleextra = "config.php";
 	// Check if restore has been selected
 	if (isset($restore) && $restore=="yes") {
@@ -163,7 +168,7 @@ else {
 	$tool_content .= "
     <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
 	$tool_content .= "
-  <?= $csrf_token; ?>
+  <input type='hidden' name='csrf_token' value=$token>
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>

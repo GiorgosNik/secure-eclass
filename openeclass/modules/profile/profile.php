@@ -29,15 +29,20 @@ $require_login = true;
 $helpTopic = 'Profile';
 include '../../include/baseTheme.php';
 include "../auth/auth.inc.php";
+include '../../csrf_token.php';
+csrf_token_tag();
 $require_valid_uid = TRUE;
 $tool_content = "";
-
+$token = $_SESSION['csrf_token'];
 check_uid();
 $nameTools = $langModifProfile;
 check_guest();
 $allow_username_change = !get_config('block-username-change');
 
 if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	  }else{
         if (!$allow_username_change) {
                 $username_form = $uname;
         }
@@ -108,6 +113,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 			exit();
 	    }
 	}
+}
 }	// if submit
 
 ##[BEGIN personalisation modification - For LDAP users]############
@@ -224,6 +230,7 @@ $authmethods = array("imap","pop3","ldap","db","shibboleth");
 
 if ((!isset($changePass)) || isset($_POST['submit'])) {
 	$tool_content .= "<form method=\"post\" action=\"$sec?submit=yes\"><br/>
+	<input type='hidden' name='csrf_token' value=$token>
     <table width=\"99%\">
     <tbody><tr>
        <th width=\"220\" class='left'>$langName</th>";

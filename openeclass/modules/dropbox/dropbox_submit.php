@@ -38,7 +38,9 @@
 require_once("dropbox_init1.inc.php");
 include "../../include/lib/forcedownload.php";
 $nameTools = $dropbox_lang["dropbox"];
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 /**
  * ========================================
  * PREVENT RESUBMITING
@@ -145,6 +147,10 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
      * --------------------------------------
      */
 	if (!$error) {
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+			$error=1;
+		  }else{
 		$cwd = getcwd();
 		if (is_dir($dropbox_cnf["sysPath"])) {
 			$dropbox_space = dir_total_space($dropbox_cnf["sysPath"]);
@@ -203,6 +209,7 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			}
 		}
 		chdir ($cwd);
+	}
 	} //end if(!$error)
 
 	if (!$error) {

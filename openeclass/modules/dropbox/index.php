@@ -41,6 +41,9 @@ $nameTools = $dropbox_lang["dropbox"];
 
 /**** The following is added for statistics purposes ***/
 include('../../include/action.php');
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 $action = new action();
 $action->record('MODULE_ID_DROPBOX');
 /**************************************/
@@ -119,6 +122,7 @@ elseif(isset($_REQUEST['upload']) && $_REQUEST['upload'] == 1)
 
 	$tool_content .= <<<tCont2
     <form method="post" action="dropbox_submit.php" enctype="multipart/form-data" onsubmit="return checkForm(this)">
+	<input type='hidden' name='csrf_token' value=$token>
 tCont2;
 	$tool_content .= "
     <table width='99%' class='FormData'>

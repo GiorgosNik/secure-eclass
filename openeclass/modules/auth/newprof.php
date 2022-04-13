@@ -28,7 +28,7 @@ include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 require_once 'auth.inc.php';
 include '../../csrf_token.php';
-$csrf_token = csrf_token_tag();
+csrf_token_tag();
 $nameTools = $langReqRegProf;
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
 
@@ -39,12 +39,13 @@ $tool_content = "";
 
 
 $auth = get_auth_id();
-
+$token = $_SESSION['csrf_token'];
 // display form
 if (!isset($submit)) {
 
 @$tool_content .= "
 <form action=\"$_SERVER[PHP_SELF]\" method=\"post\">
+<input type='hidden' name='csrf_token' value=$token>
 <table width=\"99%\" style=\"border: 1px solid #edecdf;\">
 <thead>
 <tr>
