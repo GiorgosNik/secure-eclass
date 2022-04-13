@@ -53,7 +53,7 @@
 */
 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Questionnaire';
 
 include '../../include/baseTheme.php';

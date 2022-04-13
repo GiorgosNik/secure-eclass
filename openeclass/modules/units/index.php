@@ -29,7 +29,7 @@ Units display module
 */
 
 $require_current_course = true;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'AddCourseUnitscontent';
 include '../../include/baseTheme.php';
 include '../../include/lib/fileDisplayLib.inc.php';

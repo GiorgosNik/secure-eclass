@@ -31,7 +31,7 @@ if (isset($from_home) and ($from_home == TRUE) and isset($_GET['cid'])) {
 }
 $require_current_course = TRUE;
 $require_prof = true;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Infocours';
 include '../../include/baseTheme.php';
 

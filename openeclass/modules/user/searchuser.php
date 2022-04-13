@@ -27,7 +27,7 @@
 /* This script allows a course admin to search users to the course. */
 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'User';
 
 include '../../include/baseTheme.php';

@@ -58,7 +58,7 @@ existing (phpBB-based) to a new eclass forum :-(
 */
 $require_login = TRUE;
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 $nameTools = $langForums;

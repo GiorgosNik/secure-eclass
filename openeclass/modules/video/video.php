@@ -51,7 +51,7 @@ documents path.
 */
 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Video';
 $guest_allowed = true;
 

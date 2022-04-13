@@ -29,7 +29,7 @@
 */
 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'For';
 $require_prof = true;
 include '../../include/baseTheme.php';

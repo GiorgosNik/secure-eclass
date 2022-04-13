@@ -37,7 +37,7 @@ work.php
 
 $require_current_course = TRUE;
 $require_login = true;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Work';
 
 include '../../include/baseTheme.php';

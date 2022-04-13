@@ -54,7 +54,7 @@
  * Open eClass 2.x standard stuff
  */
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';

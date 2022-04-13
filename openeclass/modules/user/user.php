@@ -33,7 +33,7 @@
 
 $require_login = true;
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'User';
 $require_prof = true;
 

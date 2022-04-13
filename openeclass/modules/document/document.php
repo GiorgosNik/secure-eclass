@@ -51,7 +51,7 @@ $tool_content = "";
 $nameTools = $langDoc;
 $dbTable = "document";
 
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Doc';
 
 // check for quotas

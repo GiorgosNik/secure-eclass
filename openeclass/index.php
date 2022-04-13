@@ -207,7 +207,7 @@ $nameTools = $langWelcomeToEclass;
 // --------------------------------------------------------------
 if (isset($uid) and !isset($logout)) {
 	$nameTools = $langWelcomeToPortfolio;
-	$require_help = true;
+	$require_help = false;
 	$helpTopic = "Portfolio";
 	if (isset($_SESSION['user_perso_active']) and $_SESSION['user_perso_active'] == 'no') {
 		if (!check_guest()) {
@@ -251,7 +251,7 @@ elseif ((isset($logout) && isset($uid)) or (1 == 1)) {
 		unset($_SESSION['uid']);
 		session_destroy();
 	}
-	$require_help = true;
+	$require_help = false;
 	$helpTopic = "Init";
 	include "include/logged_out_content.php";
 	draw($tool_content, 0, 'index');

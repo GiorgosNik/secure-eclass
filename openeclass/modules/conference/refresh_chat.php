@@ -35,7 +35,7 @@
 	
 header("Content-type: text/html; charset=UTF-8"); 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'User';
 $tool_content = "";
 include '../../include/baseTheme.php';

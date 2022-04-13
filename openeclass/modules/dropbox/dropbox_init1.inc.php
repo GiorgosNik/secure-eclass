@@ -26,7 +26,7 @@
 $require_login = TRUE;
 $require_current_course = TRUE;
 $guest_allowed = FALSE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'Dropbox';
 include_once '../../include/baseTheme.php';
 

@@ -27,7 +27,7 @@ session_start();
 
 $require_login = TRUE;
 $require_prof = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'CreateCourse';
 
 include '../../include/baseTheme.php';

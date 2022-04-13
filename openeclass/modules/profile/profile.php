@@ -24,7 +24,7 @@
 *  			eMail: info@openeclass.org
 * =========================================================================*/
 
-$require_help = TRUE;
+$requier_help = false;
 $require_login = true;
 $helpTopic = 'Profile';
 include '../../include/baseTheme.php';

@@ -25,7 +25,7 @@
 * =========================================================================*/
 
 $require_current_course = TRUE;
-$require_help = TRUE;
+$requier_help = false;
 $helpTopic = 'User';
 
 include '../../include/baseTheme.php';
