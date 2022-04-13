@@ -64,11 +64,14 @@ if($is_adminOfCourse) {
 		<td width='52' align='center'><a href=\"".$_SERVER['PHP_SELF']."?delete=yes\">$langYes</a></td>
 		<td><small>$langByDel</small></td>
 		</tr>
-
+		<tr>
+		<td align='center'><a href=\"infocours.php\">$langNo</a></td>
+		<td>&nbsp;</td>
+		</tr>
 		</tbody>
 		</table>";
 		
-		$tool_content .= "
+		$tool_content .= "<p align=\"right\"><a href=\"infocours.php\">$langBack</a></p>
 		</ul>
 		</div>";
 	} // else

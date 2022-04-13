@@ -46,7 +46,6 @@ $tool_content = "";
 // This is used for inserting data in 'monthly_report' table.
 // The work is done every time the admin page is called in order to
 // ensure correct (up-to-date) information on the table.
-require_once "summarizeMonthlyData.php";
 
 mysql_select_db($mysqlMainDb);
 

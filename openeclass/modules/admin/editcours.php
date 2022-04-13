@@ -116,7 +116,7 @@ if (isset($c)) {
   <tbody>
   <tr>
     <th width=\"220\">&nbsp;</th>
-    <td>".$langCourseInfo."</td>
+    <td>".$langCourseInfo." (<a href=\"infocours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langModify."</a>)</td>
   </tr>";
 	$tool_content .= "
   <tr>
@@ -229,11 +229,7 @@ if (isset($c)) {
     <th rowspan=\"5\">&nbsp;</th>
     <td><a href=\"listusers.php?c=".course_code_to_id($c)."\">".$langListUsersActions."</a></td>
   </tr>";
-  // Register unregister users
-	$tool_content .= "
-  <tr>
-    <td><a href=\"addusertocours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langAdminUsers."</a></td>
-  </tr>";
+  
   // Backup course
 	$tool_content .= "
   <tr>

@@ -211,11 +211,16 @@ function loggedInMenu(){
 	array_push($sideMenuLink, $urlServer . "modules/auth/courses.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 
+	array_push($sideMenuText, $GLOBALS['langModifyProfile']);
+	array_push($sideMenuLink, $urlServer . "modules/profile/profile.php");
+	array_push($sideMenuImg, "black-arrow1.gif");
 	
 	array_push($sideMenuSubGroup, $sideMenuText);
 	array_push($sideMenuSubGroup, $sideMenuLink);
 	array_push($sideMenuSubGroup, $sideMenuImg);
 	array_push($sideMenuGroup, $sideMenuSubGroup);
+
+
 
 	$sideMenuSubGroup = array();
 	$sideMenuText = array();
@@ -299,12 +304,6 @@ function adminMenu(){
 	array_push($sideMenuLink, "../admin/listusers.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 
-	// check for close user registration
-	if (isset($close_user_registration) and $close_user_registration == TRUE) {
-		array_push($sideMenuText, $GLOBALS['langUserOpen']);
-		array_push($sideMenuLink, "../admin/listreq.php?type=user");
-		array_push($sideMenuImg, "black-arrow1.gif");
-	}
 	
 	array_push($sideMenuSubGroup, $sideMenuText);
 	array_push($sideMenuSubGroup, $sideMenuLink);
@@ -328,12 +327,7 @@ function adminMenu(){
 	array_push($sideMenuImg, "black-arrow1.gif");
 	array_push($sideMenuText, $GLOBALS['langListFaculte']);
 	array_push($sideMenuLink, "../admin/addfaculte.php");
-	// check if we have betacms enabled
-	if (get_config('betacms') == TRUE) {
-		array_push($sideMenuImg, "black-arrow1.gif");
-		array_push($sideMenuText, $GLOBALS['langBrowseBCMSRepo']);
-		array_push($sideMenuLink, "../betacms_bridge/browserepo.php");
-	}
+
 	array_push($sideMenuImg, "black-arrow1.gif");
 	array_push($sideMenuSubGroup, $sideMenuText);
 	array_push($sideMenuSubGroup, $sideMenuLink);

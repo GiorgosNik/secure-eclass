@@ -89,7 +89,6 @@ if (isset($persoIsActive)) {
 // if we try to login... then authenticate user.
 $warning = '';
 if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
-	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
 		$uname = mysql_real_escape_string(trim($_POST['uname']));
@@ -128,7 +127,6 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 						include "include/login.php";
 					} else {
 						// alternate methods login
-						include "include/alt_login.php";
 					}
 				} else {
 					$tool_content .= "<br>$langInvalidAuth<br>";

@@ -31,7 +31,6 @@ $require_help = TRUE;
 $helpTopic = 'CreateCourse';
 
 include '../../include/baseTheme.php';
-require_once("../betacms_bridge/include/bcms.inc.php");
 
 $nameTools = $langCreateCourse . " (" . $langCreateCourseStep ." 1 " .$langCreateCourseStep2 . " 3)" ;
 $tool_content = $head_content = "";
@@ -73,8 +72,6 @@ $titulaire_probable="$prenom $nom";
 
 $tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
 
-// Import from BetaCMS Bridge
-doImportFromBetaCMSBeforeCourseCreation();
 
 function escape_if_exists($name) {
         if (isset($_POST[$name])) {
@@ -376,20 +373,25 @@ if (isset($_POST['create_course'])) {
         // ------------- update main Db------------
         mysql_select_db("$mysqlMainDb");
 
-        db_query("INSERT INTO cours SET
-                        code = '$code',
-                        languageCourse =" . quote($language) . ",
-                        intitule = " . quote($intitule) . ",
-                        description = " . quote($description) . ",
-                        course_addon = " . quote($course_addon) . ",
-                        course_keywords = " . quote($course_keywords) . ",
-                        faculte = " . quote($facname) . ",
-                        visible = " . quote($formvisible) . ",
-                        titulaires = " . quote($titulaires) . ",
-                        fake_code = " . quote($code) . ",
-                        type = " . quote($type) . ",
-                        faculteid = '$facid',
-                        first_create = NOW()");
+		mysql_query("PREPARE stmt1 FROM 'INSERT INTO cours SET code=?, languageCourse=?, intitule=?, description=?, course_addon=?, course_keywords=?, faculte=?, visible=?, titulaires=?, fake_code=?, type=?, faculteid=?, first_create=NOW()';");
+            
+        mysql_query('SET @a = "' . mysql_real_escape_string($code) . '";');
+        mysql_query('SET @b = "' . mysql_real_escape_string($language) . '";');
+        mysql_query('SET @c = "' . mysql_real_escape_string($intitule) . '";');
+        mysql_query('SET @d = "' . mysql_real_escape_string($description) . '";');
+        mysql_query('SET @e = "' . mysql_real_escape_string($course_addon) . '";');
+        mysql_query('SET @f = "' . mysql_real_escape_string($course_keywords) . '";');
+        mysql_query('SET @g = "' . mysql_real_escape_string($facname) . '";');
+        mysql_query('SET @h = "' . mysql_real_escape_string($formvisible) . '";');
+        mysql_query('SET @i = "' . mysql_real_escape_string($titulaires) . '";');
+        mysql_query('SET @j = "' . mysql_real_escape_string($code) . '";');
+        mysql_query('SET @k = "' . mysql_real_escape_string($type) . '";');
+        mysql_query('SET @l = "' . mysql_real_escape_string($facid) . '";');
+
+
+        $result = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
+
+
         $new_cours_id = mysql_insert_id();
         mysql_query("INSERT INTO cours_user SET
                         cours_id = $new_cours_id,

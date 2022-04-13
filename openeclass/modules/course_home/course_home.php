@@ -78,6 +78,18 @@ while($result = mysql_fetch_row($res)) {
 	$fake_code = $result[8];
 }
 
+if ($is_adminOfCourse) {
+        $edit_link = "&nbsp;<a href='../../modules/course_info/infocours.php'><img src='../../template/classic/img/edit.gif' title='$langEdit'></img></a>";
+} else {
+        $edit_link = '';
+}
+$main_content .= "\n      <div class='course_info'>";
+if (!empty($description)) {
+        $main_content .= "\n      <h1>$langDescription$edit_link</h1>\n      <p>$description</p>";
+
+} else {
+        $main_content .= "\n      <p>$langThisCourseDescriptionIsEmpty$edit_link</p>";
+}
 
 if (!empty($keywords)) {
 	$main_content .= "\n      <p><b>$langCourseKeywords</b> $keywords</p>";
