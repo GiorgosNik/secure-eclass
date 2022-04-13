@@ -1,13 +1,17 @@
 function FullScreen(editor, args)
 {
   this.editor = editor;
+  this.originalSizes = null;
   editor._superclean_on = false;
-  cfg = editor.config;
+  var cfg = editor.config;
 
+  cfg.registerIcon('fullscreen', [_editor_url + cfg.imgURL + 'ed_buttons_main.png',8,0]);
+  cfg.registerIcon('fullscreenrestore', [_editor_url + cfg.imgURL + 'ed_buttons_main.png',9,0]);
+  
   cfg.registerButton
   ( 'fullscreen',
     this._lc("Maximize/Minimize Editor"),
-    [_editor_url + cfg.imgURL + 'ed_buttons_main.gif',8,0], true,
+    cfg.iconList.fullscreen, true,
       function(e, objname, obj)
       {
         e._fullScreen();
@@ -43,28 +47,48 @@ FullScreen.prototype._lc = function(string) {
 Xinha.prototype._fullScreen = function()
 {
   var e = this;
+  var cfg = e.config;
   function sizeItUp()
   {
     if(!e._isFullScreen || e._sizing) return false;
     e._sizing = true;
     // Width & Height of window
     var dim = Xinha.viewportSize();
+    if(e.config.fullScreenSizeDownMethod == 'restore') 
+    {
+      e.originalSizes = {
+        x:   parseInt(e._htmlArea.style.width),
+        y:   parseInt(e._htmlArea.style.height),
+        dim: dim
+      };
+    }
 
     var h = dim.y - e.config.fullScreenMargins[0] -  e.config.fullScreenMargins[2];
     var w = dim.x - e.config.fullScreenMargins[1] -  e.config.fullScreenMargins[3];
 
     e.sizeEditor(w + 'px', h + 'px',true,true);
     e._sizing = false;
-    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage([_editor_url + cfg.imgURL + 'ed_buttons_main.gif',9,0]); 
+    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreenrestore); 
   }
 
   function sizeItDown()
   {
     if(e._isFullScreen || e._sizing) return false;
     e._sizing = true;
-    e.initSize();
+
+    if(e.originalSizes != null) 
+    {
+        var os = e.originalSizes;
+        var nDim = Xinha.viewportSize();
+        var nW = os.x + (nDim.x - os.dim.x);
+        var nH = os.y + (nDim.y - os.dim.y);
+        e.sizeEditor( nW + 'px', nH + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
+        e.originalSizes = null;
+    }
+    else e.initSize();
+
     e._sizing = false;
-    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage([_editor_url + cfg.imgURL + 'ed_buttons_main.gif',8,0]); 
+    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreen); 
   }
 
   /** It's not possible to reliably get scroll events, particularly when we are hiding the scrollbars
@@ -185,7 +209,7 @@ Xinha.prototype._fullScreen = function()
     this._htmlArea.style.zIndex   = 999;
     this._htmlArea.style.left     = e.config.fullScreenMargins[3] + 'px';
     this._htmlArea.style.top      = e.config.fullScreenMargins[0] + 'px';
-    if ( !Xinha.is_ie ) this._htmlArea.style.border   = 'none';
+    if ( !Xinha.is_ie && !Xinha.is_webkit ) this._htmlArea.style.border   = 'none';
     this._isFullScreen = true;
     resetScroll();
 

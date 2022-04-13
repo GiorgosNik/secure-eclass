@@ -15,10 +15,10 @@
     --  The file is loaded by the Xinha Core when no alternative method (plugin) is loaded.
     --
     --
-    --  $HeadURL: http://svn.xinha.python-hosting.com/tags/0.92beta/modules/GetHtml/DOMwalk.js $
-    --  $LastChangedDate: 2007-02-16 00:01:45 +0100 (Fr, 16 Feb 2007) $
-    --  $LastChangedRevision: 742 $
-    --  $LastChangedBy: ray $
+    --  $HeadURL$
+    --  $LastChangedDate$
+    --  $LastChangedRevision$
+    --  $LastChangedBy$
     --------------------------------------------------------------------------*/
 function GetHtmlImplementation(editor) {
     this.editor = editor;
@@ -27,9 +27,9 @@ function GetHtmlImplementation(editor) {
 GetHtmlImplementation._pluginInfo = {
   name          : "GetHtmlImplementation DOMwalk",
   origin        : "Xinha Core",
-  version       : "$LastChangedRevision: 742 $".replace(/^[^:]*: (.*) \$$/, '$1'),
+  version       : "$LastChangedRevision$".replace(/^[^:]*:\s*(.*)\s*\$$/, '$1'),
   developer     : "The Xinha Core Developer Team",
-  developer_url : "$HeadURL: http://svn.xinha.python-hosting.com/tags/0.92beta/modules/GetHtml/DOMwalk.js $".replace(/^[^:]*: (.*) \$$/, '$1'),
+  developer_url : "$HeadURL$".replace(/^[^:]*:\s*(.*)\s*\$$/, '$1'),
   sponsor       : "",
   sponsor_url   : "",
   license       : "htmlArea"
@@ -37,21 +37,13 @@ GetHtmlImplementation._pluginInfo = {
 
 // Retrieves the HTML code from the given node.	 This is a replacement for
 // getting innerHTML, using standard DOM calls.
-// Wrapper catch a Mozilla-Exception with non well formed html source code
+// Wrapper legacy see #442
 Xinha.getHTML = function(root, outputRoot, editor)
 {
-  try
-  {
-    return Xinha.getHTMLWrapper(root,outputRoot,editor);
-  }
-  catch(ex)
-  {   
-    alert(Xinha._lc('Your Document is not well formed. Check JavaScript console for details.'));
-    return editor._iframe.contentWindow.document.body.innerHTML;
-  }
+  return Xinha.getHTMLWrapper(root,outputRoot,editor);
 };
 
-Xinha.emptyAttributes = " checked disabled ismap readonly nowrap compact declare selected defer multiple noresize noshade ";
+Xinha.emptyAttributes = " checked disabled ismap readonly nowrap compact declare selected defer multiple noresize noshade "
 
 Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
 {
@@ -90,7 +82,7 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
     case 7: // Node.PROCESSING_INSTRUCTION_NODE
       // PI's don't seem to survive going into the wysiwyg mode, (at least in moz)
       // so this is purely academic
-      html += (Xinha.is_ie ? ('\n' + indent) : '') + '<?' + root.target + ' ' + root.data + ' ?>';
+      html += (Xinha.is_ie ? ('\n' + indent) : '') + '<'+'?' + root.target + ' ' + root.data + ' ?>';
     break;
 
     case 1: // Node.ELEMENT_NODE
@@ -113,10 +105,14 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
         {
           html += (Xinha.is_ie ? ('\n' + indent) : '') + "<head>";
         }
-        // lowercasize
+        
         var save_multiline = RegExp.multiline;
         RegExp.multiline = true;
-        var txt = root.innerHTML.replace(Xinha.RE_tagName, function(str, p1, p2) { return p1 + p2.toLowerCase(); });
+        var txt = 
+        root.innerHTML
+        .replace(Xinha.RE_tagName, function(str, p1, p2) { return p1 + p2.toLowerCase(); }) // lowercasize
+        .replace(/\s*=\s*(([^'"][^>\s]*)([>\s])|"([^"]+)"|'([^']+)')/g, '="$2$4$5"$3') //add attribute quotes
+        .replace(/<(link|meta)((\s*\S*="[^"]*")*)>([\n\r]*)/g, '<$1$2 />\n'); //terminate singlet tags
         RegExp.multiline = save_multiline;
         html += txt + '\n';
         if ( outputRoot )
@@ -128,12 +124,28 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
       else if ( outputRoot )
       {
         closed = (!(root.hasChildNodes() || Xinha.needsClosingTag(root)));
-        html += (Xinha.is_ie && Xinha.isBlockElement(root) ? ('\n' + indent) : '') + "<" + root.tagName.toLowerCase();
+        html += ((Xinha.isBlockElement(root)) ? ('\n' + indent) : '') + "<" + root.tagName.toLowerCase();
         var attrs = root.attributes;
         
-        for ( i = 0; i < attrs.length; ++i )
+        for ( i = attrs.length-1; i >= 0; --i )
         {
           var a = attrs.item(i);
+          // In certain browsers (*cough* firefox) the dom node loses
+          // information if the image is currently broken.  In order to prevent
+          // corrupting the height and width of image tags, we strip height and
+          // width from the image rather than reporting bad information.
+          if (Xinha.is_real_gecko && (root.tagName.toLowerCase() == 'img') &&
+              ((a.nodeName.toLowerCase() == 'height') || (a.nodeName.toLowerCase() == 'width')))
+          {
+            if (!root.complete || root.naturalWidth === 0)
+            {
+              // This means that firefox has been unable to read the dimensions from the actual image
+              continue;
+            }
+          }
+
+          if(root.tagName.toLowerCase() == 'img' && a.nodeName.toLowerCase() == 'complete') continue;
+
           if (typeof a.nodeValue == 'object' ) continue; // see #684
           if (root.tagName.toLowerCase() == "input" 
               && root.type.toLowerCase() == "checkbox" 
@@ -151,7 +163,7 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
             continue;
           }
           var name = a.nodeName.toLowerCase();
-          if ( /_moz_editor_bogus_node/.test(name) )
+          if ( /_moz_editor_bogus_node/.test(name) || ( name == 'class' && a.nodeValue == 'webkit-block-placeholder') )
           {
             html = "";
             break;
@@ -176,15 +188,34 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
             // development.  Browser differences
             // suck.
             //
+            // If you have a percent width in width/height then we may need to use nodeValue
+            //  it may well be OK to use nodeValue all the time these days, but it's easier
+            //  to just do it for these and not fix what's not broke
+            if(name == "width" || name == "height")
+            {
+              if(a.nodeValue.match(/%$/))
+              {
+                value = a.nodeValue;
+              }
+              else
+              {
+                value = root[a.nodeName];
+              }
+            }
             // Using Gecko the values of href and src are converted to absolute links
-            // unless we get them using nodeValue()
-            if ( typeof root[a.nodeName] != "undefined" && name != "href" && name != "src" && !(/^on/.test(name)) )
+            // unless we get them using nodeValue()            
+            else if ( typeof root[a.nodeName] != "undefined" && name != "href" && name != "src" && !(/^on/.test(name)) )
             {
               value = root[a.nodeName];
             }
             else
             {
               value = a.nodeValue;
+			  if (name == 'class')
+			  {
+			  	value = value.replace(/Apple-style-span/,'');
+				if (!value) continue;
+			  }
               // IE seems not willing to return the original values - it converts to absolute
               // links using a.nodeValue, a.value, a.stringValue, root.getAttribute("href")
               // So we have to strip the baseurl manually :-/
@@ -217,18 +248,26 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
           {
             value = root.style.cssText.replace(/rgb\(.*?\)/ig,function(rgb){ return Xinha._colorToRgb(rgb) });
           }
+          else if (!value) // IE8 has style in attributes (see below), but it's empty! 
+          {
+            continue;
+          }
+
+/* This looks wrong, http://trac.xinha.org/ticket/1391#comment:7
           if ( /^(_moz)?$/.test(value) )
           {
             // Mozilla reports some special tags
             // here; we don't need them.
             continue;
           }
+*/
+
           html += " " + name + '="' + Xinha.htmlEncode(value) + '"';
         }
         //IE fails to put style in attributes list & cssText is UPPERCASE
         if ( Xinha.is_ie && root.style.cssText )
         {
-          html += ' style="' + root.style.cssText.toLowerCase() + '"';
+          html += ' style="' + root.style.cssText.replace(/(^)?([^:]*):(.*?)(;|$)/g, function(m0, m1,m2,m3, m4){return m2.toLowerCase() + ':' + m3 + m4;}) + '"';
         }
         if ( Xinha.is_ie && root.tagName.toLowerCase() == "option" && root.selected )
         {
@@ -267,6 +306,10 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
           html += innerText + '</'+root_tag+'>' + ((Xinha.is_ie) ? '\n' : '');
         }
       }
+      else if (root_tag == "pre")
+      {
+        html += ((Xinha.is_ie) ? '\n' : '') + root.innerHTML.replace(/<br>/g,'\n') + '</'+root_tag+'>';
+      }
       else
       {
         for ( i = root.firstChild; i; i = i.nextSibling )
@@ -279,13 +322,31 @@ Xinha.getHTMLWrapper = function(root, outputRoot, editor, indent)
         }
         if ( outputRoot && !closed )
         {
-          html += (Xinha.is_ie && Xinha.isBlockElement(root) && containsBlock ? ('\n' + indent) : '') + "</" + root.tagName.toLowerCase() + ">";
+          html += (((Xinha.isBlockElement(root) && containsBlock) || root_tag == 'head' || root_tag == 'html') ? ('\n' + indent) : '') + "</" + root.tagName.toLowerCase() + ">";
         }
       }
     break;
 
     case 3: // Node.TEXT_NODE
-      html = /^script|noscript|style$/i.test(root.parentNode.tagName) ? root.data : Xinha.htmlEncode(root.data);
+      if ( /^script|noscript|style$/i.test(root.parentNode.tagName) )
+      {
+        html = root.data;
+      }
+      else if(root.data.trim() == '')
+      {
+        if(root.data)
+        {
+          html = ' ';
+        }
+        else
+        {
+          html = '';
+        }
+      }
+      else
+      {
+        html = Xinha.htmlEncode(root.data);
+      }
     break;
 
     case 8: // Node.COMMENT_NODE

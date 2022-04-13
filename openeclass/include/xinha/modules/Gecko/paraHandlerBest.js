@@ -749,8 +749,11 @@ EnterParagraphs.prototype.isNormalListItem = function(rng)
   {
     // neither we nor our parent are a list item. this is not a normal
     // li case.
-    
-    return false;
+    var listNode = this.editor._getFirstAncestorForNodeAndWhy(node, ["li"])[0];
+    if ( typeof listNode == 'undefined' || !listNode )
+    {
+      return false;
+    }
   }
   
   // at this point we have a listNode. Is it the first list item?
@@ -888,7 +891,8 @@ EnterParagraphs.prototype.handleEnter = function(ev)
         holdEnd = holdEnd.parentNode;
       }
       
-      this.editor.scrollToElement(holdEnd);
+      this.editor.scrollElementIntoViewport(holdEnd);
+      //this.editor.scrollToElement(holdEnd);
     }
     catch (e)
     {

@@ -33,7 +33,7 @@
   {
 
 //  Strip http:// from the URL if present
-    $URL = preg_replace('|^http://|', '', $URL);
+    $URL = preg_replace("/^https?:\/\//i", "", $URL);
 
 //  Separate into Host and URI
     $Host = substr($URL, 0, strpos($URL, "/"));
@@ -60,7 +60,7 @@
 
 
 //  Open the connection to the host
-    $socket = fsockopen($Host, 80, &$errno, &$errstr);
+    $socket = fsockopen($Host, 80, $errno, $errstr);
     if (!$socket) {
       $result = "($errno) $errstr";
       return $Result;
@@ -95,7 +95,7 @@
   }
 
   // Any errors would screq up our javascript
-  error_reporting(E_NONE);
+  error_reporting(0);
   ini_set('display_errors', false);
 
   if(trim(@$_REQUEST['content']))
@@ -115,7 +115,7 @@
       $content = ob_get_contents();
     ob_end_clean();
 
-    if(!strlen($content))
+    if(strlen($content) < 4)
     {
       // Tidy on the local machine failed, try a post
       $res_1
@@ -137,7 +137,7 @@
             ),
           'http://infohound.net/tidy/tidy.pl');
 
-      if(preg_match('/<a href="([^"]+)" title="Save the tidied HTML/', $res_1, $m))
+      if(preg_match('/<a href="([^"]+)" title'.'="Save the tidied HTML/', $res_1, $m))
       {
         $tgt = strtr($m[1], array_flip(get_html_translation_table(HTML_ENTITIES)));
         $content = implode('', file('http://infohound.net/tidy/' . $tgt));
