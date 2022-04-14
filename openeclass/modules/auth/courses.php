@@ -25,6 +25,9 @@
 * =========================================================================*/
 
 $require_login = TRUE;
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 include '../../include/baseTheme.php';
 $nameTools = $langChoiceLesson;
 $navigation[] = array ("url"=>"courses.php", "name"=> $langChoiceDepartment);
@@ -57,49 +60,58 @@ if (isset($_POST['selectCourse']) and is_array($_POST['selectCourse'])) {
         $selectCourse = array();
 }
 
-if (isset($_POST["submit"])) {
-        foreach ($changeCourse as $key => $value) {
-                $cid = intval($value);
-                if (!in_array($cid, $selectCourse)) {
-                        // check if user tries to unregister from restricted course
-                        if (is_restricted($cid)) {
-                                $tool_content .= "(restricted unsub $cid) ";
-                        } else {
-                                db_query("DELETE FROM cours_user
-                                                WHERE statut <> 1 AND statut <> 10 AND
-                                                user_id = $uid AND cours_id = $cid");
-                        }
-                }
-        }
-
-	$errorExists = false;
-        foreach ($selectCourse as $key => $value) {
-                $cid = intval($value);
-                $course_info = db_query("SELECT fake_code, password FROM cours WHERE cours_id = $cid");
-                if ($course_info) {
-                        $row = mysql_fetch_array($course_info);
-                        if (!empty($row['password']) and $row['password'] != autounquote($_POST['pass' . $cid])) {
-                                $errorExists = true;
-                                $restrictedCourses[] = $row['fake_code'];
-                                continue;
-                        }
-                        if (is_restricted($cid)) { //do not allow registration to restricted course
-                                $errorExists = true;
-                                $restrictedCourses[] = $row['fake_code'];
-                        } else {
-                                db_query("INSERT IGNORE INTO `cours_user` (`cours_id`, `user_id`, `statut`, `reg_date`)
-                                                 VALUES ($cid, $uid, 5, CURDATE())");
-                        }
-                }
-        }
-
-	if ($errorExists) {
-                $tool_content .= "<p class='caution_small'>$langWrongPassCourse " .
-                                 join(', ', $restrictedCourses) . "</p><br />";
+if (isset($_POST["submit"])) { 
+        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+          header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
         } else {
-                $tool_content .= "<p class='success_small'>$langRegDone</p><br />";
+                foreach ($changeCourse as $key => $value) {
+                        $cid = intval($value);
+                        if (!in_array($cid, $selectCourse)) {
+                                // check if user tries to unregister from restricted course
+                                if (is_restricted($cid)) {
+                                        $tool_content .= "(restricted unsub $cid) ";
+                                } else {
+                                        db_query("DELETE FROM cours_user
+                                                        WHERE statut <> 1 AND statut <> 10 AND
+                                                        user_id = $uid AND cours_id = $cid");
+                                }
+                        }
+                }
+
+                $errorExists = false;
+                foreach ($selectCourse as $key => $value) {
+                        $cid = intval($value);
+                        $course_info = db_query("SELECT fake_code, password FROM cours WHERE cours_id = $cid");
+                        if ($course_info) {
+                                $row = mysql_fetch_array($course_info);
+                        
+                                if (!empty($row['password']) and $row['password'] != autounquote($_POST['pass' . $cid])) {
+                                        $errorExists = true;
+                                        $restrictedCourses[] = $row['fake_code'];
+                                        continue;
+                                }
+                                if (is_restricted($cid)) { //do not allow registration to restricted course
+                                        $errorExists = true;
+                                        $restrictedCourses[] = $row['fake_code'];
+                                } else {
+                                        db_query("INSERT IGNORE INTO `cours_user` (`cours_id`, `user_id`, `statut`, `reg_date`)
+                                                         VALUES ($cid, $uid, 5, CURDATE())");
+                                }
+                        
+                        }
+                }
+                if ($errorExists) {
+                        $tool_content .= "<p class='caution_small'>$langWrongPassCourse " .
+                                        join(', ', $restrictedCourses) . "</p><br />";
+                } else {
+                        $tool_content .= "<p class='success_small'>$langRegDone</p><br />";
+                }
+                $tool_content .= "<div align=right><a href='../../index.php'>$langHome</a></div>";
+
         }
-        $tool_content .= "<div align=right><a href='../../index.php'>$langHome</a></div>";
+        
+
+	
 
 } else {
         $fac = getfacfromfc($fc);
@@ -147,6 +159,7 @@ if (isset($_POST["submit"])) {
 			$tool_content .= expanded_faculte($fac, $fc, $uid);
 			$tool_content .= "
     <br />
+    <input type='hidden' name='csrf_token' value=$token>
     <table width='99%' class='framed' align='left'>
     <tbody>
     <tr>

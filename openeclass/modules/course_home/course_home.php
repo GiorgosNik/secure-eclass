@@ -35,7 +35,9 @@
 
 $require_current_course = TRUE;
 $guest_allowed = true;
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 //$courseHome is used by the breadcrumb logic
 //See function draw() in baseTheme.php for details
 //$courseHome = true;
@@ -314,21 +316,14 @@ if ($is_adminOfCourse or
           <td align='left'>
             <form action='{$urlServer}student_view.php' method='post'>$button_message
               <input class=\"Login\" type='submit' name='submit' value='>' />
+              <input type='hidden' name='csrf_token' value=$token>
             </form>
           </td>
         </tr>
         </tbody>
         </table>
-
-
         ";
-        /*
-        $tool_content .=
-                "<tr><td colspan='3' style='text-align: right'>" .
-                "<form action='{$urlServer}student_view.php' method='post'>" .
-                "<input type='submit' name='submit' value='$button_message' />" .
-                "</form></td></tr>\n";
-        */
+
 }
 
 $tool_content .= "

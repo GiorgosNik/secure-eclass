@@ -40,7 +40,9 @@ $requier_help = false;
 $helpTopic = 'Coursedescription';
 $require_login = true;
 $require_prof = true;
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 include '../../include/baseTheme.php';
 include '../../include/lib/textLib.inc.php';
 // support for math symbols
@@ -79,70 +81,82 @@ mysql_select_db($_SESSION['dbname']);
 
 if ($is_adminOfCourse) {
         if (isset($_POST['save'])) {
-                if ($_POST['edIdBloc'] == 'add') {
-                        $res = db_query("SELECT MAX(id) FROM course_description");
-                        list($max_id) = mysql_fetch_row($res);
-                        $new_id = max(sizeof($titreBloc), $max_id) + 1;
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
                 } else {
-                        $new_id = intval($_POST['edIdBloc']);
+                        if ($_POST['edIdBloc'] == 'add') {
+                                $res = db_query("SELECT MAX(id) FROM course_description");
+                                list($max_id) = mysql_fetch_row($res);
+                                $new_id = max(sizeof($titreBloc), $max_id) + 1;
+                        } else {
+                                $new_id = intval($_POST['edIdBloc']);
+                        }
+                        if (empty($edTitleBloc)) {
+                                $edTitleBloc = $titreBloc[$edIdBloc];
+                        }
+                        db_query("INSERT IGNORE INTO course_description SET id = $new_id");
+                        db_query("UPDATE course_description
+                                        SET title = " . autoquote(mysql_real_escape_string(trim($edTitleBloc))) . ",
+                                        content = " . autoquote(mysql_real_escape_string(trim($edContentBloc))) . ",
+                                        `upDate` = NOW()
+                                        WHERE id = $new_id");
+                        header('Location: ' . $urlServer . 'modules/course_description/edit.php');
+                        exit;
                 }
-                if (empty($edTitleBloc)) {
-                        $edTitleBloc = $titreBloc[$edIdBloc];
-                }
-                db_query("INSERT IGNORE INTO course_description SET id = $new_id");
-                db_query("UPDATE course_description
-                                SET title = " . autoquote(mysql_real_escape_string(trim($edTitleBloc))) . ",
-                                    content = " . autoquote(mysql_real_escape_string(trim($edContentBloc))) . ",
-                                    `upDate` = NOW()
-                                WHERE id = $new_id");
-                header('Location: ' . $urlServer . 'modules/course_description/edit.php');
-                exit;
         } elseif (isset($_GET['delete'])) {
-                $del_id = intval($_GET['numBloc']);
-		$res = db_query("DELETE FROM course_description WHERE id = $del_id");
-		$tool_content .= "<p class='success'>$langBlockDeleted<br /><br /><a href='$_SERVER[PHP_SELF]'>$langBack</a></p>";
-
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                } else {
+                        $del_id = intval($_GET['numBloc']);
+                        $res = db_query("DELETE FROM course_description WHERE id = $del_id");
+                        $tool_content .= "<p class='success'>$langBlockDeleted<br /><br /><a href='$_SERVER[PHP_SELF]'>$langBack</a></p>";
+                }
         } elseif (isset($_REQUEST['numBloc'])) {
-                // Edit action
-                $edit_id = intval($_REQUEST['numBloc']);
-                $numBlock = $edit_id;
-                $res = db_query("SELECT * FROM course_description WHERE id = $edit_id");
-                $title = '';
-                if ($res and mysql_num_rows($res) > 0) {
-                        $blocs = mysql_fetch_array($res);
-                        $title = q($blocs['title']);
-                        $contentBloc = $blocs["content"];
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
                 } else {
-                        if (isset($titreBloc[$edit_id])) {
-                                $title = q($titreBloc[$edit_id]);
+                        // Edit action
+                        $edit_id = intval($_REQUEST['numBloc']);
+                        $numBlock = $edit_id;
+                        $res = db_query("SELECT * FROM course_description WHERE id = $edit_id");
+                        $title = '';
+                        if ($res and mysql_num_rows($res) > 0) {
+                                $blocs = mysql_fetch_array($res);
+                                $title = q($blocs['title']);
+                                $contentBloc = $blocs["content"];
+                        } else {
+                                if (isset($titreBloc[$edit_id])) {
+                                        $title = q($titreBloc[$edit_id]);
+                                }
+                                if (!isset($titreBlocNotEditable[$edit_id]) or !$titreBlocNotEditable[$numBloc]) {
+                                        $numBloc = 'add';
+                                }
                         }
+
+                        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>
+                                <input type='hidden' name='csrf_token' value=$token>
+                                <input type='hidden' name='edIdBloc' value='$numBloc' />
+                                <table width='99%' class='FormData' align='left'><tbody>
+                                <tr><th class='left' width='220'>$langTitle:</th>
+                                <td><b>$title</b>";
                         if (!isset($titreBlocNotEditable[$edit_id]) or !$titreBlocNotEditable[$numBloc]) {
-                                $numBloc = 'add';
+                                $tool_content .= "</td></tr><tr><th class='left'>&nbsp;</th>
+                                <td><input type='text' name='edTitleBloc' value='$title' />
+                                        </td></tr>";
+                        } else {
+                                $tool_content .= "<input type='hidden' name='edTitleBloc' value='$title' /></td></tr>";
                         }
-                }
 
-                $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>
-                        <input type='hidden' name='edIdBloc' value='$numBloc' />
-                        <table width='99%' class='FormData' align='left'><tbody>
-                           <tr><th class='left' width='220'>$langTitle:</th>
-                               <td><b>$title</b>";
-                if (!isset($titreBlocNotEditable[$edit_id]) or !$titreBlocNotEditable[$numBloc]) {
-                        $tool_content .= "</td></tr><tr><th class='left'>&nbsp;</th>
-                            <td><input type='text' name='edTitleBloc' value='$title' />
-                                </td></tr>";
-                } else {
-                        $tool_content .= "<input type='hidden' name='edTitleBloc' value='$title' /></td></tr>";
+                        $tool_content .= "
+                                <tr><th class='left'>&nbsp;</th>
+                                <td><table class='xinha_editor'>
+                                <tr><td><textarea id='xinha' name='edContentBloc'>" . 
+                                        q(@$contentBloc) . "</textarea></td></tr></table></td></tr>
+                                <tr><th class='left'>&nbsp;</th>
+                                <td><input type='submit' name='save' value='$langAdd' />&nbsp;&nbsp;
+                                        <input type='submit' name='ignore' value='$langBackAndForget' /></td></tr>
+                        </tbody></table></form>\n";
                 }
-
-                $tool_content .= "
-                        <tr><th class='left'>&nbsp;</th>
-                            <td><table class='xinha_editor'>
-                            <tr><td><textarea id='xinha' name='edContentBloc'>" . 
-                                q(@$contentBloc) . "</textarea></td></tr></table></td></tr>
-                        <tr><th class='left'>&nbsp;</th>
-                            <td><input type='submit' name='save' value='$langAdd' />&nbsp;&nbsp;
-                                <input type='submit' name='ignore' value='$langBackAndForget' /></td></tr>
-                    </tbody></table></form>\n";
         } else {
                 $sql = "SELECT * FROM `course_description` order by id";
                 $res = db_query($sql,$db);
@@ -153,7 +167,7 @@ if ($is_adminOfCourse) {
                 }
                 $tool_content .= "
     <form method='post' action='$_SERVER[PHP_SELF]'>
-
+    <input type='hidden' name='csrf_token' value=$token>
     <table width='99%' align='left' class='FormData'>
     <tbody>
     <tr>
