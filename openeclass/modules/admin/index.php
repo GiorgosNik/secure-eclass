@@ -110,7 +110,7 @@ $last_prof_info = "<b>".$myrow['prenom']." ".$myrow['nom']."</b> (".$myrow['emai
 $sql = "SELECT prenom, nom, email, registered_at FROM user WHERE statut = 5 ORDER BY user_id DESC LIMIT 0,1";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$last_stud_info = "<b>".$myrow['prenom']." ".$myrow['nom']."</b> (".$myrow['email'].", ".date("j/n/Y H:i",$myrow['registered_at']).")";
+$last_stud_info = "<b>".htmlspecialchars($myrow['prenom'], ENT_QUOTES, 'UTF-8')." ".htmlspecialchars($myrow['nom'], ENT_QUOTES, 'UTF-8')."</b> (".htmlspecialchars($myrow['email'], ENT_QUOTES, 'UTF-8').", ".date("j/n/Y H:i",$myrow['registered_at']).")";
 
 // Find admin's last login
 $sql = "SELECT `when` FROM loginout WHERE id_user = '".$uid."' AND action = 'LOGIN' ORDER BY `when` DESC LIMIT 1,1";

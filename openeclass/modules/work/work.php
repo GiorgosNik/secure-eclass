@@ -246,7 +246,7 @@ $token = $_SESSION['csrf_token'];
 function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 {
 	global $tool_content, $workPath;
-
+	
 	$secret = uniqid("");
 
 	mysql_query("PREPARE stmt2 FROM 'INSERT INTO assignments SET title=?, description=?, comments=?, deadline=?, submission_date=NOW(), secret_directory=?, group_submissions=?';");
@@ -255,7 +255,7 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	mysql_query('SET @b = "' . mysql_real_escape_string($desc) . '";');
 	mysql_query('SET @c = "' . mysql_real_escape_string($comments) . '";');
 	mysql_query('SET @d = "' . mysql_real_escape_string($deadline) . '";');
-	mysql_query('SET @e = ' .  mysql_real_escape_string($secret) . ';');
+	mysql_query('SET @e = "' .  mysql_real_escape_string($secret) . '";');
 	mysql_query('SET @f = "'  . mysql_real_escape_string($group_submissions) . '";');
                 
 	db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f;");
@@ -748,28 +748,28 @@ function assignment_details($id, $row, $message = null)
     </tr>
     <tr>
       <th class='left'>$m[title]:</th>
-      <td>$row[title]</td>
+      <td>".htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8')."</td>
     </tr>";
 	$tool_content .= "
     <tr>
       <th class='left'>$m[description]:</th>
-      <td>$row[description]</td>
+      <td>".htmlspecialchars($row['description'], ENT_QUOTES, 'UTF-8')."</td>
     </tr>";
 	if (!empty($row['comments'])) {
 		$tool_content .= "
     <tr>
       <th class='left'>$m[comments]:</th>
-      <td>$row[comments]</td>
+      <td>".htmlspecialchars($row['comments'], ENT_QUOTES, 'UTF-8')."</td>
     </tr>";
 	}
 	$tool_content .= "
     <tr>
       <th class='left'>$m[start_date]:</th>
-      <td>" . nice_format($row['submission_date']) . "</td>
+      <td>" . nice_format(htmlspecialchars($row['submission_date'], ENT_QUOTES, 'UTF-8')) . "</td>
     </tr>
     <tr>
       <th class='left'>$m[deadline]:</th>
-      <td>" . nice_format($row['deadline']) . " ";
+      <td>" . nice_format(htmlspecialchars($row['deadline'], ENT_QUOTES, 'UTF-8')) . " ";
 	if ($row['days'] > 1) {
 		$tool_content .= "<span class=\"not_expired\">$langDaysLeft $row[days] $langDays</span></td>
     </tr>";

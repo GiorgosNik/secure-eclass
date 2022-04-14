@@ -205,14 +205,12 @@ if ($persoStatus == "yes")  {
 ##[END personalisation modification]############
 
 unset($_SESSION['uname']);
-unset($_SESSION['pass']);
 unset($_SESSION['nom']);
 unset($_SESSION['prenom']);
 
-$_SESSION['uname'] = $username_form;
-$_SESSION['pass'] = $password_form;
-$_SESSION['nom'] = $nom_form;
-$_SESSION['prenom'] = $prenom_form;
+$_SESSION['uname'] = htmlspecialchars($username_form, ENT_QUOTES, 'UTF-8');
+$_SESSION['nom'] = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+$_SESSION['prenom'] = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
 
 ##[BEGIN personalisation modification]############IT DOES NOT UPDATE THE DB!!!
 if (isset($_SESSION['perso_is_active'])) {
@@ -238,9 +236,9 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	if (isset($_SESSION['shib_user'])) {
                 $auth_text = "Shibboleth user";
 		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8')."</b> [".$auth_text."]
-	        <input type=\"hidden\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
+	        <input type=\"hidden\" name=\"prenom_form\" value=".htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8')."></td>";
 	} else {
-		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
+		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=".htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8')."></td>";
 	}
 	$tool_content .= "</tr>
     <tr>

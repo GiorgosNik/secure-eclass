@@ -232,9 +232,9 @@ if (!isset($submit)) {
 		$uname = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
 		$_SESSION['uid'] = $uid;
 		$_SESSION['statut'] = 5;
-		$_SESSION['prenom'] = $prenom;
-		$_SESSION['nom'] = $nom;
-		$_SESSION['uname'] = $uname;
+		$_SESSION['prenom'] = htmlspecialchars($prenom, ENT_QUOTES, 'UTF-8');
+		$_SESSION['nom'] = htmlspecialchars($nom, ENT_QUOTES, 'UTF-8');
+		$_SESSION['uname'] = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
 		
 		// registration form
 		$tool_content .= "<table width='99%'><tbody><tr>" .

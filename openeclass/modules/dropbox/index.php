@@ -147,11 +147,11 @@ tCont2;
 	{
 		$reciepientsSize = 3;
 	}
-
+	
 	$tool_content .= "
     <tr>
       <th class='left'>".$dropbox_lang["authors"]." :</th>
-      <td><input type='text' name='authors' value='".getUserNameFromId($uid)."' size='40' class='FormData_InputText' /></td>
+      <td><input type='text' name='authors' value='".htmlspecialchars(getUserNameFromId($uid), ENT_QUOTES, 'UTF-8')."' size='40' class='FormData_InputText' /></td>
     </tr>
     <tr>
       <th class='left'>".$dropbox_lang["description"]." :</th>
@@ -294,7 +294,7 @@ if (!isset($_GET['mailing']))  // RH: Mailing detail: no received files
         <td width=\"3\"><img src=\"../../template/classic/img/inbox.gif\" title=\"$dropbox_lang[receivedTitle]\" /></td>
         <td>";
 
-		$tool_content .= "<a href='dropbox_download.php?id=".urlencode($w->id)."' target=_blank>".$w->title."</a>";
+		$tool_content .= "<a href='dropbox_download.php?id=".urlencode($w->id)."' target=_blank>".$clean."</a>";
 
 		$fSize = ceil(($w->filesize)/1024);
 		$tool_content .= <<<tCont9
@@ -315,7 +315,7 @@ tCont9;
         <td><div class=\"cellpos\">";
 
 	$tool_content .= "
-        <a href=\"dropbox_submit.php?deleteReceived=".urlencode($w->id)."&amp;dropbox_unid=".urlencode($dropbox_unid)."\" onClick='return confirmation(\"$w->title\");'>
+        <a href=\"dropbox_submit.php?deleteReceived=".urlencode($w->id)."&amp;dropbox_unid=".urlencode($dropbox_unid)."\" onClick='return confirmation(\"$clean\");'>
         <img src=\"../../template/classic/img/delete-small.png\" title=\"$langDelete\" /></a>";
 
 	$tool_content .= "</div></td></tr>";
@@ -461,21 +461,22 @@ foreach ($dropbox_person -> sentWork as $w)
 	        } else {
 	           $tool_content .= "\n       <tr class=\"odd\">";
             	}
+				$clean = htmlspecialchars($w->title, ENT_QUOTES, 'UTF-8');
 	$tool_content .= <<<tCont12
-
-		<td width="3"><img src="../../template/classic/img/outbox.gif" title="$w->title" /></td>
+	
+		<td width="3"><img src="../../template/classic/img/outbox.gif" title="$clean" /></td>
 		<td ><a href="$ahref" target="_blank">
-		$w->title</a>
+		$clean</a>
         <small>&nbsp;&nbsp;&nbsp;($fSize kB)</small>
         <br />
         <small>$w->description</small></td>
 
 tCont12;
 	$tool_content .="<td>";
-
+	
 	foreach($w -> recipients as $r)
 	{
-		$tool_content .=  $r["name"] . ", <br>\n";
+		$tool_content .=  htmlspecialchars($r["name"], ENT_QUOTES, 'UTF-8') . ", <br>\n";
 	}
 	$tool_content = strrev(substr(strrev($tool_content), 7));
 
@@ -486,7 +487,7 @@ tCont12;
 
 	$tool_content .= "
 	<a href=\"dropbox_submit.php?deleteSent=".urlencode($w->id)."&amp;dropbox_unid=".urlencode($dropbox_unid) . $mailingInUrl."\"
-		onClick='return confirmation(\"$w->title\");'>
+		onClick='return confirmation(\"$clean\");'>
 		<img src=\"../../template/classic/img/delete-small.png\" title=\"$langDelete\" /></a>";
 	$tool_content .= "</div></td></tr>";
 

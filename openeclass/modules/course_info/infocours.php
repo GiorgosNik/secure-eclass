@@ -99,7 +99,7 @@ if (isset($_POST['submit'])) {
 		mysql_query('SET @d = "' . mysql_real_escape_string(htmlspecialchars($_POST['course_addon'], ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @e = "' . mysql_real_escape_string(htmlspecialchars($_POST['course_keywords'], ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @f = '  . intval(mysql_real_escape_string($_POST['formvisible'])) . ';');
-		mysql_query('SET @g = "' . mysql_real_escape_string($_POST['titulary']) . '";');
+		mysql_query('SET @g = "' . mysql_real_escape_string(htmlspecialchars($_POST['titulary'], ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @h = "' . mysql_real_escape_string($newlang) . '";');
 		mysql_query('SET @i = "' . mysql_real_escape_string($_POST['type']) . '";');
 		mysql_query('SET @j = "' . mysql_real_escape_string($_POST['password']) . '";');
