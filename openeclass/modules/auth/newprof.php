@@ -135,8 +135,12 @@ $registration_errors = array();
                                       break;
                     }
             }
-            mysql_query("PREPARE stmt1 FROM 'INSERT INTO prof_request SET profname=?, profsurname=?, profuname=?, profemail=?, proftmima=?, profcomm=?, status=1, statut=1, date_open=NOW(), comment=?, lang=?';");
+            $prenom_form = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
+            $nom_form = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+            $uname = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
+            $usercomment = htmlspecialchars($usercomment, ENT_QUOTES, 'UTF-8');
             
+            mysql_query("PREPARE stmt1 FROM 'INSERT INTO prof_request SET profname=?, profsurname=?, profuname=?, profemail=?, proftmima=?, profcomm=?, status=1, statut=1, date_open=NOW(), comment=?, lang=?';");
             mysql_query('SET @a = "' . mysql_real_escape_string($prenom_form) . '";');
             mysql_query('SET @b = "' . mysql_real_escape_string($nom_form) . '";');
             mysql_query('SET @c = "' . mysql_real_escape_string($uname) . '";');

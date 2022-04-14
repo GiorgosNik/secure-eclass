@@ -378,21 +378,20 @@ if (isset($_POST['create_course'])) {
 		mysql_select_db("$mysqlMainDb");
 
 		mysql_query("PREPARE stmt1 FROM 'INSERT INTO cours SET code=?, languageCourse=?, intitule=?, description=?, course_addon=?, course_keywords=?, faculte=?, visible=?, titulaires=?, fake_code=?, type=?, faculteid=?, first_create=NOW()';");
-
 		mysql_query('SET @a = "' . mysql_real_escape_string($code) . '";');
 		mysql_query('SET @b = "' . mysql_real_escape_string($language) . '";');
-		mysql_query('SET @c = "' . mysql_real_escape_string($intitule) . '";');
-		mysql_query('SET @d = "' . mysql_real_escape_string($description) . '";');
-		mysql_query('SET @e = "' . mysql_real_escape_string($course_addon) . '";');
-		mysql_query('SET @f = "' . mysql_real_escape_string($course_keywords) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string(htmlspecialchars($intitule, ENT_QUOTES, 'UTF-8')) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string(htmlspecialchars($description, ENT_QUOTES, 'UTF-8')) . '";');
+		mysql_query('SET @e = "' . mysql_real_escape_string(htmlspecialchars($course_addon, ENT_QUOTES, 'UTF-8')) . '";');
+		mysql_query('SET @f = "' . mysql_real_escape_string(htmlspecialchars($course_keywords, ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @g = "' . mysql_real_escape_string($facname) . '";');
 		mysql_query('SET @h = "' . mysql_real_escape_string($formvisible) . '";');
-		mysql_query('SET @i = "' . mysql_real_escape_string($titulaires) . '";');
+		mysql_query('SET @i = "' . mysql_real_escape_string(htmlspecialchars($titulaires, ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @j = "' . mysql_real_escape_string($code) . '";');
 		mysql_query('SET @k = "' . mysql_real_escape_string($type) . '";');
 		mysql_query('SET @l = "' . mysql_real_escape_string($facid) . '";');
 
-
+		$intitule = htmlspecialchars($intitule, ENT_QUOTES, 'UTF-8');
 		$result = db_query("EXECUTE stmt1 USING @a, @b, @c, @d, @e, @f, @g, @h, @i, @j, @k, @l;");
 
 

@@ -127,6 +127,9 @@ if (!isset($submit)) {
 	</table>
 	</form>";
 } else {
+	$prenom_form = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
+	$nom_form = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+
 	// trim white spaces in the end and in the beginning of the word
 	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
 	// registration
@@ -224,6 +227,9 @@ if (!isset($submit)) {
 		}
 		mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
 		VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+		$prenom = htmlspecialchars($prenom, ENT_QUOTES, 'UTF-8');
+		$nom = htmlspecialchars($nom, ENT_QUOTES, 'UTF-8');
+		$uname = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
 		$_SESSION['uid'] = $uid;
 		$_SESSION['statut'] = 5;
 		$_SESSION['prenom'] = $prenom;

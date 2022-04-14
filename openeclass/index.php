@@ -159,8 +159,8 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		} else {
 			$warning = '';
 			$log = 'yes';
-			$_SESSION['nom'] = $nom;
-			$_SESSION['prenom'] = $prenom;
+			$_SESSION['nom'] = htmlspecialchars($nom, ENT_QUOTES, 'UTF-8');
+			$_SESSION['prenom'] = htmlspecialchars($prenom, ENT_QUOTES, 'UTF-8');
 			$_SESSION['email'] = $email;
 			$_SESSION['statut'] = $statut;
 			$_SESSION['is_admin'] = $is_admin;
