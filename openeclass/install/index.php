@@ -132,7 +132,7 @@ if(isset($welcomeScreen) )
 	$dbMyAdmin="../admin/mysql/";
 	$phpSysInfoURL="../admin/sysinfo/";
 	// extract the path to append to the url if it is not installed on the web root directory
-	$urlAppendPath = str_replace('/install/index.php', '', $_SERVER['PHP_SELF']);
+	$urlAppendPath = str_replace('/install/index.php', '', htmlspecialchars($_SERVER['PHP_SELF']));
 	$urlForm = "http://".$_SERVER['SERVER_NAME'].$urlAppendPath."/";
 	$pathForm = realpath("../")."/";
 	$emailForm = $_SERVER['SERVER_ADMIN'];
@@ -149,7 +149,7 @@ if(isset($welcomeScreen) )
 }
 
 if (isset($alreadyVisited)) {
-	$tool_content .= "<form action=".$_SERVER['PHP_SELF']."?alreadyVisited=1 method=\"post\">";
+	$tool_content .= "<form action=".htmlspecialchars($_SERVER['PHP_SELF'])."?alreadyVisited=1 method=\"post\">";
 	$tool_content .= "
             <input type=\"hidden\" name=\"urlAppendPath\" value=\"$urlAppendPath\">
             <input type=\"hidden\" name=\"pathForm\" value=\"".str_replace("\\","/",realpath($pathForm)."/")."\" >

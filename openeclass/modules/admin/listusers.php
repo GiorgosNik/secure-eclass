@@ -59,7 +59,7 @@ $nameTools = $langListUsersActions;
 
 // initalize the incoming variables
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$c = isset($_GET['c']) ? $_GET['c'] : (isset($_POST['c']) ? $_POST['c'] : '');
+$c = isset($_GET['sorry']) ? $_GET['sorry'] : (isset($_POST['sorry']) ? $_POST['sorry'] : '');
 
 switch ($c)	// get the case for each different listing
 {
@@ -73,7 +73,7 @@ switch ($c)	// get the case for each different listing
 		$view = 2;
 		break; // search listing (search_user.php)
 	default:
-		$c = intval($c);
+		$c = intval(htmlspecialchars($c));
 		$view = 3;
 		break; // list per course
 }
@@ -239,9 +239,9 @@ if ($c == 'inactive') {
 }
 // end filter/criteria
 
-$ord = isset($_GET['ord']) ? $_GET['ord'] : '';
-$startList = isset($_GET['startList']) ? $_GET['startList'] : '';
-$numbList = isset($_GET['numbList']) ? $_GET['numbList'] : '';
+$ord = isset($_GET['ord']) ? htmlspecialchars($_GET['ord']) : '';
+$startList = isset($_GET['startList']) ? htmlspecialchars($_GET['startList']) : '';
+$numbList = isset($_GET['numbList']) ? htmlspecialchars($_GET['numbList']) : '';
 
 if (!empty($ord)) {
 	switch ($ord) {
@@ -368,7 +368,8 @@ if ($sql) {
 				if ($startList != 0) // if beginning of list or complete listing, do not show "previous" button
 				{
 					if (isset($_REQUEST['ord'])) {
-						$tool_content .= "<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=less&ord=$_REQUEST[ord]\">
+						$ord_clean = $_REQUEST['ord'];
+						$tool_content .= "<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=less&ord=$ord_clean\">
 	       				" . keep_var() . "
 					<input type='hidden' name='csrf_token' value=$token>
 					<input type=submit value=\"$langPreced50<\" name=\"numbering\">
@@ -387,8 +388,9 @@ if ($sql) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
 			} else {
 				if (isset($_REQUEST['ord'])) {
+					$ord_clean = $_REQUEST['ord'];
 					$tool_content .= "</td><td class=\"center\" width=\"20%\">
-      				<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=all&ord=$_REQUEST[ord]\">
+      				<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=all&ord=$ord_clean\">
       				" . keep_var() . "
         			<input type=submit value=\"$langAll\" name=numbering>
 					<input type='hidden' name='csrf_token' value=$token>
@@ -410,8 +412,9 @@ if ($sql) {
 				if (!((($countUser - $startList) <= $endList) or ($endList == $countUser))) // if end of list or complete listing, do not show "next" button
 				{
 					if (isset($_REQUEST['ord'])) {
+						$ord_clean = $_REQUEST['ord'];
 						$tool_content .= "
-      					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more&ord=$_REQUEST[ord]\">
+      					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more&ord=$ord_clean\">
       					" . keep_var() . "
         				<input type=submit value=\"$langFollow50>\" name=numbering>
 						<input type='hidden' name='csrf_token' value=$token>
@@ -430,8 +433,9 @@ if ($sql) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
 			} else {
 				if (isset($_REQUEST['ord'])) {
+					$ord_clean = $_REQUEST['ord'];
 					$tool_content .= "</td><td class=\"right\" width=\"20%\">
-	  			<form method=post action=\"$_SERVER[PHP_SELF]?numbList=final&ord=$_REQUEST[ord]\">
+	  			<form method=post action=\"$_SERVER[PHP_SELF]?numbList=final&ord=$ord_clean\">
 	  			" . keep_var() . "
         			<input type=submit value=\"$langEnd>>\" name=numbering>
 					<input type='hidden' name='csrf_token' value=$token>
@@ -482,7 +486,7 @@ if ($sql) {
 		} else {
 			if (isset($numbering) and isset($_REQUEST['startList']) and isset($_REQUEST['numbList'])) {
 				$string = '';
-				if (isset($_REQUEST['c'])) {
+				if (isset($_REQUEST['sorry'])) {
 					$string = "&c=$c";
 				}
 				$tool_content .= "<tr><th scope=\"col\" colspan='2'>
@@ -566,36 +570,36 @@ function keep_var()
 {
 
 	$retstring = '';
-	if (isset($_REQUEST['c']) and $_REQUEST['c'] != 'searchlist' and $_REQUEST['c'] != 'inactive') {
-		$c = $_REQUEST['c'];
-		$retstring .= "<input type = 'hidden' name='c' value='$c'>";
+	if (isset($_REQUEST['sorry']) and $_REQUEST['sorry'] != 'searchlist' and $_REQUEST['sorry'] != 'inactive') {
+		$c = htmlspecialchars($_REQUEST['sorry']);
+		$retstring .= "<input type = 'hidden' name='sorry' value='$c'>";
 	} else {
 		if (isset($_REQUEST['user_surname'])) {
-			$user_surname = $_REQUEST['user_surname'];
+			$user_surname = htmlspecialchars($_REQUEST['user_surname']);
 			$retstring .= "<input type = 'hidden' name='user_surname' value='$user_surname'>";
 		}
 		if (isset($_REQUEST['user_firstname'])) {
-			$user_firstname = $_REQUEST['user_firstname'];
+			$user_firstname = htmlspecialchars($_REQUEST['user_firstname']);
 			$retstring .= "<input type='hidden' name='user_firstname' value='$user_firstname'>";
 		}
 		if (isset($_REQUEST['user_username'])) {
-			$user_username = $_REQUEST['user_username'];
+			$user_username = htmlspecialchars($_REQUEST['user_username']);
 			$retstring .= "<input type='hidden' name='user_username' value = '$user_username'>";
 		}
 		if (isset($_REQUEST['user_am'])) {
-			$user_am = $_REQUEST['user_am'];
+			$user_am = htmlspecialchars($_REQUEST['user_am']);
 			$retstring .= "<input type='hidden' name='user_am' value = '$user_am'>";
 		}
 		if (isset($_REQUEST['user_type'])) {
-			$user_type = $_REQUEST['user_type'];
+			$user_type = htmlspecialchars($_REQUEST['user_type']);
 			$retstring .= "<input type='hidden' name='user_type' value='$user_type'>";
 		}
 		if (isset($_REQUEST['user_email'])) {
-			$user_email = $_REQUEST['user_email'];
+			$user_email = htmlspecialchars($_REQUEST['user_email']);
 			$retstring .= "<input type='hidden' name='user_email' value='$user_email'>";
 		}
 		if (isset($_REQUEST['user_registered_at_flag'])) {
-			$user_registered_at_flag = $_REQUEST['user_registered_at_flag'];
+			$user_registered_at_flag = htmlspecialchars($_REQUEST['user_registered_at_flag']);
 			$retstring .= "<input type='hidden' name='user_registered_at_flag' value='$user_registered_at_flag'>";
 		}
 	}

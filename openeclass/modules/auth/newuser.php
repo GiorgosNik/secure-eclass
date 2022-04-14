@@ -128,7 +128,7 @@ if (!isset($submit)) {
 	</form>";
 } else {
 	// trim white spaces in the end and in the beginning of the word
-	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
+	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?htmlspecialchars($_POST['uname']):''));
 	// registration
 	$registration_errors = array();
 	// check if there are empty fields

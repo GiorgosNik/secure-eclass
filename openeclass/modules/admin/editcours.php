@@ -60,8 +60,8 @@ $require_admin = TRUE;
 include '../../include/baseTheme.php';
 include '../../include/lib/fileDisplayLib.inc.php';
 
-if (isset($_GET['c'])) {
-	$c = $_GET['c'];
+if (isset($_GET['sorry'])) {
+	$c = $_GET['sorry'];
 	$_SESSION['c_temp']=$c;
 }
 
@@ -116,7 +116,7 @@ if (isset($c)) {
   <tbody>
   <tr>
     <th width=\"220\">&nbsp;</th>
-    <td>".$langCourseInfo." (<a href=\"infocours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langModify."</a>)</td>
+    <td>".$langCourseInfo." (<a href=\"infocours.php?sorry=".htmlspecialchars($c)."".$searchurl."\">".$langModify."</a>)</td>
   </tr>";
 	$tool_content .= "
   <tr>
@@ -227,18 +227,18 @@ if (isset($c)) {
 	$tool_content .= "
   <tr>
     <th rowspan=\"5\">&nbsp;</th>
-    <td><a href=\"listusers.php?c=".course_code_to_id($c)."\">".$langListUsersActions."</a></td>
+    <td><a href=\"listusers.php?sorry=".course_code_to_id(htmlspecialchars($c))."\">".$langListUsersActions."</a></td>
   </tr>";
   
   // Backup course
 	$tool_content .= "
   <tr>
-    <td><a href=\"../course_info/archive_course.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langTakeBackup."<a/></td>
+    <td><a href=\"../course_info/archive_course.php?sorry=".htmlspecialchars($c)."".$searchurl."\">".$langTakeBackup."<a/></td>
   </tr>";
   // Delete course
 	$tool_content .= "
   <tr>
-    <td><a href=\"delcours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langCourseDelFull."</a></td>
+    <td><a href=\"delcours.php?sorry=".htmlspecialchars($c)."".$searchurl."\">".$langCourseDelFull."</a></td>
   </tr>";
 	$tool_content .= "
   </tbody>

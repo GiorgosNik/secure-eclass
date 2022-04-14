@@ -27,7 +27,7 @@
 // if we come from the home page
 if (isset($from_home) and ($from_home == TRUE) and isset($_GET['cid'])) {
         session_start();
-        $_SESSION['dbname'] = $cid;
+        $_SESSION['dbname'] = htmlspecialchars($cid);
 }
 $require_current_course = TRUE;
 $require_prof = true;
@@ -140,7 +140,7 @@ if (isset($_POST['submit'])) {
                 db_query("UPDATE `$currentCourseID`.accueil SET rubrique='$langCourseUnits' WHERE define_var='MODULE_ID_UNITS'");
 
                 $tool_content .= "<p class='success_small'>$langModifDone<br />
-                        <a href='".$_SERVER['PHP_SELF']."'>$langBack</a></p><br />
+                        <a href='".htmlspecialchars($_SERVER['PHP_SELF'])."'>$langBack</a></p><br />
                         <p><a href='{$urlServer}courses/$currentCourseID/index.php'>$langBackCourse</a></p><br />";
         }
 }

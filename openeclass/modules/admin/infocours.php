@@ -58,12 +58,12 @@ $searchurl = "";
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
-if(!isset($_GET['c'])) { die(); }
+if(!isset($_GET['sorry'])) { die(); }
 // Define $nameTools
 $nameTools = $langCourseInfo;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
-$navigation[] = array("url" => "editcours.php?c=".htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
+$navigation[] = array("url" => "editcours.php?sorry=".htmlspecialchars($_GET['sorry']), "name" => $langCourseEdit);
 // Initialise $tool_content
 $tool_content = "";
 include '../../csrf_token.php';
@@ -85,10 +85,10 @@ if (isset($submit))  {
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
   // Update query
-	$sql = mysql_query("UPDATE cours SET faculte='$facname', titulaires='$titulaires', intitule='$intitule', faculteid='$facid' WHERE code='".mysql_real_escape_string($_GET['c'])."'");
+	$sql = mysql_query("UPDATE cours SET faculte='$facname', titulaires='$titulaires', intitule='$intitule', faculteid='$facid' WHERE code='".mysql_real_escape_string($_GET['sorry'])."'");
 	// Some changes happened
 	if (mysql_affected_rows() > 0) {
-		$sql = mysql_query("UPDATE cours_faculte SET faculte='$facname', facid='$facid' WHERE code='".mysql_real_escape_string($_GET['c'])."'");
+		$sql = mysql_query("UPDATE cours_faculte SET faculte='$facname', facid='$facid' WHERE code='".mysql_real_escape_string($_GET['sorry'])."'");
 		$tool_content .= "<p class=\"alert1\">".$langCourseEditSuccess."</p>";
 	}
 	// Nothing updated
@@ -101,10 +101,10 @@ if (isset($submit))  {
 // Display edit form for course basic information
 else {
 	// Get course information
-	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
+	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['sorry'])."'"));
 	// Constract the edit form
 	$tool_content .= "
-  <form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+  <form action=".htmlspecialchars($_SERVER['PHP_SELF'])."?sorry=".htmlspecialchars($_GET['sorry'])."".$searchurl." method=\"post\">
   <input type='hidden' name='csrf_token' value=$token>
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
@@ -149,8 +149,8 @@ else {
   </form>\n";
 }
 // If course selected go back to editcours.php
-if (isset($_GET['c'])) {
-	$tool_content .= "<p align=\"right\"><a href=\"editcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\">".$langBack."</a></p>";
+if (isset($_GET['sorry'])) {
+	$tool_content .= "<p align=\"right\"><a href=\"editcours.php?sorry=".htmlspecialchars($_GET['sorry'])."".$searchurl."\">".$langBack."</a></p>";
 }
 // Else go back to index.php directly
 else {

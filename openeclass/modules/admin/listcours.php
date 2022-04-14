@@ -120,7 +120,7 @@ else {
 	$a=mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM cours"));
 	$caption .= "".$langManyExist.": <b>".$a[0]." $langCourses</b>";
 	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
-			ORDER BY faculte,code LIMIT ".$limit.",".$listsize."");
+			ORDER BY faculte,code LIMIT ".mysql_escape_string($limit).",".$listsize."");
 
 	if ($fulllistsize > $listsize ) {
 		// Display navigation in pages
@@ -170,11 +170,11 @@ for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 	}
 	$tool_content .= "</td><td>".htmlspecialchars($logs[0])."</td>";
 	// Add links to course users, delete course and course edit
-	$tool_content .= "<td align='center'><a href='listusers.php?c=".$logs['cours_id']."'>
+	$tool_content .= "<td align='center'><a href='listusers.php?sorry=".$logs['cours_id']."'>
 		<img src='../../template/classic/img/user_list.gif' title='$langUsers' border='0'></img></a></td>
-	<td align=\"center\" width='10'><a href='delcours.php?c=".$logs[1]."'>
+	<td align=\"center\" width='10'><a href='delcours.php?sorry=".$logs[1]."'>
 		<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
-	<td align=\"center\" width='20'><a href='editcours.php?c=".$logs[1]."".$searchurl."'>
+	<td align=\"center\" width='20'><a href='editcours.php?sorry=".$logs[1]."".$searchurl."'>
 		<img src='../../template/classic/img/edit.gif' title='$langEdit' border='0'></img></a></td>";
 	$k++;
 }

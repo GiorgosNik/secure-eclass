@@ -573,7 +573,7 @@ function edit_assignment($id)
 	global $tool_content, $langBackAssignment, $langEditSuccess, $langEditError, $langWorks, $langEdit;
 
 	$nav[] = array("url" => "work.php", "name" => $langWorks);
-	$nav[] = array("url" => "work.php?id=$id", "name" => $_POST['title']);
+	$nav[] = array("url" => "work.php?id=$id", "name" => htmlspecialchars($_POST['title']));
 
 
 	mysql_query("PREPARE stmt5 FROM 'UPDATE assignments SET title=?, description=?, group_submissions=?, comments=?, deadline=? WHERE id=?';");
@@ -715,13 +715,14 @@ function assignment_details($id, $row, $message = null)
 	global $tool_content, $m, $langDaysLeft, $langDays, $langWEndDeadline, $langNEndDeadLine, $langNEndDeadline, $langEndDeadline;
 	global $langDelAssign, $is_adminOfCourse, $langZipDownload, $langSaved;
 
+	$id_clean = mysql_real_escape_string($id);
 
 	if ($is_adminOfCourse) {
 		$tool_content .= "
     <div id=\"operations_container\">
       <ul id=\"opslist\">
         <li><a href=\"work.php?id=$id&amp;choice=do_delete\" onClick=\"return confirmation('" . addslashes($row['title']) . "');\">$langDelAssign</a></li>
-        <li><a href=\"work.php?download=$id\">$langZipDownload</a></li>
+        <li><a href=\"work.php?download=$id_clean\">$langZipDownload</a></li>
       </ul>
     </div>
 	";
@@ -806,7 +807,8 @@ function sort_link($title, $opt, $attrib = '')
 	global $tool_content;
 	$i = '';
 	if (isset($_REQUEST['id'])) {
-		$i = "&id=$_REQUEST[id]";
+		$id_clean = htmlspecialchars($_REQUEST['id']);
+		$i = "&id=$id_clean";
 	}
 	if (@($_REQUEST['sort'] == $opt)) {
 		if (@($_REQUEST['rev'] == 1)) {

@@ -218,7 +218,7 @@ function checkUserOwnsThisMailing($mailingPseudoId, $userId)
 
     $sql = "SELECT f.uploaderId FROM `" . $dropbox_cnf["fileTbl"] . "` f
 			LEFT JOIN `" . $dropbox_cnf["postTbl"] . "` p ON f.id = p.fileId
-			WHERE p.recipientId = '" . $mailingPseudoId . "'";
+			WHERE p.recipientId = '" . mysql_real_escape_string($mailingPseudoId) . "'";
     $result = db_query($sql, $currentCourseID);
 
     if ($res = mysql_fetch_array($result))
@@ -236,7 +236,7 @@ function removeMoreIfMailing($fileId)
 	global $dropbox_cnf, $dropbox_lang, $currentCourseID;
 
     $sql = "SELECT p.recipientId FROM `" . $dropbox_cnf["postTbl"] . "` p
-		WHERE p.fileId = '" . $fileId . "'";
+		WHERE p.fileId = '" . mysql_real_escape_string($fileId) . "'";
     $result = db_query($sql, $currentCourseID);
 
     if ($res = mysql_fetch_array($result))

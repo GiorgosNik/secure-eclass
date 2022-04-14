@@ -48,8 +48,8 @@ $navigation[]= array ("url"=>"index.php", "name"=> $langAdmin);
 $tool_content = "";
 
 // get the incoming values and initialize them
-$u = isset($_GET['u'])? intval($_GET['u']): false;
-$c = isset($_GET['c'])? intval($_GET['c']): false;
+$u = isset($_GET['u'])? intval(htmlspecialchars($_GET['u'])): false;
+$c = isset($_GET['sorry'])? intval(htmlspecialchars($_GET['sorry'])): false;
 $doit = isset($_GET['doit']);
 
 $u_account = $u? uid_to_username($u): '';

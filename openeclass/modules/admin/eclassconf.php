@@ -166,7 +166,7 @@ else {
 	}
 	// Constract the form
 	$tool_content .= "
-    <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
+    <form action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
 	$tool_content .= "
   <input type='hidden' name='csrf_token' value=$token>
   <table class=\"FormData\" width=\"99%\" align=\"left\">

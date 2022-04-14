@@ -80,7 +80,7 @@ function escape_if_exists($name)
 		if (get_magic_quotes_gpc()) {
 			$tmp = stripslashes($_POST[$name]);
 		} else {
-			$tmp = $_POST[$name];
+			$tmp = htmlspecialchars($_POST[$name]);
 		}
 		$GLOBALS[$name] = $tmp;
 		$GLOBALS[$name . '_html'] = '<input type="hidden" name="' . $name .
@@ -339,7 +339,7 @@ if (isset($_POST['create_course'])) {
 		$repertoire = strtoupper(new_code($facid));
 		$repertoire = str_replace(' ', '', $repertoire);
 
-		$language = langcode_to_name($_POST['languageCourse']);
+		$language = langcode_to_name(htmlspecialchars($_POST['languageCourse']));
 		// include_messages
 		include("${webDir}modules/lang/$language/common.inc.php");
 		$extra_messages = "${webDir}/config/$language.inc.php";

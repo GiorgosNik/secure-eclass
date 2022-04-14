@@ -796,9 +796,9 @@ function make_clickable_path($dbTable, $path)
 	global $langRoot, $userGroupId;
 
         if (isset($userGroupId)) {
-                $base = $_SERVER['PHP_SELF'] . '?userGroupId=' . $userGroupId . '&amp;';
+                $base = htmlspecialchars($_SERVER['PHP_SELF']) . '?userGroupId=' . $userGroupId . '&amp;';
         } else {
-                $base = $_SERVER['PHP_SELF'] . '?';
+                $base = htmlspecialchars($_SERVER['PHP_SELF']) . '?';
         }
 
 	$cur = '';
@@ -1177,7 +1177,7 @@ function add_units_navigation($entry_page = FALSE)
                         $visibility_check = "AND visibility='v'";
                 }
 		if (isset($_GET['unit'])) {
-			$unit_id = intval($_GET['unit']);
+			$unit_id = htmlspecialchars(intval($_GET['unit']), ENT_QUOTES, 'UTF-8');
 		} elseif (isset($_SESSION['unit'])) {
 			$unit_id = intval($_SESSION['unit']);
 		}

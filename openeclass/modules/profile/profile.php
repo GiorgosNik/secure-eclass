@@ -60,36 +60,36 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 
 	// check if there are empty fields
 	if (empty($nom_form) OR empty($prenom_form) OR empty($username_form)) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=4");
+		header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=4");
 		exit();
 	}
 
 	elseif (empty($email_form) and check_prof()) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=4");
+		header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=4");
 		exit();
 	}
 
 	elseif (strstr($username_form, "'") or strstr($username_form, '"') or strstr($username_form, '\\')){
-		header("location:". $_SERVER['PHP_SELF']."?msg=10");
+		header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=10");
 		exit();
 	}
 
 	// check if username is free
 	elseif(isset($user_exist) AND ($username_form==$user_exist) AND ($username_form!=$uname)) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=5");
+		header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=5");
 		exit();
 	}
 
 	// check if email is valid
 	elseif (!email_seems_valid($email_form) and check_prof()) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=6");
+		header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=6");
 		exit();
 	}
 
 	// everything is ok
 	else {
 		##[BEGIN personalisation modification]############
-		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
+		$_SESSION['langswitch'] = $language = langcode_to_name(htmlspecialchars($_REQUEST['userLanguage']));
 		$langcode = langname_to_code($language);
 
 		mysql_query("PREPARE stmt1 FROM 'UPDATE user SET nom=?, prenom=?, username=?, email=?, am=?, perso=?, lang=? WHERE user_id=?';");
@@ -109,7 +109,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
                 		unset($_SESSION['user_perso_active']);
 			}
-			header("location:". $_SERVER['PHP_SELF']."?msg=1");
+			header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=1");
 			exit();
 	    }
 	}
@@ -118,7 +118,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 
 ##[BEGIN personalisation modification - For LDAP users]############
 if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
-	$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
+	$_SESSION['langswitch'] = $language = langcode_to_name(htmlspecialchars($_REQUEST['userLanguage']));
 	$langcode = langname_to_code($language);
 
 	mysql_query("UPDATE user SET perso = '$persoStatus',
@@ -128,7 +128,7 @@ if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 		unset($_SESSION['user_perso_active']);
 	}
 
-	header("location:". $_SERVER['PHP_SELF']."?msg=1");
+	header("location:". htmlspecialchars($_SERVER['PHP_SELF'])."?msg=1");
 	exit();
 }
 ##[END personalisation modification]############

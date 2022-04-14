@@ -34,7 +34,7 @@ $local_style = 'h3 { font-size: 10pt;} li { font-size: 10pt;} ';
 $tool_content = "";
 
 if (isset($_GET['cid']))
-  $_SESSION['cid_tmp']=$cid;
+  $_SESSION['cid_tmp']=mysql_real_escape_string($cid);
 if(!isset($_GET['cid']))
   $cid=$_SESSION['cid_tmp'];
 

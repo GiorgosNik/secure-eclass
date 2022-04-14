@@ -53,15 +53,15 @@ if ($is_adminOfCourse) {
 
 		if(isset($_POST["video_URL"]))
 		{
-		 	$URL["video_URL"]=stripslashes($_POST["video_URL"]);
+		 	$URL["video_URL"]=stripslashes(htmlspecialchars($_POST["video_URL"]));
 		}
 		if(isset($_POST["presantation_URL"]))
 		{
-			$URL["presantation_URL"]=stripslashes($_POST["presantation_URL"]);
+			$URL["presantation_URL"]=stripslashes(htmlspecialchars($_POST["presantation_URL"]));
 		}
 		if(isset($_POST["netmeeting_show"]))
 		{
-			$URL["netmeeting_show"]=$_POST["netmeeting_show"];
+			$URL["netmeeting_show"]=htmlspecialchars($_POST["netmeeting_show"]);
 		}
 
 		if(isset($_POST["action"]))

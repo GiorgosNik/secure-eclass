@@ -51,7 +51,7 @@ $action->record('MODULE_ID_DROPBOX');
 $tool_content .="
 <div id=\"operations_container\">
   <ul id=\"opslist\">
-    <li><a href=\"".$_SERVER['PHP_SELF']."?upload=1\">".$dropbox_lang['uploadFile']."</a></li>
+    <li><a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])."?upload=1\">".$dropbox_lang['uploadFile']."</a></li>
   </ul>
 </div>";
 
@@ -61,7 +61,7 @@ $tool_content .="
 */
 
 if (isset($_GET["sentOrder"]) && in_array($_GET["sentOrder"], array("lastDate", "firstDate", "title", "size", "author", "recipient"))) {
-	$sentOrder = $_GET["sentOrder"];
+	$sentOrder = mysql_real_escape_string($_GET["sentOrder"]);
 } else {
 	if (isset($_SESSION["sentOrder"]) && in_array($_SESSION["sentOrder"], array("lastDate", "firstDate", "title", "size", "author", "recipient"))) {
 		$sentOrder = $_SESSION["sentOrder"];
@@ -76,7 +76,7 @@ $_SESSION['sentOrder'] = $sentOrder;
 * The sessionvar receivedOrder keeps preference of user to by what field to order the received files list by
 */
 if (isset($_GET["receivedOrder"]) && in_array($_GET["receivedOrder"], array("lastDate", "firstDate", "title", "size", "author", "sender"))) {
-	$receivedOrder = $_GET["receivedOrder"];
+	$receivedOrder = mysql_real_escape_string($_GET["receivedOrder"]);
 } else {
 	if (isset($_SESSION["receivedOrder"]) && in_array($_SESSION["receivedOrder"], array("lastDate", "firstDate", "title", "size", "author", "sender"))) {
 		$receivedOrder = $_SESSION["receivedOrder"];
@@ -93,8 +93,8 @@ require_once("dropbox_class.inc.php");
 
 if (isset($_GET['mailing']))  // RH: Mailing detail window passes parameter
 {
-	checkUserOwnsThisMailing($_GET['mailing'], $uid);
-	$dropbox_person = new Dropbox_Person( $_GET['mailing'], $is_courseAdmin, $is_courseTutor);
+	checkUserOwnsThisMailing(mysql_real_escape_string($_GET['mailing']), $uid);
+	$dropbox_person = new Dropbox_Person( mysql_real_escape_string($_GET['mailing']), $is_courseAdmin, $is_courseTutor);
 	$mailingInUrl = "&mailing=" . urlencode( $_GET['mailing']);
 }
 else

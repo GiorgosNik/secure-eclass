@@ -56,7 +56,7 @@ if (isset($_POST["dropbox_unid"])) {
 	$dropbox_unid = $_POST["dropbox_unid"];
 } elseif (isset($_GET["dropbox_unid"]))
 {
-	$dropbox_unid = $_GET["dropbox_unid"];
+	$dropbox_unid = mysql_real_escape_string($_GET["dropbox_unid"]);
 } else {
 	die($dropbox_lang["badFormData"]);
 }
@@ -68,7 +68,7 @@ if (isset($_SESSION["dropbox_uniqueid"]) && isset($_GET["dropbox_unid"]) && $dro
 	} else {
 		$mypath = "http";
 	}
-	$mypath=$mypath."://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php";
+	$mypath=$mypath."://".$_SERVER['HTTP_HOST'].dirname(htmlspecialchars($_SERVER['PHP_SELF']))."/index.php";
 
 	header("Location: $mypath");
 }
@@ -238,7 +238,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 	{
 		$dropbox_person->orderSentWork($_SESSION["sentOrder"]);
 	}
-	$i = $_GET['mailingIndex'];
+	$i = mysql_real_escape_string($_GET['mailingIndex']);
 	$mailing_item = $dropbox_person->sentWork[$i];
 	$mailing_title = $mailing_item->title;
 	$mailing_file = $dropbox_cnf["sysPath"] . '/' . $mailing_item->filename;
@@ -479,8 +479,8 @@ if (isset($_GET['deleteReceived']) || isset($_GET['deleteSent']))
 
 	if (isset($_GET['mailing']))  // RH
 	{
-		checkUserOwnsThisMailing($_GET['mailing'], $uid);
-		$dropbox_person = new Dropbox_Person( $_GET['mailing'], $is_adminOfCourse, $is_adminOfCourse);
+		checkUserOwnsThisMailing(mysql_real_escape_string($_GET['mailing']), $uid);
+		$dropbox_person = new Dropbox_Person( mysql_real_escape_string($_GET['mailing']), $is_adminOfCourse, $is_adminOfCourse);
 	}
 	else
 	{
@@ -501,9 +501,9 @@ if (isset($_GET['deleteReceived']) || isset($_GET['deleteSent']))
 		if ($_GET["deleteReceived"] == "all")
 		{
 			$dropbox_person->deleteAllReceivedWork( );
-		} elseif (is_numeric( $_GET["deleteReceived"]))
+		} elseif (is_numeric( mysql_real_escape_string($_GET["deleteReceived"])))
 		{
-			$dropbox_person->deleteReceivedWork( $_GET['deleteReceived']);
+			$dropbox_person->deleteReceivedWork( mysql_real_escape_string($_GET['deleteReceived']));
 		}
 		else
 		{
@@ -515,9 +515,9 @@ if (isset($_GET['deleteReceived']) || isset($_GET['deleteSent']))
 		if ($_GET["deleteSent"] == "all")
 		{
 			$dropbox_person->deleteAllSentWork( );
-		}elseif ( is_numeric( $_GET["deleteSent"]))
+		}elseif ( is_numeric( mysql_real_escape_string($_GET["deleteSent"])))
 		{
-			$dropbox_person->deleteSentWork( $_GET['deleteSent']);
+			$dropbox_person->deleteSentWork( mysql_real_escape_string($_GET['deleteSent']));
 		}
 		else
 		{

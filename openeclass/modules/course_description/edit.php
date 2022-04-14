@@ -89,7 +89,7 @@ if ($is_adminOfCourse) {
                                 list($max_id) = mysql_fetch_row($res);
                                 $new_id = max(sizeof($titreBloc), $max_id) + 1;
                         } else {
-                                $new_id = intval($_POST['edIdBloc']);
+                                $new_id = intval(htmlspecialchars($_POST['edIdBloc']));
                         }
                         if (empty($edTitleBloc)) {
                                 $edTitleBloc = $titreBloc[$edIdBloc];
@@ -107,7 +107,7 @@ if ($is_adminOfCourse) {
                 if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
                 } else {
-                        $del_id = intval($_GET['numBloc']);
+                        $del_id = intval(htmlspecialchars($_GET['numBloc']));
                         $res = db_query("DELETE FROM course_description WHERE id = $del_id");
                         $tool_content .= "<p class='success'>$langBlockDeleted<br /><br /><a href='$_SERVER[PHP_SELF]'>$langBack</a></p>";
                 }
@@ -116,7 +116,7 @@ if ($is_adminOfCourse) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
                 } else {
                         // Edit action
-                        $edit_id = intval($_REQUEST['numBloc']);
+                        $edit_id = intval(htmlspecialchars($_REQUEST['numBloc']));
                         $numBlock = $edit_id;
                         $res = db_query("SELECT * FROM course_description WHERE id = $edit_id");
                         $title = '';
@@ -196,7 +196,7 @@ if ($is_adminOfCourse) {
         				<thead><tr>
           				<th class='left' style='border: 1px solid #CAC3B5;'>".$titreBloc[$numBloc].":</th>
           				<td width='50' class='right'>
-					<a href='".$_SERVER['PHP_SELF']."?numBloc=".$numBloc."' >
+					<a href='".htmlspecialchars($_SERVER['PHP_SELF'])."?numBloc=".$numBloc."' >
 					<img src='../../template/classic/img/edit.gif' border='0' title='$langModify' /></a>&nbsp;&nbsp;";
 					$tool_content .= "<a href='$_SERVER[PHP_SELF]?delete=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
       					</td></tr><tr>

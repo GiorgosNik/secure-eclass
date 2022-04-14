@@ -111,7 +111,7 @@ if ($is_adminOfCourse) {
                 $title = autoquote(mysql_real_escape_string($_REQUEST['unittitle']));
                 $descr = autoquote(mysql_real_escape_string($_REQUEST['unitdescr']));
                 if (isset($_REQUEST['unit_id'])) { // update course unit
-                        $unit_id = intval($_REQUEST['unit_id']);
+                        $unit_id = intval(htmlspecialchars($_REQUEST['unit_id']));
                         $result = db_query("UPDATE course_units SET
                                                    title = $title,
                                                    comments = $descr
@@ -125,23 +125,23 @@ if ($is_adminOfCourse) {
 		        $main_content .= "\n        <p class='success_small'>$langCourseUnitAdded</p>";
                 }
         } elseif (isset($_REQUEST['del'])) { // delete course unit
-		$id = intval($_REQUEST['del']);
+		$id = intval(htmlspecialchars($_REQUEST['del']));
 		db_query("DELETE FROM course_units WHERE id = '$id'");
 		db_query("DELETE FROM unit_resources WHERE unit_id = '$id'");
 		$main_content .= "<p class='success_small'>$langCourseUnitDeleted</p>";
 	} elseif (isset($_REQUEST['vis'])) { // modify visibility
-		$id = intval($_REQUEST['vis']);
+		$id = intval(htmlspecialchars($_REQUEST['vis']));
 		$sql = db_query("SELECT `visibility` FROM course_units WHERE id='$id'");
 		list($vis) = mysql_fetch_row($sql);
 		$newvis = ($vis == 'v')? 'i': 'v';
 		db_query("UPDATE course_units SET visibility = '$newvis' WHERE id = $id AND course_id = $cours_id");
 	} elseif (isset($_REQUEST['down'])) {
-		$id = intval($_REQUEST['down']); // change order down
+		$id = intval(htmlspecialchars($_REQUEST['down'])); // change order down
                 move_order('course_units', 'id', $id, 'order', 'down',
                            "course_id=$cours_id");
 
 	} elseif (isset($_REQUEST['up'])) { // change order up
-		$id = intval($_REQUEST['up']);
+		$id = intval(htmlspecialchars($_REQUEST['up']));
                 move_order('course_units', 'id', $id, 'order', 'up',
                            "course_id=$cours_id");
 	}

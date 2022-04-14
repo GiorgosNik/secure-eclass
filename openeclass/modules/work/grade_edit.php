@@ -44,10 +44,11 @@ $nameTools = $m['grades'];
 mysql_select_db($currentCourseID);
 
 if ($is_adminOfCourse and isset($_GET['assignment']) and isset($_GET['submission'])) {
-		$assign = get_assignment_details($_GET['assignment']);
+		$assign = get_assignment_details(mysql_escape_string($_GET['assignment']));
+    $assignm = mysql_escape_string($_GET['assignment']);
 		$navigation[] = array("url"=>"work.php", "name"=>$langWorks);
 		$navigation[] = array("url"=>"work.php?id=$_GET[assignment]", "name"=>$m['WorkView']);
-		show_edit_form($_GET['assignment'], $_GET['submission'], $assign);
+		show_edit_form(mysql_escape_string($_GET['assignment']), mysql_escape_string($_GET['submission']), $assign);
 		draw($tool_content, 2);
 } else {
 		header('Location: work.php');

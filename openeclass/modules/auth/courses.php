@@ -40,7 +40,7 @@ $icons = array(
 );
 
 if (isset($_REQUEST['fc'])) {
-        $fc = intval($_REQUEST['fc']);
+        $fc = intval(htmlspecialchars($_REQUEST['fc']));
 } elseif (isset($_SESSION['fc_memo'])) {
         $fc = $_SESSION['fc_memo'];
 } else {
