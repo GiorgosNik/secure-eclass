@@ -34,6 +34,7 @@
 */
 
 $require_current_course = TRUE;
+include '../../csrf_token.php';
 
 include '../../include/baseTheme.php';
 $tool_content = "";
@@ -65,6 +66,8 @@ function get_assignment_details($id)
 function show_edit_form($id, $sid, $assign)
 {
 	global $m, $langGradeOk, $tool_content, $langGradeWork;
+  csrf_token_tag();
+  $token = $_SESSION['csrf_token'];
 
 	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id = '$sid'"))) {
 		
@@ -77,6 +80,7 @@ function show_edit_form($id, $sid, $assign)
 		$tool_content .= <<<cData
 
     <form method="post" action="work.php">
+    <input type='hidden' name='csrf_token' value=$token>
     <input type="hidden" name="assignment" value="${id}">
     <input type="hidden" name="submission" value="${sid}">
 

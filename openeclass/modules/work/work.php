@@ -133,9 +133,13 @@ hContent;
 
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
-		$nameTools = $m['WorkView'];
-		$navigation[] = array("url" => "work.php", "name" => $langWorks);
-		submit_grade_comments($assignment, $submission, $grade, $comments);
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		} else {
+			$nameTools = $m['WorkView'];
+			$navigation[] = array("url" => "work.php", "name" => $langWorks);
+			submit_grade_comments($assignment, $submission, $grade, $comments);
+		}
 	} elseif (isset($add)) {
 		$nameTools = $langNewAssign;
 		$navigation[] = array("url" => "work.php", "name" => $langWorks);
