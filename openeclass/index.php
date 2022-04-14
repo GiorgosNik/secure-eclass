@@ -87,6 +87,9 @@ if (isset($persoIsActive)) {
 $warning = '';
 if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 } else { // normal authentication
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	} else {
 	if (isset($_POST['uname'])) {
 		$uname = mysql_real_escape_string(trim($_POST['uname']));
 	} else {
@@ -174,6 +177,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		}
 		##[END personalisation modification]############
 	}  // end of user authentication
+}
 }
 
 if (isset($_SESSION['uid'])) {

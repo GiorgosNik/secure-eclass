@@ -420,64 +420,6 @@ function index_and_sort_dir($path)
 	}
 }
 
-
-/*
- * build an html form listing all directories of a given directory
- *
- */
-//afth h function dhmiourgei mia lista se combo box me tous fakelous enos path. sth sygkekrimenh exei prostethei to orisma $entryToExclude prokeimenou na mhn emfanizetai mia eggrafh
-function form_dir_list_exclude($dbTable, $sourceType, $sourceComponent, $command, $baseWorkDir, $entryToExclude)
-{
-	global $langParentDir, $langTo, $langMoveFrom, $langMove, $moveFileNameAlias;
-	global $tool_content, $userGroupId;
-
-        if (isset($userGroupId)) {
-                $groupset = '?userGroupId=' . $userGroupId;
-        } else {
-                $groupset = '';
-        }
-	$dirList = index_and_sort_dir($baseWorkDir);
-	$dialogBox .= "<form action='$_SERVER[PHP_SELF]$groupset' method='post'>\n";
-	$dialogBox .= "<input type='hidden' name='".$sourceType."' value='".$sourceComponent."'>\n";
-	$dialogBox .="<table class='FormData' width='99%'>
-        	<tbody><tr><th class='left' width='200'>$langMove:</th>
-          	<td class='left'>$langMoveFrom <em>$moveFileNameAlias</em> $langTo:</td><td class='left'>";
-	$dialogBox .= "<select name='".$command."' class='auth_input'>\n" ;
-	$dialogBox .= "<option value='' style='color:#999999'>".$langParentDir."\n";
-	$bwdLen = strlen($baseWorkDir) ;
-	
-	/* build html form inputs */
-	if ($dirList)
-	{
-		while (list( , $pathValue) = each($dirList))
-		{
-			$pathValue = substr($pathValue , $bwdLen);
-			$dirname = basename($pathValue);
-			$sql = db_query("SELECT path, filename FROM $dbTable 
-				WHERE path LIKE '%/$dirname%'"); 
-			while ($r = mysql_fetch_array($sql)) {
-				$filename = $r['filename'];
-				$path = $r['path']; 
-				$tab = "";	
-				$depth = substr_count($pathValue, "/");
-				for ($h=0; $h<$depth; $h++)
-				{
-					$tab .= "&nbsp;&nbsp;";
-				}
-			
-//			$tool_content .= $baseWorkDir.$path;
-			if ($pathValue != $entryToExclude and (!is_file($baseWorkDir.$path)))
-				$dialogBox .= "<option value='$path'>$tab>$filename</option>";
-			}
-		}
-	}
-
-	$dialogBox .= "</select></td><td class='left'><input type=\"submit\" value=\"$langMove\"></td></tr>
-        	</tbody></table><br/>";
-	$dialogBox .= "</form>";
-	return $dialogBox;
-}
-
 //------------------------------------------------------------------------------
 /* --------------- backported functions from Claroline 1.7.x --------------- */
 

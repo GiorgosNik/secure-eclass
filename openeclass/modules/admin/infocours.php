@@ -66,7 +66,9 @@ $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
 $navigation[] = array("url" => "editcours.php?c=".htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
 // Initialise $tool_content
 $tool_content = "";
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
@@ -76,6 +78,9 @@ if (isset($search) && ($search=="yes")) {
 }
 // Update cours basic information
 if (isset($submit))  {
+  if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	} else {
   // Get faculte ID and faculte name for $faculte
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
@@ -90,6 +95,7 @@ if (isset($submit))  {
 	else {
 		$tool_content .= "<p class=\"alert1\">".$langNoChangeHappened."</p>";
 	}
+}
 
 }
 // Display edit form for course basic information
@@ -99,6 +105,7 @@ else {
 	// Constract the edit form
 	$tool_content .= "
   <form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+  <input type='hidden' name='csrf_token' value=$token>
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>
@@ -158,4 +165,3 @@ else {
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content,3,'admin');
-?>
