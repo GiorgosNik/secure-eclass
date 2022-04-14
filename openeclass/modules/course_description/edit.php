@@ -49,8 +49,8 @@ include '../../include/lib/textLib.inc.php';
 include '../../include/phpmathpublisher/mathpublisher.php';
 
 $tool_content = $head_content = "";
-$nameTools = $langEditCourseProgram ;
-$navigation[] = array ('url' => 'index.php', 'name' => $langCourseProgram);
+$nameTools = $langEditCourseProgram;
+$navigation[] = array('url' => 'index.php', 'name' => $langCourseProgram);
 
 $lang_editor = langname_to_code($language);
 
@@ -96,10 +96,10 @@ if ($is_adminOfCourse) {
                         }
                         db_query("INSERT IGNORE INTO course_description SET id = $new_id");
                         db_query("UPDATE course_description
-                                        SET title = " . autoquote(mysql_real_escape_string(trim($edTitleBloc))) . ",
-                                        content = " . autoquote(mysql_real_escape_string(trim($edContentBloc))) . ",
-                                        `upDate` = NOW()
-                                        WHERE id = $new_id");
+                                SET title = " . autoquote(mysql_real_escape_string(trim(htmlspecialchars($edTitleBloc, ENT_QUOTES, 'UTF-8')))) . ",
+                                    content = " . autoquote(mysql_real_escape_string(trim(htmlspecialchars($edContentBloc, ENT_QUOTES, 'UTF-8')))) . ",
+                                    `upDate` = NOW()
+                                WHERE id = $new_id");
                         header('Location: ' . $urlServer . 'modules/course_description/edit.php');
                         exit;
                 }
@@ -150,8 +150,8 @@ if ($is_adminOfCourse) {
                         $tool_content .= "
                                 <tr><th class='left'>&nbsp;</th>
                                 <td><table class='xinha_editor'>
-                                <tr><td><textarea id='xinha' name='edContentBloc'>" . 
-                                        q(@$contentBloc) . "</textarea></td></tr></table></td></tr>
+                                <tr><td><textarea id='xinha' name='edContentBloc'>" .
+                                q(@$contentBloc) . "</textarea></td></tr></table></td></tr>
                                 <tr><th class='left'>&nbsp;</th>
                                 <td><input type='submit' name='save' value='$langAdd' />&nbsp;&nbsp;
                                         <input type='submit' name='ignore' value='$langBackAndForget' /></td></tr>
@@ -159,10 +159,10 @@ if ($is_adminOfCourse) {
                 }
         } else {
                 $sql = "SELECT * FROM `course_description` order by id";
-                $res = db_query($sql,$db);
-                while($bloc = mysql_fetch_array($res)) {
+                $res = db_query($sql, $db);
+                while ($bloc = mysql_fetch_array($res)) {
                         $blocState[$bloc["id"]] = "used";
-                        $titreBloc[$bloc["id"]]	= $bloc["title"];
+                        $titreBloc[$bloc["id"]]        = $bloc["title"];
                         $contentBloc[$bloc["id"]] = $bloc["content"];
                 }
                 $tool_content .= "
@@ -177,41 +177,41 @@ if ($is_adminOfCourse) {
     <tr>
       <th class='left'>$langSelection :</th>
       <td><select name='numBloc' size='1' class='auth_input'>";
-		while (list($numBloc,) = each($titreBloc)) {
-			if (!isset($blocState[$numBloc])||$blocState[$numBloc] != "used")
-				$tool_content .= "\n            <option value='".$numBloc."'>".$titreBloc[$numBloc]."</option>";
-		}
-		$tool_content .= "\n</select></td></tr><tr><th>&nbsp;</th>
+                while (list($numBloc,) = each($titreBloc)) {
+                        if (!isset($blocState[$numBloc]) || $blocState[$numBloc] != "used")
+                                $tool_content .= "\n            <option value='" . $numBloc . "'>" . $titreBloc[$numBloc] . "</option>";
+                }
+                $tool_content .= "\n</select></td></tr><tr><th>&nbsp;</th>
       		<td><input type='submit' name='add' value='$langAdd' /></td>
     		</tr></tbody></table>
     		<p>&nbsp;</p>
     </form>\n";
 
-	reset($titreBloc);
-		while (list($numBloc,) = each($titreBloc)) {
-			if (isset($blocState[$numBloc]) && $blocState[$numBloc]=="used") {
-				$tool_content .= "<table width='99%' class='CourseDescr'>
+                reset($titreBloc);
+                while (list($numBloc,) = each($titreBloc)) {
+                        if (isset($blocState[$numBloc]) && $blocState[$numBloc] == "used") {
+                                $tool_content .= "<table width='99%' class='CourseDescr'>
     					<thead><tr><td>
         				<table width='100%' class='FormData'>
         				<thead><tr>
-          				<th class='left' style='border: 1px solid #CAC3B5;'>".$titreBloc[$numBloc].":</th>
+          				<th class='left' style='border: 1px solid #CAC3B5;'>" . $titreBloc[$numBloc] . ":</th>
           				<td width='50' class='right'>
 					<a href='".htmlspecialchars($_SERVER['PHP_SELF'])."?numBloc=".$numBloc."' >
 					<img src='../../template/classic/img/edit.gif' border='0' title='$langModify' /></a>&nbsp;&nbsp;";
-					$tool_content .= "<a href='$_SERVER[PHP_SELF]?delete=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
+                                $tool_content .= "<a href='$_SERVER[PHP_SELF]?delete=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
       					</td></tr><tr>
-      				<td>".mathfilter(make_clickable(nl2br($contentBloc[$numBloc])), 12, "../../courses/mathimg/")."</td>
+      				<td>" . mathfilter(make_clickable(nl2br($contentBloc[$numBloc])), 12, "../../courses/mathimg/") . "</td>
     				</tr></thead></table>";
-				$tool_content .= "<br />";
-			}
-		}
-	}
+                                $tool_content .= "<br />";
+                        }
+                }
+        }
 } else {
-	exit();
+        exit();
 }
 
-if(isset($numBloc)) {
-	draw($tool_content, 2, 'course_description', $head_content, $body_action);
+if (isset($numBloc)) {
+        draw($tool_content, 2, 'course_description', $head_content, $body_action);
 } else {
-	draw($tool_content, 2, 'course_description', $head_content);
+        draw($tool_content, 2, 'course_description', $head_content);
 }

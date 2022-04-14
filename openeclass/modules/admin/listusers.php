@@ -83,8 +83,11 @@ if ($view == 2)	// coming from search_user.php(search with criteria)
 	if ((!empty($search)) && ($search = "yes")) {
 		// get the incoming values
 		$user_surname = isset($_POST['user_surname']) ? $_POST['user_surname'] : '';
+		$user_surname =htmlspecialchars($user_surname, ENT_QUOTES, 'UTF-8');
 		$user_firstname = isset($_POST['user_firstname']) ? $_POST['user_firstname'] : '';
+		$user_firstname =htmlspecialchars($user_firstname, ENT_QUOTES, 'UTF-8');
 		$user_username = isset($_POST['user_username']) ? $_POST['user_username'] : '';
+		$user_username =htmlspecialchars($user_username, ENT_QUOTES, 'UTF-8');
 		$user_am = isset($_POST['user_am']) ? $_POST['user_am'] : '';
 		$user_type = isset($_POST['user_type']) ? $_POST['user_type'] : '';
 		$user_email = isset($_POST['user_email']) ? $_POST['user_email'] : '';
@@ -523,10 +526,10 @@ if ($sql) {
 				}
 				$tool_content .= "<td width=\"1\">
 				<img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'></td>
-    				<td>" . htmlspecialchars($logs['nom']) . "</td>
-    				<td>" . htmlspecialchars($logs['prenom']) . "</td>
-    				<td>" . htmlspecialchars($logs['username']) . "</td>
-    				<td>" . htmlspecialchars($logs['email']) . "</td>
+    				<td>" . htmlspecialchars($logs['nom'], ENT_QUOTES, 'UTF-8') . "</td>
+					<td>" . htmlspecialchars($logs['prenom'], ENT_QUOTES, 'UTF-8') . "</td>
+					<td>" . htmlspecialchars($logs['username'], ENT_QUOTES, 'UTF-8') . "</td>
+					<td>" . htmlspecialchars($logs['email'], ENT_QUOTES, 'UTF-8') . "</td>
     				<td align='center'>";
 				switch ($logs['statut']) {
 					case 1:

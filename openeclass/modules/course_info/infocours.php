@@ -93,12 +93,11 @@ if (isset($_POST['submit'])) {
                 list($facid, $facname) = explode('--', $_POST['facu']);
 
                 mysql_query("PREPARE stmt2 FROM 'UPDATE `$mysqlMainDb`.cours SET intitule=?, faculte=?, description=?, course_addon=?, course_keywords=?, visible=?, titulaires=?, languageCourse=?, type=?, password=?, faculteid=? WHERE cours_id=?';");
-      
-		mysql_query('SET @a = "' . mysql_real_escape_string($_POST['title']) . '";');
+		mysql_query('SET @a = "' . mysql_real_escape_string(htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @b = "' . mysql_real_escape_string($facname) . '";');
-		mysql_query('SET @c = "' . mysql_real_escape_string($_POST['description']) . '";');
-		mysql_query('SET @d = "' . mysql_real_escape_string($_POST['course_addon']) . '";');
-		mysql_query('SET @e = "' . mysql_real_escape_string($_POST['course_keywords']) . '";');
+		mysql_query('SET @c = "' . mysql_real_escape_string(htmlspecialchars($_POST['description'], ENT_QUOTES, 'UTF-8')) . '";');
+		mysql_query('SET @d = "' . mysql_real_escape_string(htmlspecialchars($_POST['course_addon'], ENT_QUOTES, 'UTF-8')) . '";');
+		mysql_query('SET @e = "' . mysql_real_escape_string(htmlspecialchars($_POST['course_keywords'], ENT_QUOTES, 'UTF-8')) . '";');
 		mysql_query('SET @f = '  . intval(mysql_real_escape_string($_POST['formvisible'])) . ';');
 		mysql_query('SET @g = "' . mysql_real_escape_string($_POST['titulary']) . '";');
 		mysql_query('SET @h = "' . mysql_real_escape_string($newlang) . '";');
