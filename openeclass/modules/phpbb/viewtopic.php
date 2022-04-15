@@ -219,12 +219,12 @@ if (isset($_GET['all'])) {
 	$sql = "SELECT p.*, pt.post_text FROM posts p, posts_text pt 
 		WHERE topic_id = '$topic' 
 		AND p.post_id = pt.post_id
-		ORDER BY post_id LIMIT $start, $posts_per_page";
+		ORDER BY post_id LIMIT ".mysql_real_escape_string($start).", ".mysql_real_escape_string($posts_per_page)."";
 } else {
 	$sql = "SELECT p.*, pt.post_text FROM posts p, posts_text pt
 		WHERE topic_id = '$topic'
 		AND p.post_id = pt.post_id
-		ORDER BY post_id LIMIT $posts_per_page";
+		ORDER BY post_id LIMIT ".mysql_real_escape_string($posts_per_page)."";
 }
 if (!$result = db_query($sql, $currentCourseID)) {
 	$tool_content .= "$langErrorConnectPostDatabase. $sql";

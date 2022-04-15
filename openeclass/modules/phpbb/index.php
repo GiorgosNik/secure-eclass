@@ -252,7 +252,7 @@ if ($total_categories) {
 					$tool_content .= "<font color='#CAC3B5'>$langNoPosts</font></td>";
 				}
 				list($forum_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-					WHERE user_id = $uid AND forum_id = $forum AND course_id = $cours_id", $mysqlMainDb));
+					WHERE user_id = $uid AND forum_id = ".mysql_real_escape_string($forum)." AND course_id = $cours_id", $mysqlMainDb));
 				if (!isset($forum_action_notify)) {
 					$forum_link_notify = FALSE;
 					$forum_icon = '_off';

@@ -80,17 +80,17 @@ include("functions.php"); // application logic for phpBB
  *****************************************************************************/
 
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
-	WHERE (forum_id = '$forum')";
+	WHERE (forum_id = '".mysql_real_escape_string($forum)."')";
 if (!$result = db_query($sql, $currentCourseID)) {
 	$tool_content .= $langErrorDataForum;
 	draw($tool_content, 2, 'phpbb', $head_content);
 	exit;
 }
 $myrow = mysql_fetch_array($result);
-$forum_name = $myrow["forum_name"];
-$forum_access = $myrow["forum_access"];
-$forum_type = $myrow["forum_type"];
-$forum_id = $forum;
+$forum_name = htmlspecialchars($myrow["forum_name"]);
+$forum_access = htmlspecialchars($myrow["forum_access"]);
+$forum_type = htmlspecialchars($myrow["forum_type"]);
+$forum_id = htmlspecialchars($forum);
 
 $nameTools = $langNewTopic;
 $navigation[]= array ("url"=>"index.php", "name"=> $langForums);
@@ -144,23 +144,42 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
-	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$nom', '$prenom')";
-	$result = db_query($sql, $currentCourseID);
+
+	mysql_query("PREPARE stmt FROM 'INSERT INTO topics SET topic_title=?, topic_poster=?, forum_id=?, topic_time=?, topic_notify=1, nom=?, prenom=?';");
+      
+	mysql_query('SET @a = "' . mysql_real_escape_string($subject) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($uid) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($forum) . '";');
+	mysql_query('SET @d = "' . mysql_real_escape_string($time) . '";');
+	mysql_query('SET @e = "' . mysql_real_escape_string($nom) . '";');
+	mysql_query('SET @f = "' . mysql_real_escape_string($prenom) . '";');
+	
+	$result = db_query("EXECUTE stmt USING @a, @b, @c, @d, @e, @f;", $currentCourseID);
 
 	$topic_id = mysql_insert_id();
-	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
-	if (!$result = db_query($sql, $currentCourseID)) {
+
+	mysql_query("PREPARE stmt2 FROM 'INSERT INTO posts SET topic_id=?, forum_id=?, poster_id=?, post_time=?, poster_ip=?, nom=?, prenom=?';");
+      
+	mysql_query('SET @a = "' . mysql_real_escape_string($topic_id) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($forum) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($uid) . '";');
+	mysql_query('SET @d = "' . mysql_real_escape_string($time) . '";');
+	mysql_query('SET @e = "' . mysql_real_escape_string($poster_ip) . '";');
+	mysql_query('SET @f = "' . mysql_real_escape_string($nom) . '";');
+	mysql_query('SET @g = "' . mysql_real_escape_string($prenom) . '";');
+
+	if (!$result = db_query("EXECUTE stmt2 USING @a, @b, @c, @d, @e, @f, @g;", $currentCourseID)) {
 		$tool_content .= $langErrorEnterPost;
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	} else {
 		$post_id = mysql_insert_id();
 		if ($post_id) {
-			$sql = "INSERT INTO posts_text (post_id, post_text)
-					VALUES ($post_id, " . autoquote($message) . ")";
-			$result = db_query($sql, $currentCourseID);
+			mysql_query("PREPARE stmt3 FROM 'INSERT INTO posts_text SET post_id=?, post_text=?';");
+			mysql_query('SET @a = "' . mysql_real_escape_string($post_id) . '";');
+			mysql_query('SET @b = "' . mysql_real_escape_string($message) . '";');
+			$result = db_query("EXECUTE stmt3 USING @a, @b;", $currentCourseID);
+
 			$sql = "UPDATE topics
 				SET topic_last_post_id = $post_id
 				WHERE topic_id = '$topic_id'";
@@ -169,7 +188,7 @@ if (isset($submit) && $submit) {
 	}
 	$sql = "UPDATE forums
 		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = $post_id
-		WHERE forum_id = '$forum'";
+		WHERE forum_id = '".mysql_real_escape_string($forum)."'";
 	$result = db_query($sql, $currentCourseID);
 	
 	$topic = $topic_id;
@@ -185,7 +204,7 @@ if (isset($submit) && $submit) {
 	$category_id = forum_category($forum);
 	$cat_name = category_name($category_id);
 	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
-			WHERE (forum_id = $forum OR cat_id = $category_id) 
+			WHERE (forum_id = ".mysql_real_escape_string($forum)." OR cat_id = $category_id) 
 			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
 	$c = course_code_to_title($currentCourseID);
 	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyForumNotify $langInForums '$forum_name' $langInCat '$cat_name' \n\n$gunet";
@@ -236,7 +255,7 @@ if (isset($submit) && $submit) {
 	</tr>
 	<tr>
 	<th>&nbsp;</th>
-	<td><input type='hidden' name='forum' value='$forum' />
+	<td><input type='hidden' name='forum' value='".htmlspecialchars($forum)."' />
 	<input type='submit' name='submit' value='$langSubmit' />&nbsp;
 	<input type='submit' name='cancel' value='$langCancelPost' />
 	</td></tr>

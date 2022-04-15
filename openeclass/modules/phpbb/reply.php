@@ -78,24 +78,24 @@ if (isset($post_id) && $post_id) {
 	// We have a post id, so include that in the checks..
 	$sql  = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t, posts p ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic)";
+	$sql .= "WHERE (f.forum_id = '".mysql_real_escape_string($form)."') AND (t.topic_id = ".mysql_real_escape_string($topic).")";
 	$sql .= " AND (p.post_id = $post_id) AND (t.forum_id = f.forum_id)";
 	$sql .= " AND (p.forum_id = f.forum_id) AND (p.topic_id = t.topic_id)";
 } else {
 	// No post id, just check forum and topic.
 	$sql = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";	
+	$sql .= "WHERE (f.forum_id = '".mysql_real_escape_string($form)."') AND (t.topic_id = ".mysql_real_escape_string($topic).") AND (t.forum_id = f.forum_id)";	
 }
 
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
 
-$forum_name = $myrow["forum_name"];
-$forum_access = $myrow["forum_access"];
-$forum_type = $myrow["forum_type"];
-$topic_title = $myrow["topic_title"];
-$forum_id = $forum;
+$forum_name = htmlspecialchars($myrow["forum_name"]);
+$forum_access = htmlspecialchars($myrow["forum_access"]);
+$forum_type = htmlspecialchars($myrow["forum_type"]);
+$topic_title = htmlspecialchars($myrow["topic_title"]);
+$forum_id = htmlspecialchars($forum);
 
 $nameTools = $langReply;
 $navigation[]= array ("url"=>"index.php", "name"=> $langForums);
@@ -166,21 +166,40 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
-	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
-	$result = db_query($sql, $currentCourseID);
+
+	mysql_query("PREPARE stmt FROM 'INSERT INTO posts SET topic_id=?, forum_id=?, poster_id=?, post_time=?, poster_ip=?, nom=?, prenom=?';");
+      
+	mysql_query('SET @a = "' . mysql_real_escape_string($topic) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($forum) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($uid) . '";');
+	mysql_query('SET @d = "' . mysql_real_escape_string($time) . '";');
+	mysql_query('SET @e = "' . mysql_real_escape_string($poster_ip) . '";');
+	mysql_query('SET @f = "' . mysql_real_escape_string($nom) . '";');
+	mysql_query('SET @g = "' . mysql_real_escape_string($prenom) . '";');
+
+	$result = db_query("EXECUTE stmt USING @a, @b, @c, @d, @e, @f, @g;", $currentCourseID);
+
 	$this_post = mysql_insert_id();
 	if ($this_post) {
-		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
-                        autoquote($message) . ")";
-		$result = db_query($sql, $currentCourseID); 
+
+		mysql_query("PREPARE stmt2 FROM 'INSERT INTO posts_text SET post_id=?, post_text=?';");
+		mysql_query('SET @a = "' . mysql_real_escape_string($this_post) . '";');
+		mysql_query('SET @b = "' . mysql_real_escape_string($message) . '";');
+		$result = db_query("EXECUTE stmt2 USING @a, @b;", $currentCourseID);
 	}
-	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
-		WHERE topic_id = '$topic'";
-	$result = db_query($sql, $currentCourseID);
-	$sql = "UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = '$this_post' 
-		WHERE forum_id = '$forum'";
-	$result = db_query($sql, $currentCourseID);
+
+	mysql_query("PREPARE stmt3 FROM 'UPDATE topics SET topic_replies=topic_replies+1, topic_last_post_id=?, topic_time=? WHERE topic_id=?';");
+	mysql_query('SET @a = "' . mysql_real_escape_string($this_post) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($time) . '";');
+	mysql_query('SET @c = "' . mysql_real_escape_string($topic) . '";');
+	$result = db_query("EXECUTE stmt3 USING @a, @b, @c;", $currentCourseID);
+
+
+	mysql_query("PREPARE stmt3 FROM 'UPDATE forums SET forum_posts=forum_posts+1, forum_last_post_id=? WHERE forum_id=?';");
+	mysql_query('SET @a = "' . mysql_real_escape_string($this_post) . '";');
+	mysql_query('SET @b = "' . mysql_real_escape_string($forum) . '";');
+	$result = db_query("EXECUTE stmt3 USING @a, @b;", $currentCourseID);
+
 	if (!$result) {
 		$tool_content .= $langErrorUpadatePostCount;
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -194,7 +213,7 @@ if (isset($submit) && $submit) {
 	$category_id = forum_category($forum);
 	$cat_name = category_name($category_id);
 	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
-			WHERE (topic_id = $topic OR forum_id = $forum OR cat_id = $category_id) 
+			WHERE (topic_id = ".mysql_real_escape_string($topic)." OR forum_id = ".mysql_real_escape_string($forum)." OR cat_id = $category_id) 
 			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
 	$c = course_code_to_title($currentCourseID);
 	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyTopicNotify $langInForum '$topic_title' $langOfForum '$forum_name' $langInCat '$cat_name' \n\n$gunet";
@@ -210,8 +229,8 @@ if (isset($submit) && $submit) {
 	$forward = 1;
 	$tool_content .= "<div id=\"operations_container\">
 	<ul id=\"opslist\">
-	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum&$total_topic\">$langViewMessage</a></li>
-	<li><a href=\"viewforum.php?forum=$forum&$total_forum\">$langReturnTopic</a></li>
+	<li><a href=\"viewtopic.php?topic=".htmlspecialchars($topic)."&forum=".htmlspecialchars($forum)."&$total_topic\">$langViewMessage</a></li>
+	<li><a href=\"viewforum.php?forum=".htmlspecialchars($forum)."&$total_forum\">$langReturnTopic</a></li>
 	</ul></div><br />";
 	
 	$tool_content .= "<table width=\"99%\"><tbody><tr>
@@ -227,11 +246,11 @@ if (isset($submit) && $submit) {
 		<tr><td>&nbsp;</td></tr>
 		<tr>
 		<td>
-		<input type='hidden' name='forum' value='$forum'>
-		<input type='hidden' name='topic' value='$topic'>
-		<input type='hidden' name='post' value='$post'>
-		<input type='hidden' name='quote' value='$quote'>
-		<input type='SUBMIT' name='logging_in' value='$langEnter'>
+		<input type='hidden' name='forum' value='".htmlspecialchars($forum)."'>
+		<input type='hidden' name='topic' value='".htmlspecialchars($topic)."'>
+		<input type='hidden' name='post' value='".htmlspecialchars($post)."'>
+		<input type='hidden' name='quote' value='".htmlspecialchars($quote)."'>
+		<input type='SUBMIT' name='logging_in' value='".htmlspecialchars($langEnter)."'>
 		</td></tr></table>
 		</td></tr></table></form>";
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -257,21 +276,21 @@ if (isset($submit) && $submit) {
 	// Topic review
 	$tool_content .= "<div id=\"operations_container\">
 	<ul id=\"opslist\">
-	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum\" target=\"_blank\">$langTopicReview</a></li>
+	<li><a href=\"viewtopic.php?topic=".htmlspecialchars($topic)."&forum=".htmlspecialchars($forum)."\" target=\"_blank\">$langTopicReview</a></li>
 	</ul></div><br />";
 	$tool_content .= "<form action='".htmlspecialchars($_SERVER['PHP_SELF'])."' method='post'>
 	<table class=\"FormData\" width=\"99%\">
 	<tbody>
 	<tr>
 	<th width=\"220\">&nbsp;</th>
-	<td><b>$langTopicAnswer</b>: $topic_title</td>
+	<td><b>$langTopicAnswer</b>:".htmlspecialchars($topic_title)."</td>
 	</tr>
 	<tr>
         <th class=\"left\">$langBodyMessage:";
 	if (isset($quote) && $quote) {
 		$sql = "SELECT pt.post_text, p.post_time, u.username 
 			FROM posts p, posts_text pt 
-			WHERE p.post_id = '$post' AND pt.post_id = p.post_id";
+			WHERE p.post_id = '".htmlspecialchars($post)."' AND pt.post_id = p.post_id";
 		if ($r = db_query($sql, $currentCourseID)) {
 			$m = mysql_fetch_array($r);
 			$text = $m["post_text"];
@@ -298,17 +317,17 @@ if (isset($submit) && $submit) {
 	<table class='xinha_editor'>
 	<tr>
 	<td>
-	<textarea id='xinha' name='message' rows='15' cols='70' class='auth_input'>$reply</textarea></td>
+	<textarea id='xinha' name='message' rows='15' cols='70' class='auth_input'>".htmlspecialchars($reply)."</textarea></td>
 	</tr></table></td>
 	</tr>
 	<tr>
 	<th>&nbsp;</th>
 	<td>
-	<input type='hidden' name='forum' value='$forum'>
-	<input type='hidden' name='topic' value='$topic'>
-	<input type='hidden' name='quote' value='$quote'>
-	<input type='submit' name='submit' value='$langSubmit'>&nbsp;
-	<input type='submit' name='cancel' value='$langCancelPost'>
+	<input type='hidden' name='forum' value='".htmlspecialchars($forum)."'>
+	<input type='hidden' name='topic' value='".htmlspecialchars($topic)."'>
+	<input type='hidden' name='quote' value='".htmlspecialchars($quote)."'>
+	<input type='submit' name='submit' value='".htmlspecialchars($langSubmit)."'>&nbsp;
+	<input type='submit' name='cancel' value='".htmlspecialchars($langCancelPost)."'>
 	</td>
 	</tr>
 	</tbody></table>

@@ -169,7 +169,7 @@ $sql = "SELECT t.*, p.post_time, p.nom AS nom1, p.prenom AS prenom1
         FROM topics t
         LEFT JOIN posts p ON t.topic_last_post_id = p.post_id
         WHERE t.forum_id = '$forum' 
-        ORDER BY topic_time DESC LIMIT $first_topic, $topics_per_page";
+        ORDER BY topic_time DESC LIMIT ".mysql_real_escape_string($first_topic).",".mysql_real_escape_string($topics_per_page)."";
 
 $result = db_query($sql, $currentCourseID);
 
