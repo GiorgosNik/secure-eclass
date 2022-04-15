@@ -38,7 +38,7 @@
 
     if($hash)
     {
-      session_start();
+      session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
       if(!isset($_SESSION[sha1($hash)]))
       {
         ?>

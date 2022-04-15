@@ -81,8 +81,10 @@ mysql_select_db($_SESSION['dbname']);
 
 if ($is_adminOfCourse) {
         if (isset($_POST['save'])) {
-                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                        session_unset();
+                        session_destroy();
                 } else {
                         if ($_POST['edIdBloc'] == 'add') {
                                 $res = db_query("SELECT MAX(id) FROM course_description");
@@ -103,17 +105,21 @@ if ($is_adminOfCourse) {
                         header('Location: ' . $urlServer . 'modules/course_description/edit.php');
                         exit;
                 }
-        } elseif (isset($_GET['delete'])) {
-                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+        } elseif (isset($_GET['delete_please'])) {
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                        session_unset();
+                        session_destroy();
                 } else {
                         $del_id = intval(htmlspecialchars($_GET['numBloc']));
                         $res = db_query("DELETE FROM course_description WHERE id = $del_id");
                         $tool_content .= "<p class='success'>$langBlockDeleted<br /><br /><a href='$_SERVER[PHP_SELF]'>$langBack</a></p>";
                 }
         } elseif (isset($_REQUEST['numBloc'])) {
-                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+                if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                        session_unset();
+                        session_destroy();
                 } else {
                         // Edit action
                         $edit_id = intval(htmlspecialchars($_REQUEST['numBloc']));
@@ -198,7 +204,7 @@ if ($is_adminOfCourse) {
           				<td width='50' class='right'>
 					<a href='".htmlspecialchars($_SERVER['PHP_SELF'])."?numBloc=".$numBloc."' >
 					<img src='../../template/classic/img/edit.gif' border='0' title='$langModify' /></a>&nbsp;&nbsp;";
-                                $tool_content .= "<a href='$_SERVER[PHP_SELF]?delete=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
+                                $tool_content .= "<a href='$_SERVER[PHP_SELF]?delete_please=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
       					</td></tr><tr>
       				<td>" . mathfilter(make_clickable(nl2br($contentBloc[$numBloc])), 12, "../../courses/mathimg/") . "</td>
     				</tr></thead></table>";

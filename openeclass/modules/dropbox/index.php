@@ -297,13 +297,14 @@ if (!isset($_GET['mailing']))  // RH: Mailing detail: no received files
 		$tool_content .= "<a href='dropbox_download.php?id=".urlencode($w->id)."' target=_blank>".$clean."</a>";
 
 		$fSize = ceil(($w->filesize)/1024);
+		$desc = htmlspecialchars($w->description);
 		$tool_content .= <<<tCont9
         <small>&nbsp;&nbsp;&nbsp;($fSize kB)</small>
         <br />
-        <small>$w->description</small>
+        <small>$desc</small>
         </td>
 tCont9;
-		$tool_content .= "<td>$w->author</td><td>".$w->uploadDate;
+		$tool_content .= "<td>".htmlspecialchars($w->author)."</td><td>".$w->uploadDate;
 
 		if ($w->uploadDate != $w->lastUploadDate)
 		{

@@ -38,7 +38,7 @@ if (isset($_GET['cid']))
 if(!isset($_GET['cid']))
   $cid=$_SESSION['cid_tmp'];
 
-if (!isset($doit) or $doit != "yes") {
+if (!isset($notsorry) or $notsorry != "yes") {
 
   $tool_content .= "
     <table width='40%'>
@@ -48,7 +48,7 @@ if (!isset($doit) or $doit != "yes") {
       	<p>$langConfirmUnregCours:</p><p> <em>".course_code_to_title($cid)."</em>&nbsp;? </p>
 	<ul class='listBullet'>
 	<li>$langYes: 
-	<a href='$_SERVER[PHP_SELF]?u=$uid&amp;cid=$cid&amp;doit=yes' class=mainpage>$langUnregCours</a>
+	<a href='$_SERVER[PHP_SELF]?u=$uid&amp;cid=$cid&amp;notsorry=yes' class=mainpage>$langUnregCours</a>
 	</li>
 	<li>$langNo: <a href='../../index.php' class=mainpage>$langBack</a>
 	</li></ul>

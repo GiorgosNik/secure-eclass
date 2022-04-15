@@ -1,4 +1,4 @@
-<?php session_start();
+<?php session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
 header('Content-Type: text/html; charset=UTF-8');
 /*========================================================================
 *   Open eClass 2.3

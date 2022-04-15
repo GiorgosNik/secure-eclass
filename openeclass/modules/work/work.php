@@ -133,8 +133,10 @@ hContent;
 
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
-		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+			session_unset();
+			session_destroy();
 		} else {
 			$nameTools = $m['WorkView'];
 			$navigation[] = array("url" => "work.php", "name" => $langWorks);
@@ -218,8 +220,10 @@ function show_submission($sid)
 	global $tool_content, $langWorks, $langSubmissionDescr, $langNotice3,$csrf_token;
 	csrf_token_tag();
 $token = $_SESSION['csrf_token'];
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
 	} else {
 	$nameTools = $langWorks;
 	$navigation[] = array("url" => "work.php", "name" => $langWorks);
@@ -269,8 +273,10 @@ function submit_work($id)
 {
 	global $tool_content, $workPath, $uid, $stud_comments, $group_sub, $REMOTE_ADDR, $langUploadSuccess,
 		$langBack, $langWorks, $langUploadError, $currentCourseID, $langExerciseNotPermit, $langUnwantedFiletype, $csrf_token;
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
 	} else {
 		//DUKE Work submission bug fix.
 		//Do not allow work submission if:

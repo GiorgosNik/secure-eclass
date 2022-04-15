@@ -50,21 +50,21 @@ $tool_content = "";
 // get the incoming values and initialize them
 $u = isset($_GET['u'])? intval(htmlspecialchars($_GET['u'])): false;
 $c = isset($_GET['sorry'])? intval(htmlspecialchars($_GET['sorry'])): false;
-$doit = isset($_GET['doit']);
+$notsorry = isset($_GET['notsorry']);
 
 $u_account = $u? uid_to_username($u): '';
 $u_realname = $u? uid_to_name($u): '';
 $u_statut = get_uid_statut($u);
 $t = 0;
 
-if (!$doit) {
+if (!$notsorry) {
         $tool_content .= "<h4>$langConfirmDelete</h4><p>$langConfirmDeleteQuestion1 <em>$u_realname ($u_account)</em>";
         if($c) {
                 $tool_content .= " $langConfirmDeleteQuestion2 <em>".htmlspecialchars($c)."</em>";
         }
         $tool_content .= ";</p>
                 <ul>
-                <li>$langYes: <a href=\"unreguser.php?u=".htmlspecialchars($u)."&c=".htmlspecialchars($c)."&doit=yes\">$langDelete</a><br>&nbsp;</li>
+                <li>$langYes: <a href=\"unreguser.php?u=".htmlspecialchars($u)."&c=".htmlspecialchars($c)."&notsorry=yes\">$langDelete</a><br>&nbsp;</li>
                 <li>$langNo: <a href=\"edituser.php?u=".htmlspecialchars($u)."\">$langBack</a></li>
                 </ul>";
 } else {

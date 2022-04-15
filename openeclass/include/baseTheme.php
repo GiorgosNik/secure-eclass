@@ -212,7 +212,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		//set the text and icon on the third bar (header)
 		if ($menuTypeID == 2) {
-			$t->set_var ( 'THIRD_BAR_TEXT', q(ellipsize($intitule, 64)) );
+			$t->set_var ( 'THIRD_BAR_TEXT', q(ellipsize(htmlspecialchars($intitule), 64)) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'lesson_icon' );
 		} elseif (isset ( $langUserBriefcase ) && $menuTypeID > 0 && $menuTypeID < 3 && !isset($_SESSION['user_perso_active'])) {
 			$t->set_var ( 'THIRD_BAR_TEXT', $langUserBriefcase );
@@ -292,27 +292,27 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		if (isset ( $currentCourseID ) && ! $courseHome) {
 			$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_LINK}">' );
 			$t->set_var ( 'BREAD_LINK', $urlServer . 'courses/' . $currentCourseID . '/index.php' );
-			$t->set_var ( 'BREAD_TEXT', q($intitule) );
+			$t->set_var ( 'BREAD_TEXT', q(htmlspecialchars($intitule)) );
 			if ($statut == 10)
 				$t->set_var ( 'BREAD_ARROW', '' );
 			$t->set_var ( 'BREAD_HREF_END', '</a>' );
 			$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
 			$breadIterator ++;
 			if (isset ( $pageTitle )) {
-				$pageTitle .= " | " . $intitule;
+				$pageTitle .= " | " . htmlspecialchars($intitule);
 			} else {
-				$pageTitle = $intitule;
+				$pageTitle = htmlspecialchars($intitule);
 			}
 
 		} elseif (isset ( $currentCourseID ) && $courseHome) {
 			$t->set_var ( 'BREAD_HREF_FRONT', '' );
 			$t->set_var ( 'BREAD_LINK', '' );
-			$t->set_var ( 'BREAD_TEXT', $intitule );
+			$t->set_var ( 'BREAD_TEXT', htmlspecialchars($intitule) );
 			$t->set_var ( 'BREAD_ARROW', '&#187;' );
 			$t->set_var ( 'BREAD_HREF_END', '' );
 			$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
 			$breadIterator ++;
-			$pageTitle .= " | " . $intitule;
+			$pageTitle .= " | " . htmlspecialchars($intitule);
 
 		}
 
