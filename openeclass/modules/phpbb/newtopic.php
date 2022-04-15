@@ -62,6 +62,9 @@ include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 $tool_content = "";
 $lang_editor = langname_to_code($language);
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 $head_content = <<<hContent
 <script type="text/javascript">
         _editor_url  = "$urlAppend/include/xinha/";
@@ -102,6 +105,11 @@ if (!does_exists($forum, $currentCourseID, "forum")) {
 }
 
 if (isset($submit) && $submit) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
+	} else {
 	$subject = strip_tags($subject);
 	if (trim($message) == '' || trim($subject) == '') {
 		$tool_content .= $langEmptyMsg;
@@ -221,7 +229,8 @@ if (isset($submit) && $submit) {
 	<p>$langClick <a href='viewforum.php?forum=$forum_id&amp;total_forum'>$langHere</a> $langReturnTopic</p>
 	</td>
 	</tr>
-	</tbody></table>"; 
+	</tbody></table>";
+	} 
 } else {
 	if (!$uid AND !$fakeUid) {
 		$tool_content .= "<center><br /><br />
@@ -234,6 +243,7 @@ if (isset($submit) && $submit) {
 		exit();
 	}
 	$tool_content .= "<form action='".htmlspecialchars($_SERVER['PHP_SELF'])."' method='post'>
+	<input type='hidden' name='csrf_token' value=$token>
 	<table class='FormData' width='99%'>
 	<tbody>
 	<tr>
@@ -265,4 +275,3 @@ if (isset($submit) && $submit) {
 	</form>";
 }
 draw($tool_content, 2, 'phpbb', $head_content);
-?>
