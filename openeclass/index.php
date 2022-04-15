@@ -1,4 +1,5 @@
-<?php session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
+<?php session_start();
+
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -87,10 +88,9 @@ if (isset($persoIsActive)) {
 $warning = '';
 if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 } else { // normal authentication
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-		session_unset();
-		session_destroy();
 	} else {
 	if (isset($_POST['uname'])) {
 		$uname = mysql_real_escape_string(trim($_POST['uname']));
@@ -254,7 +254,7 @@ elseif ((isset($logout) && isset($uid)) or (1 == 1)) {
 		unset($_SESSION['uid']);
 		$temp = $_SESSION['csrf_token'];
 		session_destroy();
-		session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
+		session_start();
 		$_SESSION['csrf_token'] = $temp;
 
 	}

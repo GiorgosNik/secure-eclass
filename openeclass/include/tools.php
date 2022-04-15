@@ -177,7 +177,7 @@ function loggedInMenu(){
 		array_push($sideMenuSubGroup, $arrMenuType);
 	
 		array_push($sideMenuText, "<b style=\"color:#a33033;\">$GLOBALS[langAdminTool]</b>");
-		array_push($sideMenuLink, $urlServer . "modules/admin/");
+		array_push($sideMenuLink, $urlServer . "modules/clown/");
 		array_push($sideMenuImg, "black-arrow1.gif");
 		
 		array_push($sideMenuSubGroup, $sideMenuText);
@@ -301,7 +301,7 @@ function adminMenu(){
 	$arrMenuType['text'] = $GLOBALS['langAdminUsers'];
 	array_push($sideMenuSubGroup, $arrMenuType);
 	array_push($sideMenuText, $GLOBALS['langListUsersActions']);
-	array_push($sideMenuLink, "../admin/listusers.php");
+	array_push($sideMenuLink, "../clown/listusers.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 
 	
@@ -323,7 +323,7 @@ function adminMenu(){
 	array_push($sideMenuSubGroup, $arrMenuType);
 
 	array_push($sideMenuText, $GLOBALS['langListCours']);
-	array_push($sideMenuLink, "../admin/listcours.php");
+	array_push($sideMenuLink, "../clown/listcours.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 	array_push($sideMenuText, $GLOBALS['langListFaculte']);
 	
@@ -356,7 +356,7 @@ function adminMenu(){
 	array_push($sideMenuSubGroup, $arrMenuType);
 
 	array_push($sideMenuText, $GLOBALS['langConfigFile']);
-	array_push($sideMenuLink, "../admin/eclassconf.php");
+	array_push($sideMenuLink, "../clown/eclassconf.php");
 	array_push($sideMenuImg, "black-arrow1.gif");
 
 

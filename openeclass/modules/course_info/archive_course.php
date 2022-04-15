@@ -85,7 +85,7 @@ if($is_adminOfCourse) {
 	if (isset($c) && ($c!="")) {
 		if (isset($search) && ($search=="yes")) $searchurl = "&search=yes";
 		else $searchurl = "";
-		$tool_content .= "<a href=\"../admin/editcours.php?sorry=".$c."".$searchurl."\">$langBack</a>";
+		$tool_content .= "<a href=\"../clown/editcours.php?sorry=".$c."".$searchurl."\">$langBack</a>";
 	} else {
 		$tool_content .= "<a href=\"infocours.php\">$langBack</a>";
 	}

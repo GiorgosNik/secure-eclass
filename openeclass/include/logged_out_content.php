@@ -42,9 +42,9 @@
 include './csrf_token.php';
 if (isset($logout) && isset($uid)) {
 	unset($_SESSION['csrf_token']);
-
 }
 csrf_token_tag();
+
 if (!defined('INDEX_START')) {
 	die("Action not allowed!");
 }
