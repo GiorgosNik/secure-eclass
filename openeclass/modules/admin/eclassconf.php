@@ -70,9 +70,11 @@ $tool_content = "";
 ******************************************************************************/
 // Save new config.php
 if (isset($submit))  {
-  if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
-	  header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-	}else{
+  if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+    session_unset();
+    session_destroy();
+  } else{
 	// Make config directory writable
 	@chmod( "../../config",777 );
 	@chmod( "../../config", 0777 );

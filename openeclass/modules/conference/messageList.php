@@ -94,9 +94,11 @@ if (isset($_GET['store']) && $is_adminOfCourse) {
 		date=NOW(), date_modified=NOW()", $currentCourseID);
 	exit;
 }
-if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 	header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-  }else{
+	session_unset();
+	session_destroy();
+} else{
 // add new line
 if (isset($chatLine) and trim($chatLine) != '') {
 	$fchat = fopen($fileChatName,'a');

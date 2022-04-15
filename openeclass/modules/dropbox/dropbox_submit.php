@@ -146,18 +146,20 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
      * --------------------------------------
      */
 	if (!$error) {
-		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+			session_unset();
+			session_destroy();
 			$error=1;
-		  }else{
+		} else {
 		$cwd = getcwd();
 		if (is_dir($dropbox_cnf["sysPath"])) {
 			$dropbox_space = dir_total_space($dropbox_cnf["sysPath"]);
 		}
-		$dropbox_filename = $_FILES['file']['name'];
-		$dropbox_filesize = $_FILES['file']['size'];
-		$dropbox_filetype = $_FILES['file']['type'];
-		$dropbox_filetmpname = $_FILES['file']['tmp_name'];
+		$dropbox_filename = htmlspecialchars($_FILES['file']['name']);
+		$dropbox_filesize = htmlspecialchars($_FILES['file']['size']);
+		$dropbox_filetype = htmlspecialchars($_FILES['file']['type']);
+		$dropbox_filetmpname = htmlspecialchars($_FILES['file']['tmp_name']);
 
 		if ($dropbox_filesize + $dropbox_space > $diskQuotaDropbox)
 		{
@@ -240,7 +242,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 	$mailing_item = $dropbox_person->sentWork[$i];
 	$mailing_title = $mailing_item->title;
 	$mailing_file = $dropbox_cnf["sysPath"] . '/' . $mailing_item->filename;
-	$errormsg = '<b>' . $mailing_item->recipients[0]['name'] . ' ('
+	$errormsg = '<b>' . htmlspecialchars($mailing_item->recipients[0]['name']) . ' ('
 	. "<a href='dropbox_download.php?id=".urlencode($mailing_item->id)."'>'"
 	. $mailing_title . '</a>):</b><br><br>';
 

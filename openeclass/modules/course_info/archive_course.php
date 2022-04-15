@@ -25,7 +25,7 @@
 * =========================================================================*/
 
 if (isset($c) && ($c!="")) {
-	session_start();
+	session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
 	$require_admin = TRUE;
 	$_SESSION['dbname'] = $c;
 }

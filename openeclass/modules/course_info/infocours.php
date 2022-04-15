@@ -26,7 +26,7 @@
 * =========================================================================*/
 // if we come from the home page
 if (isset($from_home) and ($from_home == TRUE) and isset($_GET['cid'])) {
-        session_start();
+        session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
         $_SESSION['dbname'] = htmlspecialchars($cid);
 }
 $require_current_course = TRUE;
@@ -58,9 +58,11 @@ $head_content = <<<hContent
 hContent;
 
 if (isset($_POST['submit'])) {
-        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
                 header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-              }else{
+                session_unset();
+                session_destroy();
+        } else{
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
                                   <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";

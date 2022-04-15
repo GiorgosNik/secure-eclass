@@ -87,13 +87,13 @@ if (($filepartscount > 1) && isset($mimetype[$fileparts [$filepartscount - 1]]))
 { 
     // give hint to browser about filetype
     header( "Content-type: " . $mimetype[$fileparts [$filepartscount - 1]] . "\n");
-    header( "Content-Disposition: inline; filename=$file\n");
+    header( "Content-Disposition: inline; filename=".htmlspecialchars($file)."\n");
 }
 else
 { 
 	//no information about filetype: force a download dialog window in browser
 	header( "Content-type: application/octet-stream\n");
-	header( "Content-Disposition: inline; filename=$file\n");
+	header( "Content-Disposition: inline; filename=".htmlspecialchars($file)."\n");
 }
 
 /**
@@ -107,7 +107,7 @@ header("Pragma: \n");
 header("Cache-Control: \n");
 header("Cache-Control: public\n"); // IE cannot download from sessions without a cache
 
-header("Content-Description: " . trim(htmlentities($file)) . "\n");
+header("Content-Description: " . trim(htmlentities(htmlspecialchars($file))) . "\n");
 header("Content-Transfer-Encoding: binary\n");
 header("Content-Length: " . filesize( $path)."\n" );
 

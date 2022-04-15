@@ -40,13 +40,13 @@ $navigation[] = array ("url" => "listfaculte.php", "name" => $langListFac);
 // parse the faculte id in a session
 // This is needed in case the user decides to switch language.
 if (isset($fc)) {
-    $_SESSION['fc_memo'] = $fc;
+    $_SESSION['fc_memo'] = htmlspecialchars($fc);
 }
 if (!isset($fc)) {
     $fc = $_SESSION['fc_memo'];
 }
 // security check
-$fc = intval($fc);
+$fc = intval(htmlspecialchars($fc));
 $fac = mysql_fetch_row(mysql_query("SELECT name FROM faculte WHERE id = " . $fc));
 if (!($fac = $fac[0])) {
     die("ERROR: no faculty with id $fc");
@@ -66,7 +66,7 @@ $tool_content .= "
   <table width=99% class='framed'>
   <tbody>
   <tr>
-    <td><a name='top'>&nbsp;</a>$langFaculty:&nbsp;<b>$fac</b></td>
+    <td><a name='top'>&nbsp;</a>$langFaculty:&nbsp;<b>".htmlspecialchars($fac)."</b></td>
     <td><div align='right'>";
 // get the different course types available for this faculte
 $typesresult = db_query("SELECT DISTINCT cours.type types FROM cours WHERE cours.faculteid = $fc ORDER BY cours.type");
@@ -154,9 +154,9 @@ foreach (array("pre" => $langpres,
     $k = 0;
     while ($mycours = mysql_fetch_array($result)) {
         if ($mycours['visible'] == 2) {
-            $codelink = "<a href='../../courses/$mycours[k]/'>$mycours[i]</a>&nbsp;<small>(" . $mycours['c'] . ")</small>";
+            $codelink = "<a href='../../courses/".htmlspecialchars($mycours[k])."/'>".htmlspecialchars($mycours[i])."</a>&nbsp;<small>(" . htmlspecialchars($mycours['c']) . ")</small>";
         } else {
-            $codelink = "$mycours[i]&nbsp;<small>(" . $mycours['c'] . ")</small>";
+            $codelink = "$mycours[i]&nbsp;<small>(" . htmlspecialchars($mycours['c']) . ")</small>";
         }
 
         if ($k % 2 == 0) {
@@ -166,7 +166,7 @@ foreach (array("pre" => $langpres,
         }
         $tool_content .= "\n          <td width='1%'><img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'></td>";
         $tool_content .= "\n          <td>" . $codelink . "</td>";
-        $tool_content .= "\n          <td><small>$mycours[t]</small></td>";
+        $tool_content .= "\n          <td><small>".htmlspecialchars($mycours[t])."</small></td>";
         $tool_content .= "\n          <td align='center'>";
         // show the necessary access icon
         foreach ($icons as $visible => $image) {

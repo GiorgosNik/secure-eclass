@@ -40,8 +40,10 @@ check_guest();
 $allow_username_change = !get_config('block-username-change');
 
 if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
 	  }else{
         if (!$allow_username_change) {
                 $username_form = $uname;

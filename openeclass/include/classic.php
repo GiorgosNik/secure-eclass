@@ -95,12 +95,12 @@ if ($result2 and mysql_num_rows($result2) > 0) {
                         }
                         cours_table_header($this_statut);
                 }
-		$code = $mycours['code'];
-                $title = $mycours['title'];
-		$status[$code] = $this_statut;
-		$cours_id_map[$code] = $mycours['cours_id'];
-                $profs[$code] = $mycours['profs'];
-                $titles[$code] = $mycours['title'];
+		$code = htmlspecialchars($mycours['code']);
+                $title = htmlspecialchars($mycours['title']);
+		$status[$code] = htmlspecialchars($this_statut);
+		$cours_id_map[$code] = htmlspecialchars($mycours['cours_id']);
+                $profs[$code] = htmlspecialchars($mycours['profs']);
+                $titles[$code] = htmlspecialchars($mycours['title']);
 		if ($k%2==0) {
 			$tool_content .= "<tr>";
 		} else {
@@ -117,8 +117,8 @@ if ($result2 and mysql_num_rows($result2) > 0) {
                 }
 		$tool_content .="<td width='1'><img src='${urlAppend}/template/classic/img/arrow_grey.gif' title='* ' /></td>";
 		$tool_content .= "\n<td><a href='${urlServer}courses/$code' class='CourseLink'>$title</a>
-			<font color='#a33033'> ($mycours[fake_code])</font></td>";
-		$tool_content .= "\n<td><small>$mycours[profs]</small></td>";
+			<font color='#a33033'> (".htmlspecialchars($mycours[fake_code]).")</font></td>";
+		$tool_content .= "\n<td><small>".htmlspecialchars($mycours[profs])."</small></td>";
 		$tool_content .= "\n<td align='center'>
 			<a href='$manage_link'><img src='$manage_icon' title='$manage_title' /></a></td>";
 		$tool_content .= "\n    </tr>";

@@ -66,7 +66,7 @@ if (isset($path2add) && $path2add == 0){
 // function library
 include $relPathLib . "lib/main.lib.php";
 //if session isn't started, start it. Needed by the language switch
-if (!session_id()) { session_start(); }
+if (!session_id()) { session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR']; }
 
 header('Content-Type: text/html; charset=UTF-8');
 

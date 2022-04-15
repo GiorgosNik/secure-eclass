@@ -63,7 +63,7 @@ $tool_content .= "
     </tr>
     <tr class='odd'>
       <th class='left' style='border-left: 1px solid #edecdf;'>IP Host:</th>
-      <td>$langHostName <b>$_SERVER[SERVER_NAME]</b></td>
+      <td>$langHostName <b>$_SERVER[SERVER_NAME]/b></td>
     </tr>
     <tr class='odd'>
       <th class='left' style='border-left: 1px solid #edecdf;'>Web Server:</th>
@@ -87,7 +87,7 @@ $tool_content .= "
 $sql = "SELECT COUNT(*) AS cnt FROM prof_request WHERE status=1 AND statut=1";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$count_prof_requests = $myrow['cnt'];
+$count_prof_requests = htmlspecialchars($myrow['cnt']);
 if ($count_prof_requests > 0) {
     $prof_request_msg = "$langThereAre $count_prof_requests $langOpenRequests";
 } else {
@@ -98,19 +98,19 @@ if ($count_prof_requests > 0) {
 $sql = "SELECT code, intitule, titulaires FROM cours ORDER BY cours_id DESC LIMIT 0,1";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$last_course_info = "<b>".$myrow['intitule']."</b> (".$myrow['code'].", ".$myrow['titulaires'].")";
+$last_course_info = "<b>".htmlspecialchars($myrow['intitule'])."</b> (".$myrow['code'].", ".htmlspecialchars($myrow['titulaires']).")";
 
 // Find last prof registration
 $sql = "SELECT prenom, nom, email, registered_at FROM user WHERE statut = 1 ORDER BY user_id DESC LIMIT 0,1";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$last_prof_info = "<b>".$myrow['prenom']." ".$myrow['nom']."</b> (".$myrow['email'].", ".date("j/n/Y H:i",$myrow['registered_at']).")";
+$last_prof_info = "<b>".htmlspecialchars($myrow['prenom'])." ".htmlspecialchars($myrow['nom'])."</b> (".htmlspecialchars($myrow['email']).", ".date("j/n/Y H:i",htmlspecialchars($myrow['registered_at'])).")";
 
 // Find last stud registration
 $sql = "SELECT prenom, nom, email, registered_at FROM user WHERE statut = 5 ORDER BY user_id DESC LIMIT 0,1";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$last_stud_info = "<b>".htmlspecialchars($myrow['prenom'], ENT_QUOTES, 'UTF-8')." ".htmlspecialchars($myrow['nom'], ENT_QUOTES, 'UTF-8')."</b> (".htmlspecialchars($myrow['email'], ENT_QUOTES, 'UTF-8').", ".date("j/n/Y H:i",$myrow['registered_at']).")";
+$last_stud_info = "<b>".htmlspecialchars(htmlspecialchars($myrow['prenom']), ENT_QUOTES, 'UTF-8')." ".htmlspecialchars($myrow['nom'], ENT_QUOTES, 'UTF-8')."</b> (".htmlspecialchars($myrow['email'], ENT_QUOTES, 'UTF-8').", ".date("j/n/Y H:i",htmlspecialchars($myrow['registered_at'])).")";
 
 // Find admin's last login
 $sql = "SELECT `when` FROM loginout WHERE id_user = '".$uid."' AND action = 'LOGIN' ORDER BY `when` DESC LIMIT 1,1";
@@ -122,13 +122,13 @@ $lastadminlogin = strtotime($myrow['when']!=""?$myrow['when']:0);
 $sql = "SELECT COUNT(*) AS cnt FROM user WHERE statut = 1 AND registered_at > '".$lastadminlogin."'";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$lastregisteredprofs = $myrow['cnt'];
+$lastregisteredprofs = htmlspecialchars($myrow['cnt']);
 
 // Count studs registered after last login
 $sql = "SELECT COUNT(*) AS cnt FROM user WHERE statut = 5 AND registered_at > '".$lastadminlogin."'";
 $result = mysql_query($sql);
 $myrow = mysql_fetch_array($result);
-$lastregisteredstuds = $myrow['cnt'];
+$lastregisteredstuds = htmlspecialchars($myrow['cnt']);
 
 
 $tool_content .= "

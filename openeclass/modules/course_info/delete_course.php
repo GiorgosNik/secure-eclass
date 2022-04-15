@@ -32,7 +32,7 @@ $nameTools = $langDelCourse;
 $tool_content = "";
 
 if($is_adminOfCourse) {
-	if(isset($delete)) {
+	if(isset($delete_please)) {
 		mysql_select_db("$mysqlMainDb",$db);
 		mysql_query("DROP DATABASE `$currentCourseID`");
 		mysql_query("DELETE FROM `$mysqlMainDb`.cours WHERE code='$currentCourseID'");
@@ -44,7 +44,7 @@ if($is_adminOfCourse) {
 		##[END personalisation modification]############
 		@mkdir("../../courses/garbage");
 		rename("../../courses/$currentCourseID", "../../courses/garbage/$currentCourseID");
-		$tool_content .= "<p class=\"success_small\">$langTheCourse <b>($intitule $currentCourseID)</b>  $langHasDel</p><br />
+		$tool_content .= "<p class=\"success_small\">$langTheCourse <b>(".htmlspecialchars($intitule)." $currentCourseID)</b>  $langHasDel</p><br />
 		<p align=\"right\"><a href=\"../../index.php\">".$langBackHome." ".$siteName."</a></p>";
                 unset($currentCourseID);
                 unset($_SESSION['dbname']);
@@ -56,12 +56,12 @@ if($is_adminOfCourse) {
 		<tbody>
 		<tr>
 		<td class=\"caution_NoBorder\" height='60' colspan='3'>
-			<p>$langByDel_A <b>$intitule ($currentCourseID) </b>&nbsp;?  </p>
+			<p>$langByDel_A <b>".htmlspecialchars($intitule)." ($currentCourseID) </b>&nbsp;?  </p>
 		</td>
 		</tr>
 		<tr>
 		<th rowspan='2' class='left' width='220'>$langConfirmDel :</th>
-		<td width='52' align='center'><a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])."?delete=yes\">$langYes</a></td>
+		<td width='52' align='center'><a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])."?delete_please=yes\">$langYes</a></td>
 		<td><small>$langByDel</small></td>
 		</tr>
 		<tr>

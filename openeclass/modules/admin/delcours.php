@@ -73,7 +73,7 @@ if (isset($search) && ($search=="yes")) {
 	$searchurl = "&search=yes";
 }
 // Delete course
-if (isset($_GET['delete']) && isset($_GET['sorry']) && $_GET['sorry'] != "eclass")  {
+if (isset($_GET['delete_please']) && isset($_GET['sorry']) && $_GET['sorry'] != "eclass")  {
     mysql_select_db($mysqlMainDb);
 	db_query("DROP DATABASE `".htmlspecialchars($_GET['sorry'])."`");
     $code = quote(mysql_real_escape_string($_GET['sorry']));
@@ -98,13 +98,13 @@ else {
     <td><br />".$langCourseDelConfirm2." <em>".htmlspecialchars($_GET['sorry'])."</em>;<br /><br /><i>".$langNoticeDel."</i><br /><br /></td>
   </tr>";
 	$tool_content .= "  <tr>
-    <td><ul><li><a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])."?sorry=".htmlspecialchars($_GET['sorry'])."&amp;delete=yes".$searchurl."\"><b>$langYes</b></a><br />&nbsp;</li>
+    <td><ul><li><a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])."?sorry=".htmlspecialchars($_GET['sorry'])."&amp;delete_please=yes".$searchurl."\"><b>$langYes</b></a><br />&nbsp;</li>
   <li><a href=\"listcours.php?sorry=".htmlspecialchars($_GET['sorry'])."".$searchurl."\"><b>$langNo</b></a></li></ul></td>
   </tr>";
 	$tool_content .= "</tbody></table><br />";
 }
 // If course deleted go back to listcours.php
-if (isset($_GET['sorry']) && !isset($delete)) {
+if (isset($_GET['sorry']) && !isset($delete_please)) {
 	$tool_content .= "<center><p><a href=\"listcours.php?sorry=".htmlspecialchars($_GET['sorry'])."".$searchurl."\">".$langBack."</a></p></center>";
 }
 // Go back to listcours.php

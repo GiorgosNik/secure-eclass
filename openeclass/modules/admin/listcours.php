@@ -153,7 +153,7 @@ for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 	$tool_content .= "<td width='1'>
 	<img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet' /></td>
 	<td><a href='{$urlServer}courses/$logs[code]/'><b>".htmlspecialchars($logs[2])."</b>
-	</a> (".htmlspecialchars($logs[1]).")<br /><i>".$logs[3]."</i>
+	</a> (".htmlspecialchars($logs[1]).")<br /><i>".htmlspecialchars($logs[3])."</i>
 	</td>
 	<td align='center'>";
 	// Define course type
@@ -172,9 +172,9 @@ for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 	// Add links to course users, delete course and course edit
 	$tool_content .= "<td align='center'><a href='listusers.php?sorry=".$logs['cours_id']."'>
 		<img src='../../template/classic/img/user_list.gif' title='$langUsers' border='0'></img></a></td>
-	<td align=\"center\" width='10'><a href='delcours.php?sorry=".$logs[1]."'>
+	<td align=\"center\" width='10'><a href='delcours.php?sorry=".htmlspecialchars($logs[1])."'>
 		<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
-	<td align=\"center\" width='20'><a href='editcours.php?sorry=".$logs[1]."".$searchurl."'>
+	<td align=\"center\" width='20'><a href='editcours.php?sorry=".htmlspecialchars($logs[1])."".$searchurl."'>
 		<img src='../../template/classic/img/edit.gif' title='$langEdit' border='0'></img></a></td>";
 	$k++;
 }

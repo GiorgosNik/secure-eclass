@@ -61,8 +61,10 @@ if (isset($_POST['selectCourse']) and is_array($_POST['selectCourse'])) {
 }
 
 if (isset($_POST["submit"])) { 
-        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
-          header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                session_unset();
+                session_destroy();
         } else {
                 foreach ($changeCourse as $key => $value) {
                         $cid = intval($value);

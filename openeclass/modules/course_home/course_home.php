@@ -70,14 +70,14 @@ $action->record('MODULE_ID_UNITS');
 $sql = 'SELECT `description`,`course_keywords`, `course_addon`,`faculte`,`lastEdit`,`type`, `visible`, `titulaires`, `fake_code` FROM `cours` WHERE `code` = "'.$currentCourse.'"';
 $res = db_query($sql, $mysqlMainDb);
 while($result = mysql_fetch_row($res)) {
-	$description = trim($result[0]);
-	$keywords = trim($result[1]);
-	$addon = nl2br(trim($result[2]));
-	$faculte = $result[3];
-	$type = $result[5];
-	$visible = $result[6];
-	$professor = $result[7];
-	$fake_code = $result[8];
+	$description = htmlspecialchars(trim($result[0]));
+	$keywords = htmlspecialchars(trim($result[1]));
+	$addon = htmlspecialchars(nl2br(trim($result[2])));
+	$faculte = htmlspecialchars($result[3]);
+	$type = htmlspecialchars($result[5]);
+	$visible = htmlspecialchars($result[6]);
+	$professor = htmlspecialchars($result[7]);
+	$fake_code = htmlspecialchars($result[8]);
 }
 
 if ($is_adminOfCourse) {

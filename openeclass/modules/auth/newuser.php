@@ -200,8 +200,10 @@ if (!isset($submit)) {
 		$password_encrypted = $password;
 	}
 
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
-	  header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
 	} else {
 		mysql_query("PREPARE stmt2 FROM 'INSERT INTO user SET user_id=NULL, nom=?, prenom=?, username=?, password=?, email=?, statut=5, department=?, am=?, registered_at=?, expires_at=?, lang=?';");
       

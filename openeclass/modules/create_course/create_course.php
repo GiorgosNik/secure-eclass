@@ -23,7 +23,7 @@
 *  			Panepistimiopolis Ilissia, 15784, Athens, Greece
 *  			eMail: info@openeclass.org
 * =========================================================================*/
-session_start();
+session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
 
 
 $require_login = TRUE;
@@ -328,8 +328,10 @@ elseif (isset($_POST['create2']) or isset($_POST['back2'])) {
 
 // create the course and the course database
 if (isset($_POST['create_course'])) {
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
 	} else {
 		$nameTools = $langCourseCreate;
 		$facid = intval($faculte);
@@ -413,8 +415,11 @@ if (isset($_POST['create_course'])) {
 		// ----------- main course index.php -----------
 
 		$fd = fopen("../../courses/$repertoire/index.php", "w");
+		$phpCode = '$_SESSION[`ipaddress`] = $_SERVER[`REMOTE_ADDR`];';
+		$x = htmlspecialchars($phpCode);
 		$string = "<?php
                 session_start();
+				$x;
         $titou=\"$repertoire\";
         session_register(\"dbname\");
         include(\"../../modules/course_home/course_home.php\");

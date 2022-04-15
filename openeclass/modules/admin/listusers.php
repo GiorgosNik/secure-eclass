@@ -329,8 +329,10 @@ if ($sql) {
 
 		// DEFINE SETTINGS FOR THE 5 NAVIGATION BUTTONS INTO THE USERS LIST: begin, less, all, more and end
 		$endList = 15;
-		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+			session_unset();
+			session_destroy();
 		} else {
 			if (isset($numbering) && $numbering) {
 				if ($numbList == "more") {
@@ -365,8 +367,10 @@ if ($sql) {
       			</form>
     			</td>
     			<td class=\"center\" width=\"20%\">";
-			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+				session_unset();
+				session_destroy();
 			} else {
 				if ($startList != 0) // if beginning of list or complete listing, do not show "previous" button
 				{
@@ -387,8 +391,10 @@ if ($sql) {
 					}
 				}
 			}
-			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+				session_unset();
+				session_destroy();
 			} else {
 				if (isset($_REQUEST['ord'])) {
 					$ord_clean = $_REQUEST['ord'];
@@ -409,8 +415,10 @@ if ($sql) {
     				<td class=\"center\" width=\"20%\">";
 				}
 			}
-			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+				session_unset();
+				session_destroy();
 			} else {
 				if (!((($countUser - $startList) <= $endList) or ($endList == $countUser))) // if end of list or complete listing, do not show "next" button
 				{
@@ -432,8 +440,10 @@ if ($sql) {
 					}
 				}
 			}
-			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
+			if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
 				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+				session_unset();
+				session_destroy();
 			} else {
 				if (isset($_REQUEST['ord'])) {
 					$ord_clean = $_REQUEST['ord'];
@@ -484,8 +494,10 @@ if ($sql) {
 		$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
   			<tbody><tr><td class=\"odd\" colspan=\"9\"><div align=\"right\">" . $caption . "</div></td>
   			</tr>";
-		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token']) {
-			header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+				header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+				session_unset();
+				session_destroy();
 		} else {
 			if (isset($numbering) and isset($_REQUEST['startList']) and isset($_REQUEST['numbList'])) {
 				$string = '';
@@ -546,7 +558,7 @@ if ($sql) {
 						break;
 				}
 				$tool_content .= "
-      				<td><a href=\"unreguser.php?u=" . $logs['user_id'] . "\">
+      				<td><a href=\"unreguser.php?u=" . htmlspecialchars($logs['user_id']) . "\">
 				<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
       				<td align='center'>
 				";

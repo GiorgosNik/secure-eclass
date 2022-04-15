@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -121,19 +121,19 @@ if (isset($c)) {
 	$tool_content .= "
   <tr>
     <th class=\"left\">".$langFaculty.":</th>
-    <td>".$row['faculte']."</td>
+    <td>".htmlspecialchars($row['faculte'])."</td>
   </tr>
   <tr>
     <th class=\"left\">".$langCode.":</th>
-    <td>".$row['code']."</td>
+    <td>".htmlspecialchars($row['code'])."</td>
   </tr>
   <tr>
     <th class=\"left\"><b>".$langTitle.":</b></th>
-    <td>".$row['intitule']."</td>
+    <td>".htmlspecialchars($row['intitule'])."</td>
   </tr>
   <tr>
     <th class=\"left\"><b>".$langTutor.":</b></td>
-    <td>".$row['titulaires']."</td>
+    <td>".htmlspecialchars($row['titulaires'])."</td>
   </tr>
   </tbody>
   </table>
@@ -146,7 +146,7 @@ if (isset($c)) {
     <td colspan=\"2\">&nbsp;</td>
   </tr>
   <tr>
-    <th width=\"220\" class=\"left\"><b>$langTheCourse <b>$row[intitule]</b> $langMaxQuota</b></th>
+    <th width=\"220\" class=\"left\"><b>$langTheCourse <b>".htmlspecialchars($row[intitule])."</b> $langMaxQuota</b></th>
     <td>".$langQuota."</td>
   </tr>";
 	// Get information about course quota
