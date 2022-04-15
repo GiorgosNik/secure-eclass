@@ -354,7 +354,7 @@ function submit_work($id)
 			mysql_query('SET @c = "' . mysql_real_escape_string($REMOTE_ADDR) . '";');
 			mysql_query('SET @d = "' . mysql_real_escape_string($filename) . '";');
 			mysql_query('SET @e = "' .  mysql_real_escape_string($_FILES['userfile']['name']) . '";');
-			mysql_query('SET @f = "'  . mysql_real_escape_string($stud_comments) . '";');
+			mysql_query('SET @f = "'  . mysql_real_escape_string(htmlspecialchars($stud_comments, ENT_QUOTES, 'UTF-8')) . '";');
 			mysql_query('SET @g = "'  . mysql_real_escape_string($group_id) . '";');
 							
 			db_query("EXECUTE stmt3 USING @a, @b, @c, @d, @e, @f, @g;", $currentCourseID);
