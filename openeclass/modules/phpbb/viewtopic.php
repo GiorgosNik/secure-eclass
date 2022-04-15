@@ -260,7 +260,7 @@ do {
 	<td class='$row_color' width='40'><div align='right'>";
 	if ($is_adminOfCourse) { // course admin
 		$tool_content .= "<a href=\"editpost.php?post_id=".$myrow["post_id"]."&amp;topic=$topic&amp;forum=$forum\"><img src='../../template/classic/img/edit.gif' title='$langModify' alt='$langModify' /></a>";
-		$tool_content .= "&nbsp;<a href='editpost.php?post_id=".$myrow["post_id"]."&amp;topic=$topic&amp;forum=$forum&amp;delete=on&amp;submit=yes' onClick='return confirmation()'><img src='../../template/classic/img/delete.gif' title='$langDelete' alt='$langDelete' /></a>";
+		$tool_content .= "&nbsp;<a href='editpost.php?post_id=".$myrow["post_id"]."&amp;topic=$topic&amp;forum=$forum&amp;clean=on&amp;submit=yes' onClick='return confirmation()'><img src='../../template/classic/img/delete.gif' title='$langDelete' alt='$langDelete' /></a>";
 	}
 	$tool_content .= "</div></td></tr>";
 	$count++;

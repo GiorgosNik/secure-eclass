@@ -58,7 +58,9 @@ $require_help = TRUE;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 $tool_content = "";
 $lang_editor = langname_to_code($language);
 $head_content = <<<hContent
@@ -85,7 +87,7 @@ if (isset($post_id) && $post_id) {
 	// No post id, just check forum and topic.
 	$sql = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";	
+	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";
 }
 
 $result = db_query($sql, $currentCourseID);
@@ -98,9 +100,9 @@ $topic_title = $myrow["topic_title"];
 $forum_id = $forum;
 
 $nameTools = $langReply;
-$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
-$navigation[]= array ("url"=>"viewforum.php?forum=$forum", "name"=> $forum_name);
-$navigation[]= array ("url"=>"viewtopic.php?&topic=$topic&forum=$forum", "name"=> $topic_title);
+$navigation[] = array("url" => "index.php", "name" => $langForums);
+$navigation[] = array("url" => "viewforum.php?forum=$forum", "name" => $forum_name);
+$navigation[] = array("url" => "viewtopic.php?&topic=$topic&forum=$forum", "name" => $topic_title);
 
 
 if (!does_exists($forum, $currentCourseID, "forum") || !does_exists($topic, $currentCourseID, "topic")) {
@@ -110,117 +112,124 @@ if (!does_exists($forum, $currentCourseID, "forum") || !does_exists($topic, $cur
 }
 
 if (isset($submit) && $submit) {
-	if (trim($message) == '') {
-		$tool_content .= $langEmptyMsg;
-		draw($tool_content, 2, 'phpbb', $head_content);
-		exit();
-	}
-	if (isset($user_level) && $user_level == -1) {
-		$tool_content .= $luserremoved;
-		draw($tool_content, 2, 'phpbb', $head_content);
-		exit();
-	}
-	if ($forum_access == 3 && $user_level < 2) {
-		$tool_content .= $langNoPost;
-		draw($tool_content, 2, 'phpbb', $head_content);
-		exit();
-	}
-	// XXX: Do we need this code ?
-	if ( $uid == -1 ) {
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
+	} else {
+		if (trim($message) == '') {
+			$tool_content .= $langEmptyMsg;
+			draw($tool_content, 2, 'phpbb', $head_content);
+			exit();
+		}
+		if (isset($user_level) && $user_level == -1) {
+			$tool_content .= $luserremoved;
+			draw($tool_content, 2, 'phpbb', $head_content);
+			exit();
+		}
 		if ($forum_access == 3 && $user_level < 2) {
 			$tool_content .= $langNoPost;
 			draw($tool_content, 2, 'phpbb', $head_content);
 			exit();
 		}
-	}
-	// Either valid user/pass, or valid session. continue with post.. but first:
-	// Check that, if this is a private forum, the current user can post here.
-	if ($forum_type == 1) {
-		if (!check_priv_forum_auth($uid, $forum, TRUE, $currentCourseID)) {
-			$tool_content .= "$langPrivateForum $langNoPost";
+		// XXX: Do we need this code ?
+		if ($uid == -1) {
+			if ($forum_access == 3 && $user_level < 2) {
+				$tool_content .= $langNoPost;
+				draw($tool_content, 2, 'phpbb', $head_content);
+				exit();
+			}
+		}
+		// Either valid user/pass, or valid session. continue with post.. but first:
+		// Check that, if this is a private forum, the current user can post here.
+		if ($forum_type == 1) {
+			if (!check_priv_forum_auth($uid, $forum, TRUE, $currentCourseID)) {
+				$tool_content .= "$langPrivateForum $langNoPost";
+				draw($tool_content, 2, 'phpbb', $head_content);
+				exit();
+			}
+		}
+		$poster_ip = $REMOTE_ADDR;
+		$is_html_disabled = false;
+		if ((isset($allow_html) && $allow_html == 0) || isset($html)) {
+			$message = htmlspecialchars($message);
+			$is_html_disabled = true;
+			if (isset($quote) && $quote) {
+				$edit_by = get_syslang_string($sys_lang, "l_editedby");
+				// If it's been edited more than once, there might be old "edited by" strings with
+				// escaped HTML code in them. We want to fix this up right here:
+				$message = preg_replace("#&lt;font\ size\=-1&gt;\[\ $edit_by(.*?)\ \]&lt;/font&gt;#si", '[ ' . $edit_by . '\1 ]', $message);
+			}
+		}
+		if ((isset($allow_bbcode) && $allow_bbcode == 1) && !isset($bbcode)) {
+			$message = bbencode($message, $is_html_disabled);
+		}
+		$message = format_message($message);
+		$time = date("Y-m-d H:i");
+		$nom = addslashes($nom);
+		$prenom = addslashes($prenom);
+
+		//to prevent [addsig] from getting in the way, let's put the sig insert down here.
+		if (isset($sig) && $sig) {
+			$message .= "\n[addsig]";
+		}
+		$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
+			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
+		$result = db_query($sql, $currentCourseID);
+		$this_post = mysql_insert_id();
+		if ($this_post) {
+			$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
+				autoquote($message) . ")";
+			$result = db_query($sql, $currentCourseID);
+		}
+		$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
+		WHERE topic_id = '$topic'";
+		$result = db_query($sql, $currentCourseID);
+		$sql = "UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = '$this_post' 
+		WHERE forum_id = '$forum'";
+		$result = db_query($sql, $currentCourseID);
+		if (!$result) {
+			$tool_content .= $langErrorUpadatePostCount;
 			draw($tool_content, 2, 'phpbb', $head_content);
 			exit();
 		}
-	}
-	$poster_ip = $REMOTE_ADDR;
-	$is_html_disabled = false;
-	if ( (isset($allow_html) && $allow_html == 0) || isset($html)) {
-		$message = htmlspecialchars($message);
-		$is_html_disabled = true;
-		if (isset($quote) && $quote) {
-			$edit_by = get_syslang_string($sys_lang, "l_editedby");
-			// If it's been edited more than once, there might be old "edited by" strings with
-			// escaped HTML code in them. We want to fix this up right here:
-			$message = preg_replace("#&lt;font\ size\=-1&gt;\[\ $edit_by(.*?)\ \]&lt;/font&gt;#si", '[ ' . $edit_by . '\1 ]', $message);
-		}
-	}
-	if ( (isset($allow_bbcode) && $allow_bbcode == 1) && !isset($bbcode)) {
-		$message = bbencode($message, $is_html_disabled);
-	}
-	$message = format_message($message);
-	$time = date("Y-m-d H:i");
-	$nom = addslashes($nom);
-	$prenom = addslashes($prenom);
 
-	//to prevent [addsig] from getting in the way, let's put the sig insert down here.
-	if (isset($sig) && $sig) {
-		$message .= "\n[addsig]";
-	}
-	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
-	$result = db_query($sql, $currentCourseID);
-	$this_post = mysql_insert_id();
-	if ($this_post) {
-		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
-                        autoquote($message) . ")";
-		$result = db_query($sql, $currentCourseID); 
-	}
-	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
-		WHERE topic_id = '$topic'";
-	$result = db_query($sql, $currentCourseID);
-	$sql = "UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = '$this_post' 
-		WHERE forum_id = '$forum'";
-	$result = db_query($sql, $currentCourseID);
-	if (!$result) {
-		$tool_content .= $langErrorUpadatePostCount;
-		draw($tool_content, 2, 'phpbb', $head_content);
-		exit();
-	}
-	
-	// --------------------------------
-	// notify users 
-	// --------------------------------
-	$subject_notify = "$logo - $langSubjectNotify";
-	$category_id = forum_category($forum);
-	$cat_name = category_name($category_id);
-	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
+		// --------------------------------
+		// notify users 
+		// --------------------------------
+		$subject_notify = "$logo - $langSubjectNotify";
+		$category_id = forum_category($forum);
+		$cat_name = category_name($category_id);
+		$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
 			WHERE (topic_id = $topic OR forum_id = $forum OR cat_id = $category_id) 
 			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
-	$c = course_code_to_title($currentCourseID);
-	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyTopicNotify $langInForum '$topic_title' $langOfForum '$forum_name' $langInCat '$cat_name' \n\n$gunet";
-	while ($r = mysql_fetch_array($sql)) {
-		$emailaddr = uid_to_email($r['user_id']);
-		send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
-	}
-	// end of notification
-	 
-	$total_forum = get_total_topics($forum, $currentCourseID);
-	$total_topic = get_total_posts($topic, $currentCourseID, "topic")-1;
-	// Subtract 1 because we want the nr of replies, not the nr of posts.
-	$forward = 1;
-	$tool_content .= "<div id=\"operations_container\">
+		$c = course_code_to_title($currentCourseID);
+		$body_topic_notify = "$langCourse: '$c'\n\n$langBodyTopicNotify $langInForum '$topic_title' $langOfForum '$forum_name' $langInCat '$cat_name' \n\n$gunet";
+		while ($r = mysql_fetch_array($sql)) {
+			$emailaddr = uid_to_email($r['user_id']);
+			send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
+		}
+		// end of notification
+
+		$total_forum = get_total_topics($forum, $currentCourseID);
+		$total_topic = get_total_posts($topic, $currentCourseID, "topic") - 1;
+		// Subtract 1 because we want the nr of replies, not the nr of posts.
+		$forward = 1;
+		$tool_content .= "<div id=\"operations_container\">
 	<ul id=\"opslist\">
 	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum&$total_topic\">$langViewMessage</a></li>
 	<li><a href=\"viewforum.php?forum=$forum&$total_forum\">$langReturnTopic</a></li>
 	</ul></div><br />";
-	
-	$tool_content .= "<table width=\"99%\"><tbody><tr>
+
+		$tool_content .= "<table width=\"99%\"><tbody><tr>
 	<td class=\"success\">$langStored</td>
 	</tr></tbody></table>";
+	}
 } else {
 	// Private forum logic here.
 	if (($forum_type == 1) && !$user_logged_in && !$logging_in) {
-		$tool_content .= "<form action='".htmlspecialchars($_SERVER['PHP_SELF'])."' method='post'>
+		$tool_content .= "<form action='" . htmlspecialchars($_SERVER['PHP_SELF']) . "' method='post'>
+		<input type='hidden' name='csrf_token' value=$token>
 		<table align='left' width='99%'>
 		<tr><td>
 		<table width='100%'><tr><td>$langPrivateNotice</td></tr>
@@ -237,7 +246,7 @@ if (isset($submit) && $submit) {
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	} else {
-		if (!$uid AND !$fakeUid) {
+		if (!$uid and !$fakeUid) {
 			$tool_content .= "<center><br><br>$langLoginBeforePost1<br>";
 			$tool_content .= "$langLoginBeforePost2<a href=../../index.php>$langLoginBeforePost3</a></center>";
 			draw($tool_content, 2, 'phpbb', $head_content);
@@ -253,13 +262,14 @@ if (isset($submit) && $submit) {
 			}
 			// Ok, looks like we're good.
 		}
-	}	
+	}
 	// Topic review
 	$tool_content .= "<div id=\"operations_container\">
 	<ul id=\"opslist\">
 	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum\" target=\"_blank\">$langTopicReview</a></li>
 	</ul></div><br />";
-	$tool_content .= "<form action='".htmlspecialchars($_SERVER['PHP_SELF'])."' method='post'>
+	$tool_content .= "<form action='" . htmlspecialchars($_SERVER['PHP_SELF']) . "' method='post'>
+	<input type='hidden' name='csrf_token' value=$token>
 	<table class=\"FormData\" width=\"99%\">
 	<tbody>
 	<tr>
@@ -316,4 +326,3 @@ if (isset($submit) && $submit) {
 }
 
 draw($tool_content, 2, 'phpbb', $head_content);
-
