@@ -93,6 +93,7 @@ $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
  
 $forum_name = own_stripslashes($myrow["forum_name"]);
+$forum_name = htmlspecialchars($forum_name, ENT_QUOTES, 'UTF-8');
 $nameTools = $forum_name;
 
 $topic_count = mysql_fetch_row(db_query("SELECT COUNT(*) FROM topics WHERE forum_id = '$forum'"));
@@ -202,6 +203,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td width='1'><img src='$image' /></td>";
 		$topic_title = own_stripslashes($myrow["topic_title"]);
+		$topic_title = htmlspecialchars($topic_title, ENT_QUOTES, 'UTF-8');
 		$pagination = '';
 		$start = '';
 		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=$forum";

@@ -285,7 +285,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		}
 
 		$pageTitle = $siteName;
-
+		$topic_title = htmlspecialchars($topic_title, ENT_QUOTES, 'UTF-8');
 		$breadIterator = 1;
 		$t->set_block ( 'mainBlock', 'breadCrumbStartBlock', 'breadCrumbStart' );
 
@@ -321,7 +321,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 				$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_LINK}">' );
 				$t->set_var ( 'BREAD_LINK', $step ["url"] );
-				$t->set_var ( 'BREAD_TEXT', $step ["name"] );
+				$t->set_var ( 'BREAD_TEXT', htmlspecialchars($step ["name"], ENT_QUOTES, 'UTF-8') );
 				$t->set_var ( 'BREAD_ARROW', '&#187;' );
 				$t->set_var ( 'BREAD_HREF_END', '</a>' );
 				$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );

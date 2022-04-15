@@ -155,11 +155,13 @@ if ($total_categories) {
 		if ($viewcat != -1) {
 			if ($categories[$i][cat_id] != $viewcat) {
 				$title = stripslashes($categories[$i][cat_title]);
+				$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 				$tool_content .= "<tr class='Forum'><td colspan='6' class='left'>&nbsp;$title</td></tr>";
 				continue;
 			}
 		}
 		$title = stripslashes($categories[$i]["cat_title"]);
+		$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 		$catNum = $categories[$i]["cat_id"];
 		list($action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
 				WHERE user_id = $uid AND cat_id = $catNum AND course_id = $cours_id", $mysqlMainDb));
@@ -202,12 +204,17 @@ if ($total_categories) {
 					$tool_content .= "<td width='2%' class='center'><img src='$folder_image' /></td>";
 				}
 				$name = stripslashes($forum_row[$x]["forum_name"]);
+				$name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 				$last_post_nom = $forum_row[$x]["nom"];
+				$last_post_nom = htmlspecialchars($last_post_nom, ENT_QUOTES, 'UTF-8');
 				$last_post_prenom = $forum_row[$x]["prenom"];
+				$last_post_prenom = htmlspecialchars($last_post_prenom, ENT_QUOTES, 'UTF-8');
 				$last_post_topic_id = $forum_row[$x]["topic_id"];
+				$last_post_topic_id = htmlspecialchars($last_post_topic_id, ENT_QUOTES, 'UTF-8');
 				$total_posts = $forum_row[$x]["forum_posts"];
 				$total_topics = $forum_row[$x]["forum_topics"];
 				$desc = stripslashes($forum_row[$x]["forum_desc"]);
+				$desc = htmlspecialchars($desc, ENT_QUOTES, 'UTF-8');
 				$tool_content .= "<td>";
 				$forum = $forum_row[$x]["forum_id"];
 				if ($is_adminOfCourse) { // admin
