@@ -372,22 +372,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			$t->set_var ( 'BODY_ACTION', $body_action );
 		}
 
-		//if $require_help is true (set by each tool) display the help link
-		if ($require_help == true) {
-			if ((isset($require_current_course) and !$is_adminOfCourse) or
-			    (!isset($require_current_course) and !check_prof())) {
-				$helpTopic .= '_student';
-			}
-			$help_link_icon = " <a  href=\"" . $relPath . "modules/help/help.php?topic=$helpTopic&amp;language=$language\"
-        onClick=\"window.open('" . $relPath . "modules/help/help.php?topic=$helpTopic&amp;language=$language','MyWindow','toolbar=no,location=no,directories=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,width=350,height=450,left=300,top=10');
-        return false;\"><img class='HelpIcon' src='" . $relPath . "template/classic/img/help_icon.gif' width='12' height='12' alt=\"$langHelp\"/></a>";
-
-			$t->set_var ( 'HELP_LINK_ICON', $help_link_icon );
-			$t->set_var ( 'LANG_HELP', $langHelp );
-		} else {
-			$t->set_var ( '{HELP_LINK}', '' );
-			$t->set_var ( 'LANG_HELP', '' );
-		}
+		
 		if (defined('RSS')) {
 			$t->set_var ('RSS_LINK_ICON', "<span class='feed'><a href='${urlServer}" . RSS . "'><img src='${urlServer}template/classic/img/feed.png' alt='RSS Feed' title='RSS Feed'></a></span>");
 		}
