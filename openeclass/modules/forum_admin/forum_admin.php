@@ -360,7 +360,7 @@ hContent;
 				$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id"));
 				if ($rows > 0) {
-					db_query("UPDATE forum_notify SET notify_sent = '$forumcatnotify' 
+					db_query("UPDATE forum_notify SET notify_sent = '" . htmlspecialchars($forumcatnotify) . "' 
 					WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id");
 				} else {
 					db_query("INSERT INTO forum_notify SET user_id = $uid,
@@ -399,7 +399,7 @@ hContent;
 			<img src='../../template/classic/img/edit.gif' border='0' title='$langModify'></img></a>&nbsp;
 			<a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?deleteforumcategoryplease=yes&cat_id=$cat_id&ok=0' onClick='return confirmation();'>
 			<img src='../../template/classic/img/delete.gif' border='0' title='$langDelete'></img></a>
-			<a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?forumcatnotify=$link_notify&cat_id=$cat_id'>	
+			<a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?forumcatnotify=" . htmlspecialchars($link_notify) . "&cat_id=$cat_id'>	
 			<img src='../../template/classic/img/announcements$icon.gif' border='0' title='$langNotify'></img></a>
 			</td></tr>";
 				$i++;

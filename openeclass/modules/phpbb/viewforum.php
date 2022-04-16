@@ -177,7 +177,9 @@ if (mysql_num_rows($result) > 0) { // topics found
 	while($myrow = mysql_fetch_array($result)) {
 		$tool_content .= "<tr>";
 		$replys = $myrow["topic_replies"];
+		$replys = htmlspecialchars($replys);
 		$last_post = $myrow["post_time"];
+		$last_post = htmlspecialchars($last_post);
 		$last_post_datetime = $myrow["post_time"];
 		list($last_post_date, $last_post_time) = split(" ", $last_post_datetime);
 		list($year, $month, $day) = explode("-", $last_post_date);
@@ -236,9 +238,9 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td><a href='$topiclink'>$topic_title</a>$pagination</td>\n";
 		$tool_content .= "<td class='Forum_leftside'>$replys</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom] $myrow[nom]</td>\n";
+		$tool_content .= "<td class='Forum_leftside1'>".htmlspecialchars($myrow[prenom])."" .$myrow[nom]."</td>\n";
 		$tool_content .= "<td class='Forum_leftside'>$myrow[topic_views]</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom1] $myrow[nom1]<br />$last_post</td>";
+		$tool_content .= "<td class='Forum_leftside1'>".htmlspecialchars($myrow[prenom1])."".$myrow[nom1]."<br />$last_post</td>";
 		list($topic_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
 			WHERE user_id = $uid AND topic_id = $myrow[topic_id] AND course_id = $cours_id", $mysqlMainDb));
 		if (!isset($topic_action_notify)) {

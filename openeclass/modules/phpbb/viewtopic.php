@@ -116,7 +116,7 @@ if ($paging and $total > $posts_per_page) {
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
 $topic_subject = own_stripslashes($myrow["topic_title"]);
-$lock_state = $myrow["topic_status"];
+$lock_state = htmlspecialchars($myrow["topic_status"]);
 
 if (!add_units_navigation(TRUE)) {
 	$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
@@ -239,13 +239,14 @@ do {
 	else 
 		$row_color = 'topic_row2';
 	$tool_content .= "<tr>";
-	$tool_content .= "<td class=\"$row_color\"><b>" . $myrow["prenom"] . " " . $myrow["nom"] . "</b></td>";
+	$tool_content .= "<td class=\"$row_color\"><b>" . htmlspecialchars($myrow["prenom"]) . " " . htmlspecialchars($myrow["nom"]) . "</b></td>";
 	$message = own_stripslashes($myrow["post_text"]);
 	// support for math symbols
-	$message = mathfilter($message, 12, "../../courses/mathimg/");
+	$message = htmlspecialchars(mathfilter($message, 12, "../../courses/mathimg/"));
 
 	if ($count == 0) {
 		$postTitle = "$langPostTitle: <b>$topic_subject</b>";
+		$postTitle = htmlspecialchars($postTitle);
 	} else {
 		$postTitle = "";
 	}

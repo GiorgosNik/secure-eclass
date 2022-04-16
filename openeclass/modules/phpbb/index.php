@@ -153,8 +153,8 @@ if ($total_categories) {
 	}
 	for($i=0; $i < $total_categories; $i++) {
 		if ($viewcat != -1) {
-			if ($categories[$i][cat_id] != $viewcat) {
-				$title = stripslashes($categories[$i][cat_title]);
+			if ($categories[$i]['cat_id'] != $viewcat) {
+				$title = stripslashes($categories[$i]['cat_title']);
 				$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 				$tool_content .= "<tr class='Forum'><td colspan='6' class='left'>&nbsp;$title</td></tr>";
 				continue;
