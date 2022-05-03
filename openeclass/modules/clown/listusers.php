@@ -78,39 +78,6 @@ switch ($c)	// get the case for each different listing
 		break; // list per course
 }
 
-if ($view == 2)	// coming from search_user.php(search with criteria)
-{
-	if ((!empty($search)) && ($search = "yes")) {
-		// get the incoming values
-		$user_surname = isset($_POST['user_surname']) ? $_POST['user_surname'] : '';
-		$user_surname =htmlspecialchars($user_surname, ENT_QUOTES, 'UTF-8');
-		$user_firstname = isset($_POST['user_firstname']) ? $_POST['user_firstname'] : '';
-		$user_firstname =htmlspecialchars($user_firstname, ENT_QUOTES, 'UTF-8');
-		$user_username = isset($_POST['user_username']) ? $_POST['user_username'] : '';
-		$user_username =htmlspecialchars($user_username, ENT_QUOTES, 'UTF-8');
-		$user_am = isset($_POST['user_am']) ? $_POST['user_am'] : '';
-		$user_type = isset($_POST['user_type']) ? $_POST['user_type'] : '';
-		$user_email = isset($_POST['user_email']) ? $_POST['user_email'] : '';
-		$user_registered_at_flag = isset($_POST['user_registered_at_flag']) ? $_POST['user_registered_at_flag'] : '';
-
-		$date = explode("-",  $_POST['date']);
-		if (array_key_exists(1, $date)) {
-			$day = $date[0];
-			$month = $date[1];
-			$year = $date[2];
-			$mytime = mktime($hour, $minute, 0, $month, $day, $year);
-		} else {
-			$mytime = mktime($hour, $minute, 0, 0, 0, 0);
-		}
-		if (!empty($mytime)) {
-			$user_registered_at = $mytime;
-		} else {
-			$user_registered_at = "";
-		}
-		// end format date/time
-	}
-}
-
 // Display Actions Toolbar
 $tool_content .= "
       <div id='operations_container'>
