@@ -113,8 +113,8 @@ if (isset($submit))  {
 */
 
 '.$utf8define.'
-$urlServer	=	"'.$_POST['formurlServer'].'";
-$urlAppend	=	"'.$_POST['formurlAppend'].'";
+$urlServer	=	"'.mysql_real_escape_string($_POST['formurlServer']).'";
+$urlAppend	=	"'.mysql_real_escape_string($_POST['formurlAppend']).'";
 $webDir		=	"'.str_replace("\\","/",realpath($_POST['formwebDir'])."/").'" ;
 
 $mysqlServer="'.mysql_real_escape_string($_POST['formmysqlServer']).'";

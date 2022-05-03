@@ -364,7 +364,7 @@ if ($sql) {
 				session_destroy();
 			} else {
 				if (isset($_REQUEST['ord'])) {
-					$ord_clean = $_REQUEST['ord'];
+					$ord_clean = htmlspecialchars($_REQUEST['ord']);
 					$tool_content .= "</td><td class=\"center\" width=\"20%\">
       				<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=all&ord=$ord_clean\">
       				" . keep_var() . "
@@ -390,7 +390,7 @@ if ($sql) {
 				if (!((($countUser - $startList) <= $endList) or ($endList == $countUser))) // if end of list or complete listing, do not show "next" button
 				{
 					if (isset($_REQUEST['ord'])) {
-						$ord_clean = $_REQUEST['ord'];
+						$ord_clean = htmlspecialchars($_REQUEST['ord']);
 						$tool_content .= "
       					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more&ord=$ord_clean\">
       					" . keep_var() . "
@@ -413,7 +413,7 @@ if ($sql) {
 				session_destroy();
 			} else {
 				if (isset($_REQUEST['ord'])) {
-					$ord_clean = $_REQUEST['ord'];
+					$ord_clean = htmlspecialchars($_REQUEST['ord']);
 					$tool_content .= "</td><td class=\"right\" width=\"20%\">
 	  			<form method=post action=\"$_SERVER[PHP_SELF]?numbList=final&ord=$ord_clean\">
 	  			" . keep_var() . "

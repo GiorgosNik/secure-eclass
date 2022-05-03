@@ -50,12 +50,12 @@ $_SESSION['fc_memo'] = $fc;
 
 $restrictedCourses = array();
 if (isset($_POST['changeCourse']) and is_array($_POST['changeCourse'])) {
-        $changeCourse = $_POST['changeCourse'];
+        $changeCourse = htmlspecialchars($_POST['changeCourse']);
 } else {
         $changeCourse = array();
 }
 if (isset($_POST['selectCourse']) and is_array($_POST['selectCourse'])) {
-        $selectCourse = $_POST['selectCourse'];
+        $selectCourse = htmlspecialchars($_POST['selectCourse']);
 } else {
         $selectCourse = array();
 }
