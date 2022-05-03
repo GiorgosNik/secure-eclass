@@ -206,7 +206,7 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 				or die($dropbox_lang["uploadError"]);
-				new Dropbox_SentWork(mysql_real_escape_string($uid), mysql_real_escape_string($dropbox_title), mysql_real_escape_string(htmlspecialchars($_POST['description'], ENT_QUOTES, 'UTF-8')), mysql_real_escape_string($_POST['authors']), mysql_real_escape_string($dropbox_filename), mysql_real_escape_string($dropbox_filesize), $newWorkRecipients);
+				new Dropbox_SentWork(mysql_real_escape_string($uid), mysql_real_escape_string($dropbox_title), mysql_real_escape_string(htmlspecialchars($_POST['description'], ENT_QUOTES, 'UTF-8')), mysql_real_escape_string($_POST['authors']), mysql_real_escape_string($dropbox_filename), mysql_real_escape_string($dropbox_filesize), mysql_real_escape_string($newWorkRecipients));
 			}
 		}
 		chdir ($cwd);

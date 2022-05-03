@@ -87,6 +87,11 @@ if (isset($submit))  {
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
   // Update query
+  $facname = mysql_real_escape_string($facname);
+  $titulaires = mysql_real_escape_string($titulaires);
+  $intitule = mysql_real_escape_string($intitule);
+  $facid = mysql_real_escape_string($facid);
+
 	$sql = mysql_query("UPDATE cours SET faculte='$facname', titulaires='$titulaires', intitule='$intitule', faculteid='$facid' WHERE code='".mysql_real_escape_string($_GET['sorry'])."'");
 	// Some changes happened
 	if (mysql_affected_rows() > 0) {
