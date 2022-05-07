@@ -57,7 +57,7 @@ if (!isset($notsorry) or $notsorry != "yes") {
 		}
 	}  //endif is admin
 } else {
-	if (isset($uid)) {
+	if (isset($uid) and $uid != 1) {
 		$tool_content .=  "<table width=99%><tbody>";
 		$tool_content .=  "<tr>";
 		$tool_content .=  "<td class=\"success\">";
