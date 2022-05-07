@@ -42,7 +42,12 @@ search.php
 
 include '../../include/baseTheme.php';
 if(isset($_POST['search_terms'])) {
-	$search_terms_title = $search_terms_keywords = $search_terms_instructor = $search_terms_coursecode = $_POST['search_terms'];
+	$search_terms_title = $search_terms_keywords = $search_terms_instructor = $search_terms_coursecode = htmlspecialchars($_POST['search_terms']);
+	$search_terms_title = htmlspecialchars($search_terms_title);
+	$search_terms_keywords = htmlspecialchars($search_terms_keywords);
+	$search_terms_instructor = htmlspecialchars($search_terms_instructor);
+	$search_terms_coursecode = htmlspecialchars($search_terms_coursecode);
+
 }
 //elegxos ean o xrhsths vrisketai sthn kentrikh selida tou systhmatos xwris na exei kanei login
 if (@empty($uid))

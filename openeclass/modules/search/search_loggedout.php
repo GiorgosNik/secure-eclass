@@ -33,7 +33,9 @@
 ==============================================================================*/
 
 $require_current_course = FALSE;
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 $nameTools = $langSearch;
 $tool_content = "";
 
@@ -43,7 +45,8 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 	emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
 	$tool_content .= "
-    <form method=\"post\" action=\"$_SERVER[PHP_SELF]\">
+    <form method=\"post\" action=\""+htmlspecialchars($_SERVER[PHP_SELF])+"\">
+	<input type='hidden' name='csrf_token' value=$token>
 		<table width=\"99%\">
         <tbody>
 		<tr>
@@ -123,9 +126,9 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 	        $tbl_content .= "\n    <tr class=\"odd\">";
           }
             $tbl_content .= "\n      <td><img src=\"../../template/classic/img/arrow_grey.gif\" alt=\"\" border=\"0\" /></td>";
-            $tbl_content .= "\n      <td><a href=\"../../courses/".$mycours['code']."/\">".$mycours['intitule']."</a> (".$mycours['code'].")</td>";
-            $tbl_content .= "\n      <td>".$mycours['titulaires']."</td>";
-            $tbl_content .= "\n      <td>".$mycours['course_keywords']."</td>";
+            $tbl_content .= "\n      <td><a href=\"../../courses/".$mycours['code']."/\">".htmlspecialchars($mycours['intitule'])."</a> (".$mycours['code'].")</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['titulaires'])."</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['course_keywords'])."</td>";
             $tbl_content .= "\n    </tr>";
 			//afkhsh tou arithmou apotelesmatwn
 			$results_found++;
