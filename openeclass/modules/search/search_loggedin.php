@@ -39,15 +39,17 @@ $require_current_course = FALSE;
 
 $nameTools = $langSearch;
 $tool_content = "";
-
-
+include '../../csrf_token.php';
+csrf_token_tag();
+$token = $_SESSION['csrf_token'];
 //elegxos ean *yparxoun* oroi anazhthshs
 if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_terms_instructor) && empty($search_terms_coursecode)) {
 /**********************************************************************************************
 		emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
 	$tool_content .= "
-    <form method=\"post\" action=\"$_SERVER[PHP_SELF]\">
+    <form method=\"post\" action=\""+htmlspecialchars($_SERVER[PHP_SELF])"+\">
+	<input type='hidden' name='csrf_token' value=$token>
 	<table width=\"99%\" class=\"FormData\" align=\"left\">
     <tbody>
 	<tr>
@@ -84,6 +86,12 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 
 }else
 {
+
+	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+		session_unset();
+		session_destroy();
+	} else {
 /**********************************************************************************************
 	ektelesh anazhthshs afou yparxoun oroi anazhthshs
 	 emfanish arikown mhnymatwn anazhthshs
@@ -136,9 +144,9 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
           }
 
             $tbl_content .= "\n      <td><img src=\"../../template/classic/img/arrow_grey.gif\" alt=\"\" border=\"0\" /></td>";
-            $tbl_content .= "\n      <td><a href=\"../../courses/".$mycours['code']."/\">".$mycours['intitule']."</a> (".$mycours['code'].")</td>";
-            $tbl_content .= "\n      <td>".$mycours['titulaires']."</td>";
-            $tbl_content .= "\n      <td>".$mycours['course_keywords']."</td>";
+            $tbl_content .= "\n      <td><a href=\"../../courses/".$mycours['code']."/\">".htmlspecialchars($mycours['intitule'])."</a> (".$mycours['code'].")</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['titulaires'])."</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['course_keywords'])."</td>";
             $tbl_content .= "\n    </tr>";
 			//afkhsh tou arithmou apotelesmatwn
 			$results_found++;
@@ -164,13 +172,14 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
     $tool_content .=  $tbl_content;
     $tool_content .= "\n    </tbody>";
     $tool_content .= "\n    </table>";
-}
+	}
     //ektypwsh syndesmou gia nea anazhthsh
     //$tool_content .= "<p align=\"center\"><a href=\"search.php\">$langNewSearch</a></p>";
 
 }
 
 draw($tool_content, 1, 'search');
+}
 
 //katharisma twn orwn anazhthshs gia apofygh lathwn
 $search_terms_title = "";
