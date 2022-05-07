@@ -121,11 +121,6 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 	ektelesh anazhthshs afou yparxoun oroi anazhthshs
 	 emfanish arikown mhnymatwn anazhthshs
 ***********************************************************************************************/
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
-		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-		session_unset();
-		session_destroy();
-	} else {
 		//ektypwsh syndesmou gia nea anazhthsh
 		$tool_content .= "
 		<div id=\"operations_container\">
@@ -480,7 +475,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 		$tool_content .= "<br /><p class=\"caution_small\">$langNoResult</p>";
 		}
 
-	}//telos anazhthshs (if empty($search_terms) = false)
+	//telos anazhthshs (if empty($search_terms) = false)
 
 	draw($tool_content, 2, 'search');
 

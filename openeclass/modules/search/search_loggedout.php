@@ -44,8 +44,9 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 /**********************************************************************************************
 	emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
-	$tool_content .= "
-    <form method=\"post\" action=\""+htmlspecialchars($_SERVER[PHP_SELF])+"\">
+$bla = 	htmlspecialchars($_SERVER[PHP_SELF]);
+$tool_content .= "
+    <form method=\"post\" action=\"$bla\">
 	<input type='hidden' name='csrf_token' value=$token>
 		<table width=\"99%\">
         <tbody>

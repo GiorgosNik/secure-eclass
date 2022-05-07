@@ -47,8 +47,10 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 /**********************************************************************************************
 		emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
-	$tool_content .= "
-    <form method=\"post\" action=\""+htmlspecialchars($_SERVER[PHP_SELF])"+\">
+	
+$bla = 	htmlspecialchars($_SERVER[PHP_SELF]);
+$tool_content .= "
+    <form method=\"post\" action=\"$bla\">
 	<input type='hidden' name='csrf_token' value=$token>
 	<table width=\"99%\" class=\"FormData\" align=\"left\">
     <tbody>
@@ -87,11 +89,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 }else
 {
 
-	if (!$csrf_token || $csrf_token !== $_SESSION['csrf_token'] || $_SERVER['REMOTE_ADDR'] != $_SESSION['ipaddress']) {
-		header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-		session_unset();
-		session_destroy();
-	} else {
+
 /**********************************************************************************************
 	ektelesh anazhthshs afou yparxoun oroi anazhthshs
 	 emfanish arikown mhnymatwn anazhthshs
@@ -179,7 +177,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 }
 
 draw($tool_content, 1, 'search');
-}
+
 
 //katharisma twn orwn anazhthshs gia apofygh lathwn
 $search_terms_title = "";
