@@ -78,3 +78,4 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
    - We deleted eclass database, through the course deletion url (admin/delcours.php)
    - We edited course quota (admin/quotacours.php)
    - We modified admin's profile (profile.php)
+- <ins>SQL injection</ins>: We executed some basic SQL Injections, like "' or 1=1" in SELECT statements and "');DROP TABLE x;--" in INSERT statements. However, we did not find any interesting vulnerability that could allow us to really hurt the website. Besides, the mysql_query function only accepts one query and thus, we could not inject another one. Then, some other forms were already secured e.g. login.
