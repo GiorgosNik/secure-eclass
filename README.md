@@ -63,3 +63,19 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
     - adding system functions like "exec" to the disable-functions option
     - setting "allow_url_fopen" to off, to disable handling of external URLs as files.
     - setting "allow_url_include" to off
+#### Attack
+- <ins>RFI</ins>: The very first attack we performed was uploading a php file that imports the config.php file and prints the admin password. We were able to do this because the file id was displayed by accident on the screen, and so it was easy for us to track its path, since we already know the directory structrure, but also find the relative path to the config.php. Other RFI attacks we performed (can be found in RFI_Attacks folder) include listing the files of a directory, seeing the /etc/passwd content and modifying a file, adding a url redirection to a disturbing website.
+- <ins>XSS</ins>: Then, for academic reasons we tested the website for XSS vulnerabilities in the logged-in-user pages, logged-out-user pages and in the admin pages. We observed that the input of only a few forms was cleaned, e.g. profile.php. In the other forms, by injecting the classic "<script>alert('attack')</script>", we got plenty of alerts in the pages that this input was displayed. More precisely, some pages with XSS vulnerabilities, due to uncleaned data, are:
+   - newuser.php, firstname and lastname are printed on top right in index.php, as a result, alerts are thrown on the screen.
+   - lostpass.php, username is shown on the screen when a lost-password request is made
+   - dropbox/index.php, file's description is displayed
+   - create_course.php, title, description, professors are displayed in editcours.php
+   - newuseradmin.php, professor's data is shown in listreq.php
+   - work.php, data is shown when editing the assignment (comments, title)
+   - addusertocours.php,  firstname, lastname of user are displayed
+   - phpbb, message and description are displayed
+- <ins>CSRF</ins>: Even though we already had access to the admin pages, we also experimented with CSRF. More specifically, we did the following (can be found in puppies folder):
+   - We deleted eclass database, through the course deletion url (admin/delcours.php)
+   - We edited course quota (admin/quotacours.php)
+   - We modified admin's profile (profile.php)
+- <ins>SQL injection</ins>: We executed some basic SQL Injections, like "' or 1=1" in SELECT statements and "');DROP TABLE x;--" in INSERT statements. However, we did not find any interesting vulnerability that could allow us to really hurt the website. Besides, the mysql_query function only accepts one query and thus, we could not inject another one. Then, some other forms were already secured e.g. login.
