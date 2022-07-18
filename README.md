@@ -1,11 +1,14 @@
-## Open eClass 2.3
+# secure-eclass
 
-Το repository αυτό περιέχει μια **παλιά και μη ασφαλή** έκδοση του eclass.
-Προορίζεται για χρήση στα πλαίσια του μαθήματος
-[Προστασία & Ασφάλεια Υπολογιστικών Συστημάτων (ΥΣ13)](https://ys13.chatzi.org/), **μην τη
-χρησιμοποιήσετε για κάνενα άλλο σκοπό**.
+### Team Members
 
-### Χρήση μέσω docker
+- Giorgos Nikolaou
+- Nefeli Tavoulari
+
+## Description
+This project was completed as part of YS13 "Protection and Security of Information Systems". The project was split in two phases, defence and attack. During the first phase, the teams were given an older version of the e-class platform, a platform that is used by most Greek Universities. The teams were to secure this version of e-class by removing various vulnerabilities, in preparation for the second stage. During the second stage, or the attack stage, each team was assigned a rival team, and had to attack their version of the eclass platform in order to "deface" it, by making some admin-level change to the platform.
+
+## Docker Instructions
 
 ```
 # create and start (the first run takes time to build the image)
@@ -19,35 +22,21 @@ docker-compose start
 docker-compose down -v
 ```
 
-To site είναι διαθέσιμο στο http://localhost:8001/. Την πρώτη φορά θα πρέπει να τρέξετε τον οδηγό εγκατάστασης.
+The website is availiable on http://localhost:8001/. When accessed for the first time, the website will ask to perform a first-time setup.
 
-### Ρυθμίσεις eclass
+### First-Time Setup
+Set the settings as follows:
+- Select language from the drop-down menu
+- MySQL database settings
+  - Database Host: `db`
+  - Database Username: `root`
+  - Database Password: `1234`
+- Config settings
+  - Open eClass URL : `http://localhost:8001/`
 
-Στο οδηγό εγκατάστασης του eclass, χρησιμοποιήστε **οπωσδήποτε** τις παρακάτω ρυθμίσεις:
+To reset the platform and perform this setup again,delete `openeclass/config` and the next time you access the site, the first-time setup will be availiable again.
 
-- Ρυθμίσεις της MySQL
-  - Εξυπηρέτης Βάσης Δεδομένων: `db`
-  - Όνομα Χρήστη για τη Βάση Δεδομένων: `root`
-  - Συνθηματικό για τη Βάση Δεδομένων: `1234`
-- Ρυθμίσεις συστήματος
-  - URL του Open eClass : `http://localhost:8001/` (προσοχή στο τελικό `/`)
-  - Όνομα Χρήστη του Διαχειριστή : `drunkadmin`
-
-Αν κάνετε κάποιο λάθος στις ρυθμίσεις, ή για οποιοδήποτε λόγο θέλετε να ρυθμίσετε
-το openeclass από την αρχή, διαγράψτε το directory, `openeclass/config` και ο
-οδηγός εγκατάστασης θα τρέξει ξανά.
-
-## 2022 Project 1
-
-Εκφώνηση: https://ys13.chatzi.org/assets/projects/project1.pdf
-
-### Μέλη ομάδας
-
-- 1115201800134, Γιώργος Νικολάου
-- 1115201800190, Νεφέλη Ταβουλάρη
-
-### Report
-
+## Report
 #### Defence
 - <ins>CSRF</ins>: We protected the website against CSRF attacks by adding a randomly generated token to every sensitive form as a hidden input. The same token is stored on the Session. When submitting the form, the two tokens are compared, thus preventing an attacker from creating a CSRF attack URL, since they cannot fill in this hidden input with the authorised user's token, inducing them to perform an action they did not mean to.
 - <ins>XSS</ins>: Similarly, we performed URL encoding on any user input that may appear on the website. For this we employed the built-in PHP function "htmlspecialchars" and used it wherever POST, GET and REQUEST variables were used, as well as $_SERVER[PHP_SELF].
